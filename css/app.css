@@ -1,0 +1,254 @@
+/* =========================================================
+   Salary Tracker — design system
+   Apple-inspired, mobile-first, light & dark.
+   ========================================================= */
+
+:root {
+  --bg: #f5f5f7;
+  --surface: #ffffff;
+  --surface-2: #fbfbfd;
+  --text: #1d1d1f;
+  --text-2: #6e6e73;
+  --text-3: #a1a1a6;
+  --separator: rgba(60, 60, 67, 0.12);
+  --accent: #0071e3;
+  --positive: #1f9d55;   /* advance credit / received */
+  --negative: #d70015;   /* owed to me */
+  --warning: #b25000;
+  --tabbar-bg: rgba(250, 250, 252, 0.82);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.04);
+
+  --radius: 16px;
+  --radius-sm: 10px;
+  --gutter: 20px;
+  --tabbar-h: 56px;
+
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
+          "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-num: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+
+  --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #000000;
+    --surface: #1c1c1e;
+    --surface-2: #2c2c2e;
+    --text: #f5f5f7;
+    --text-2: #98989d;
+    --text-3: #636366;
+    --separator: rgba(84, 84, 88, 0.45);
+    --accent: #2997ff;
+    --positive: #30d158;
+    --negative: #ff453a;
+    --warning: #ff9f0a;
+    --tabbar-bg: rgba(22, 22, 24, 0.82);
+    --shadow: none;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #000000;
+  --surface: #1c1c1e;
+  --surface-2: #2c2c2e;
+  --text: #f5f5f7;
+  --text-2: #98989d;
+  --text-3: #636366;
+  --separator: rgba(84, 84, 88, 0.45);
+  --accent: #2997ff;
+  --positive: #30d158;
+  --negative: #ff453a;
+  --warning: #ff9f0a;
+  --tabbar-bg: rgba(22, 22, 24, 0.82);
+  --shadow: none;
+}
+
+/* ---------- Base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  background: var(--bg);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 17px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+
+/* ---------- Layout ---------- */
+.view {
+  max-width: 640px;
+  margin: 0 auto;
+  padding:
+    calc(env(safe-area-inset-top) + 12px)
+    calc(var(--gutter) + env(safe-area-inset-right))
+    calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 32px)
+    calc(var(--gutter) + env(safe-area-inset-left));
+  animation: fade-in 0.28s var(--ease);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ---------- Typography ---------- */
+.eyebrow {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  margin: 0 0 6px;
+}
+.title-large {
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 8px 0 24px;
+}
+.figure-hero {
+  font-family: var(--font-num);
+  font-size: 48px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+}
+.figure {
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+.muted { color: var(--text-2); }
+.subtle { color: var(--text-3); font-size: 13px; }
+.is-positive, .row .value.is-positive { color: var(--positive); }
+.is-negative, .row .value.is-negative { color: var(--negative); }
+
+/* ---------- Grouped list (iOS Settings style) ---------- */
+.group {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  margin: 0 0 28px;
+}
+.group-label {
+  font-size: 13px;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin: 0 4px 8px;
+}
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 48px;
+  padding: 12px 16px;
+  position: relative;
+}
+.row + .row::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 16px; right: 0;
+  border-top: 0.5px solid var(--separator);
+}
+.row .label { color: var(--text); }
+.row .value { color: var(--text-2); text-align: right; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 50px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 14px;
+  font-weight: 600;
+  background: var(--accent);
+  color: #fff;
+  transition: transform 0.12s var(--ease), opacity 0.12s var(--ease);
+}
+.btn:active { transform: scale(0.98); opacity: 0.85; }
+.btn-block { width: 100%; }
+.btn-plain { background: transparent; color: var(--accent); }
+
+/* ---------- Tab bar ---------- */
+.tabbar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  display: flex;
+  justify-content: space-around;
+  height: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
+  padding: 6px env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  background: var(--tabbar-bg);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-top: 0.5px solid var(--separator);
+  z-index: 10;
+}
+.tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  background: none;
+  border: 0;
+  padding: 2px 0 0;
+  color: var(--text-3);
+  font-size: 10.5px;
+  font-weight: 500;
+  transition: color 0.2s var(--ease);
+}
+.tab svg {
+  width: 26px; height: 26px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.tab svg circle { fill: currentColor; stroke: none; }
+.tab.is-active { color: var(--accent); }
+
+/* ---------- Misc ---------- */
+.placeholder {
+  text-align: center;
+  padding: 48px 12px;
+  color: var(--text-2);
+}
+.status-dot {
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--positive);
+  margin-right: 6px;
+  vertical-align: middle;
+}
+.status-dot.off { background: var(--text-3); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
