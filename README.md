@@ -26,13 +26,23 @@ icons/                  App icons
 ## Phases
 
 1. ✅ Environment & project structure
-2. Financial calculation engine & database
+2. ✅ Financial calculation engine & database
 3. Dashboard & initial configuration
 4. Payment entry, transaction history, balance adjustments
 5. Monthly statements & company breakdowns
 6. Backup, restore & exports
 7. Financial scenario testing
 8. Deployment & Home Screen install
+
+## Tests
+
+The financial engine has automated tests, including the required scenarios A–D
+checked at historical dates:
+
+```
+npm test               # engine tests (Node, no dependencies)
+npm run test:browser   # IndexedDB + engine in real Chromium (needs a local static server)
+```
 
 ## Releasing an update
 
