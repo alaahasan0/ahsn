@@ -1,11 +1,11 @@
 {
   "name": "salary-tracker",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Personal salary and payment tracker (PWA). No build step: the files are served as-is.",
   "type": "module",
   "scripts": {
     "test": "node --test tests/*.test.mjs",
-    "test:browser": "node tests/browser/db.check.cjs"
+    "test:browser": "node tests/browser/db.check.cjs && node tests/browser/ui.check.cjs"
   }
 }

@@ -20,9 +20,14 @@
   <meta name="format-detection" content="telephone=no">
 
   <link rel="stylesheet" href="css/app.css">
+  <script>
+    /* Apply saved appearance before first paint to avoid a flash. */
+    try { var t = localStorage.getItem('theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
 </head>
 <body>
   <div id="app">
+    <div id="demo-banner" class="demo-banner" hidden>Sample data · nothing is saved</div>
     <main id="view" class="view" aria-live="polite"></main>
 
     <nav class="tabbar" aria-label="Main">

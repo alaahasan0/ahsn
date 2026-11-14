@@ -3,7 +3,7 @@
  * Strategy: precache the app shell, serve cache-first, refresh in background.
  * Bump CACHE_VERSION whenever app files change so phones pick up the update.
  */
-const CACHE_VERSION = 'salary-v0.2.0';
+const CACHE_VERSION = 'salary-v0.3.0';
 
 const APP_SHELL = [
   './',
@@ -11,10 +11,17 @@ const APP_SHELL = [
   './manifest.webmanifest',
   './css/app.css',
   './js/app.js',
+  './js/state.js',
   './js/engine/money.js',
   './js/engine/dates.js',
   './js/engine/ledger.js',
   './js/db/store.js',
+  './js/ui/dom.js',
+  './js/ui/format.js',
+  './js/ui/theme.js',
+  './js/ui/screens/setup.js',
+  './js/ui/screens/home.js',
+  './js/ui/screens/more.js',
   './icons/icon-180.png',
   './icons/icon-192.png',
   './icons/icon-512.png',

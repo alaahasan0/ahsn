@@ -15,11 +15,12 @@ index.html              App entry point
 manifest.webmanifest    Home Screen install metadata
 sw.js                   Service worker (offline support)
 css/app.css             Design system (light & dark)
-js/app.js               Bootstrap + router; wires engine, db and ui together
-js/engine/              Financial calculation engine — pure functions, no DOM   (Phase 2)
-js/db/                  IndexedDB storage layer                                (Phase 2)
-js/ui/                  Screens and components                                 (Phase 3+)
-tests/                  Automated financial test scenarios                     (Phase 2, 7)
+js/app.js               Bootstrap + router
+js/state.js             Bridge between storage and screens (+ demo mode)
+js/engine/              Financial calculation engine — pure functions, no DOM
+js/db/                  IndexedDB storage layer with audit log
+js/ui/                  Screens (setup, overview, more) and shared components
+tests/                  Engine tests (Node) and browser tests (Playwright)
 icons/                  App icons
 ```
 
@@ -27,7 +28,7 @@ icons/                  App icons
 
 1. ✅ Environment & project structure
 2. ✅ Financial calculation engine & database
-3. Dashboard & initial configuration
+3. ✅ Dashboard & initial configuration
 4. Payment entry, transaction history, balance adjustments
 5. Monthly statements & company breakdowns
 6. Backup, restore & exports
@@ -41,7 +42,12 @@ checked at historical dates:
 
 ```
 npm test               # engine tests (Node, no dependencies)
-npm run test:browser   # IndexedDB + engine in real Chromium (needs a local static server)
+npm run test:browser   # IndexedDB + full UI flow in Chromium (needs: python3 -m http.server 8765)
+```
+
+Append `?today=YYYY-MM-DD` to the URL to view the app as if it were another day.
+
+```
 ```
 
 ## Releasing an update
