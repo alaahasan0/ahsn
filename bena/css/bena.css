@@ -233,7 +233,7 @@ html[dir="rtl"] .nav-item.active::before { border-radius: 3px 0 0 3px; }
 .page-head h1 { font-size: 28px; font-weight: 700; line-height: 1.2; }
 .page-head p { color: var(--text-2); margin-top: 6px; font-size: 14px; max-width: 70ch; }
 .page-head .actions { display: flex; gap: 8px; flex-wrap: wrap; }
-.view-enter { animation: viewIn .35s var(--ease) both; }
+.view-enter { animation: viewIn .35s var(--ease) backwards; }
 @keyframes viewIn { from { opacity: .001; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
 /* Tablet: icon rail */
@@ -885,3 +885,5 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
 @media (max-width: 767px) { .bars .col .tip, .line-chart .hz .tip { display: none; } .line-chart .hz::after { display: none; } }
 
 .m-row.clickable { cursor: pointer; }
+.chart { overflow-x: clip; }
+@media (max-width: 560px) { .role-card .pill-tag { display: none; } }

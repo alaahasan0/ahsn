@@ -54,3 +54,9 @@ Append `?today=YYYY-MM-DD` to the URL to view the app as if it were another day.
 
 Bump `CACHE_VERSION` in `sw.js` (and `APP_VERSION` in `js/app.js`) so installed
 copies download the new files.
+
+## BENA prototype (separate project)
+
+`bena/` holds an unrelated interactive UI prototype: BENA, a building identity and
+property-services platform. Open `bena/index.html`, or the single-file build
+`bena/dist/bena.html`. See `bena/README.md`.

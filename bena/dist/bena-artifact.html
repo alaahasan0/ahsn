@@ -235,7 +235,7 @@ html[dir="rtl"] .nav-item.active::before { border-radius: 3px 0 0 3px; }
 .page-head h1 { font-size: 28px; font-weight: 700; line-height: 1.2; }
 .page-head p { color: var(--text-2); margin-top: 6px; font-size: 14px; max-width: 70ch; }
 .page-head .actions { display: flex; gap: 8px; flex-wrap: wrap; }
-.view-enter { animation: viewIn .35s var(--ease) both; }
+.view-enter { animation: viewIn .35s var(--ease) backwards; }
 @keyframes viewIn { from { opacity: .001; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
 /* Tablet: icon rail */
@@ -485,7 +485,7 @@ html[dir="rtl"] .switch input:checked + i::after { transform: translateX(-18px);
 .cell-main { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .cell-main b { display: block; font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 320px; }
 .cell-main small { display: block; font-size: 12px; color: var(--text-3); white-space: nowrap; }
-.id-mono { font-family: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace; font-size: 12.5px; letter-spacing: -.01em; color: var(--ink); direction: ltr; unicode-bidi: isolate; display: inline-block; white-space: nowrap; }
+.id-mono { font-family: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace; font-size: 12.5px; letter-spacing: -.01em; color: inherit; direction: ltr; unicode-bidi: isolate; display: inline-block; white-space: nowrap; }
 .m-list { display: none; }
 @media (max-width: 767px) {
   .table-wrap.responsive { display: none; }
@@ -885,6 +885,10 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
 .bottom-sheet-m.open { top: auto; }
 .nav { min-height: 0; }
 @media (max-width: 767px) { .bars .col .tip, .line-chart .hz .tip { display: none; } .line-chart .hz::after { display: none; } }
+
+.m-row.clickable { cursor: pointer; }
+.chart { overflow-x: clip; }
+@media (max-width: 560px) { .role-card .pill-tag { display: none; } }
 </style>
 <script>try { if (JSON.parse(localStorage.getItem('bena:lang')) === 'ar') { document.documentElement.lang = 'ar'; document.documentElement.dir = 'rtl'; } } catch (e) {}</script>
 <div id="app"></div>
@@ -1612,11 +1616,11 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
     const metas = o.cols.filter((c) => c.m === 'meta');
     const endC = o.cols.find((c) => c.m === 'end');
     const lead = o.mLead;
-    const mob = `<div class="m-list">${rows.map((r) => `<${clickable ? 'button' : 'div'} class="m-row ${clickable}" ${rowAttr(r)}>${lead ? lead(r) : ''}<div class="m-body">
+    const mob = `<div class="m-list">${rows.map((r) => `<div class="m-row ${clickable}" ${clickable ? 'role="button" tabindex="0"' : ''} ${rowAttr(r)}>${lead ? lead(r) : ''}<div class="m-body">
         <div class="m-title"><span>${tCol.mRender ? tCol.mRender(r) : cell(tCol, r)}</span>${endC ? `<span class="nowrap">${cell(endC, r)}</span>` : ''}</div>
         ${subs.map((c) => `<div class="m-sub">${cell(c, r)}</div>`).join('')}
         ${metas.length ? `<div class="m-meta">${metas.map((c) => `<span>${cell(c, r)}</span>`).join('')}</div>` : ''}
-      </div></${clickable ? 'button' : 'div'}>`).join('')}</div>`;
+      </div></div>`).join('')}</div>`;
     return `<div class="card pad-0 ${o.cls || ''}">${desk}${mob}${o.pageSize ? ui.pager(pk, total, o.pageSize) : ''}</div>`;
   };
 
@@ -1637,7 +1641,7 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
   };
 
   /** Document row */
-  ui.doc = (d) => ui.li({ icon: d.icon || 'doc', tone: d.tone || '', title: d.name, sub: d.sub || `${d.type || 'PDF'} · ${d.size || '1.2 MB'} · ${B.date(d.date)}`, act: 'previewDoc', arg: tx(d.name), end: icon('download', 'chev') });
+  ui.doc = (d) => ui.li({ icon: d.icon || 'doc', tone: d.tone || '', title: `<bdi>${tx(d.name)}</bdi>`, sub: d.sub || `${d.type || 'PDF'} · ${d.size || '1.2 MB'} · ${B.date(d.date)}`, act: 'previewDoc', arg: tx(d.name), end: icon('download', 'chev') });
   B.act.previewDoc = (name) => B.modal({
     title: esc(name), sub: L('Document preview (sample)', 'معاينة المستند (نموذج)'), size: 'md',
     body: `<div style="border:1px solid var(--line);border-radius:14px;padding:24px;background:var(--surface-2)"><div class="row between" style="margin-bottom:18px"><div class="brand dark">${B.logo(26)}<span>BENA</span></div><span class="badge">${L('Sample', 'نموذج')}</span></div>
@@ -3353,7 +3357,8 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
     const hist = HIST.filter((h) => h.role === role || (role !== 'provider' && !['resident', 'owner', 'committee', 'manager', 'facility'].includes(role)));
     return created.concat(base, hist).sort(B.by((q) => q.created, -1));
   };
-  M.amountOf = (q) => q.amount || (q.status === 'completed' ? 100 + (hash(q.id) % 30) * 10 : null);
+  const KNOWN_AMOUNTS = { 'MR-24211': 180, 'MR-24288': 140 }; // match the provider-side invoices
+  M.amountOf = (q) => q.amount || KNOWN_AMOUNTS[q.id] || (q.status === 'completed' ? 100 + (hash(q.id) % 30) * 10 : null);
 
   /* ---------------- quotes ---------------- */
   /** Quotes a provider actually submitted in this session (roles/provider.js): key `${requestId}|${providerId}` */
@@ -3363,10 +3368,11 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
     const pool = M.providers().filter((p) => p.cats.includes(q.cat));
     pool.sort((a, c) => (c.areas.includes(b.district) - a.areas.includes(b.district)) || c.rating - a.rating);
     let list = [];
+    if (q.invited && q.invited.length) list = q.invited.map(M.provider).filter(Boolean);
     const fixed = q.provider || (q.invited && q.invited[0]);
     if (fixed && M.provider(fixed)) list.push(M.provider(fixed));
-    pool.forEach((p) => { if (list.length < 3 && !list.includes(p)) list.push(p); });
-    if (list.length < 2) M.providers().filter((p) => p.cats.includes('general') && !list.includes(p)).slice(0, 2 - list.length).forEach((p) => list.push(p));
+    if (!(q.invited && q.invited.length)) pool.forEach((p) => { if (list.length < 3 && !list.includes(p)) list.push(p); });
+    if (list.length < 2 && !(q.invited && q.invited.length)) M.providers().filter((p) => p.cats.includes('general') && !list.includes(p)).slice(0, 2 - list.length).forEach((p) => list.push(p));
     return list.map((p) => {
       const h = hash(q.id + p.id);
       const svc = M.services(p.id).filter((s) => s.cat === q.cat || !p.cats.includes(q.cat))[0] || M.services(p.id)[0];
@@ -3609,7 +3615,15 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
 
   /* quotes comparison */
   .mk-qgrid { display: grid; grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); gap: 14px; align-items: stretch; }
-  @media (max-width: 900px) { .mk-qgrid { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 900px) {
+    .mk-wrap .mk-qgrid { display: flex; overflow-x: auto; scrollbar-width: none; scroll-snap-type: x mandatory; margin-inline: -16px; padding: 14px 16px 4px; gap: 12px; }
+    .mk-wrap .mk-qgrid::-webkit-scrollbar { display: none; }
+    .mk-wrap .mk-qgrid .mk-q { flex: 0 0 min(84%, 340px); scroll-snap-align: start; }
+    .mk-wrap .mk-qgrid .mk-q:only-child { flex-basis: 100%; }
+  }
+  .mk-swipe { display: none; font-size: 12px; color: var(--text-3); align-items: center; gap: 6px; margin-top: -6px; }
+  .mk-swipe svg { width: 14px; height: 14px; }
+  @media (max-width: 900px) { .mk-swipe { display: flex; } }
   .mk-q { position: relative; display: flex; flex-direction: column; gap: 14px; padding: 20px; border-radius: 18px; background: #fff; border: 1px solid var(--line); }
   .mk-q.best { border-color: var(--mint); box-shadow: 0 0 0 1px var(--mint) inset; }
   .mk-q.won { border-color: var(--navy); box-shadow: 0 0 0 1px var(--navy) inset; }
@@ -3628,6 +3642,7 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
   .mk-q .actions { margin-top: auto; display: flex; gap: 8px; }
   .mk-q .actions .btn { flex: 1; }
   .mk-req-sum { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+  .mk-req-sum > .grow { flex: 1 1 220px; }
   .mk-req-sum .ri { width: 52px; height: 52px; border-radius: 16px; background: var(--navy); color: var(--mint); display: grid; place-items: center; flex: none; }
   .mk-req-sum .ri svg { width: 24px; height: 24px; }
 
@@ -3743,7 +3758,7 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
         </div>
         ${catTiles(cat)}
       </div>
-      ${mine.length && !cat ? `<div style="margin-top:22px" class="mk-mine"><span class="mi">${icon('activity')}</span><div class="grow"><b>${L(`${mine.length} active request${mine.length > 1 ? 's' : ''}`, `${mine.length} طلبات نشطة`)}</b><div class="xs" style="margin-top:2px">${esc(tx(mine[0].title))} · ${ui.statusLabel(mine[0].status === 'open' ? 'collecting' : mine[0].status)}</div></div>
+      ${mine.length && !cat ? `<div style="margin-top:22px" class="mk-mine"><span class="mi">${icon('activity')}</span><div class="grow"><b>${L(`${mine.length} active request${mine.length > 1 ? 's' : ''}`, mine.length === 1 ? 'طلب نشط واحد' : mine.length === 2 ? 'طلبان نشطان' : `${mine.length} طلبات نشطة`)}</b><div class="xs" style="margin-top:2px">${esc(tx(mine[0].title))} · ${ui.statusLabel(mine[0].status === 'open' ? 'collecting' : mine[0].status)}</div></div>
         ${mine.some((r) => ['open', 'quoted'].includes(r.status)) ? ui.btn(L('Compare quotes', 'قارن العروض'), { kind: 'primary', size: 'sm', go: `${R()}-quotes-${mine.find((r) => ['open', 'quoted'].includes(r.status)).id}` }) : ''}
         ${ui.btn(L('Service history', 'سجل الخدمات'), { size: 'sm', go: `${R()}-servicehistory` })}</div>` : ''}
       ${svcs.length ? `<div class="mk-sec"><div><h2>${cat ? L('Popular in this category', 'الأكثر طلباً في هذه الفئة') : L('Popular right now', 'الأكثر طلباً الآن')}</h2><p>${L('Fixed starting prices from verified providers', 'أسعار بدء ثابتة من مزوّدين موثّقين')}</p></div></div>
@@ -3791,11 +3806,11 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
     return `<div class="mk-rsum"><div><div class="big">${B.num1(p.rating)}</div><div style="margin-top:8px">${ui.stars(p.rating)}</div><div class="xs faint" style="margin-top:4px">${L(`${B.num(p.reviews)} verified reviews`, `${B.num(p.reviews)} مراجعة موثّقة`)}</div></div>
       <div class="mk-dist">${d.map((n, i) => `<div class="r"><span>${5 - i}★</span><span class="tr"><i style="width:${(n / tot) * 100}%"></i></span><em>${Math.round((n / tot) * 100)}%</em></div>`).join('')}</div></div>`;
   };
-  M.reviewItem = (rv) => {
+  M.reviewItem = (rv, foot = '') => {
     const b = D.building(rv.bid);
     const rep = M.replies[rv.id] || rv.reply;
     return `<div class="mk-rev"><div class="who">${ui.avatar(D.person(rv.by).name)}<div class="grow"><b>${esc(D.pname(rv.by))}</b><small>${tx(D.cat(rv.cat).name)}${b ? ' · ' + esc(tx(b.name)) : ''} · ${B.ago(rv.date)}</small></div>${ui.stars(rv.stars)}</div>
-      <p>${esc(tx(rv.text))}</p>${rep ? `<div class="reply"><b>${L('Response from the provider', 'رد المزوّد')}</b>${esc(tx(rep))}</div>` : ''}</div>`;
+      <p>${esc(tx(rv.text))}</p>${rep ? `<div class="reply"><b>${L('Response from the provider', 'رد المزوّد')}</b>${esc(tx(rep))}</div>` : ''}${foot ? `<div class="row-sm" style="justify-content:flex-end;margin-top:10px">${foot}</div>` : ''}</div>`;
   };
 
   B.shared.provider = (pid) => {
@@ -4040,7 +4055,8 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
       <button class="btn btn-text" style="padding:0;margin:4px 0 12px" data-act="back">${icon('arrowLeft', 'flip')}<span>${L('Back', 'رجوع')}</span></button>
       <div class="card"><div class="mk-req-sum"><span class="ri">${icon(D.cat(q.cat).icon)}</span><div class="grow"><div class="row-sm wrap">${ui.idMono(q.id)}${ui.status(decided ? 'accepted' : q.status === 'open' ? 'collecting' : q.status)}</div><h1 style="font-size:22px;margin-top:6px">${esc(tx(q.title))}</h1><div class="small muted" style="margin-top:4px">${b ? esc(M.placeLabel({ bid: q.building, unit: q.unit })) + ' · ' : ''}${L('Requested', 'تاريخ الطلب')} ${B.date(q.created)}</div></div>
         ${b ? ui.btn(L('Building profile', 'ملف المبنى'), { icon: 'building', size: 'sm', go: `${role}-building-${b.id}` }) : ''}</div></div>
-      <div class="mk-sec"><div><h2>${decided ? L('Quote accepted', 'تم قبول العرض') : L(`${quotes.length} quotes, side by side`, `${quotes.length} عروض جنباً إلى جنب`)}</h2><p>${decided ? L('The other quotes were closed automatically.', 'تم إغلاق العروض الأخرى تلقائياً.') : L('Prices are fixed for the stated scope. Accepting one closes the others.', 'الأسعار ثابتة للنطاق المحدد. قبول أحدها يغلق البقية.')}</p></div></div>
+      <div class="mk-sec"><div><h2>${decided ? L('Quote accepted', 'تم قبول العرض') : L(`${quotes.length} quotes, side by side`, quotes.length === 2 ? 'عرضان جنباً إلى جنب' : `${quotes.length} عروض جنباً إلى جنب`)}</h2><p>${decided ? L('The other quotes were closed automatically.', 'تم إغلاق العروض الأخرى تلقائياً.') : L('Prices are fixed for the stated scope. Accepting one closes the others.', 'الأسعار ثابتة للنطاق المحدد. قبول أحدها يغلق البقية.')}</p></div></div>
+      ${quotes.length > 1 ? `<div class="mk-swipe">${icon('arrowRight', 'flip')}${L('Swipe to compare', 'اسحب للمقارنة')}</div>` : ''}
       <div class="mk-qgrid" style="--n:${quotes.length}">${quotes.map((x) => {
         const won = decided === x.pid, lost = decided && !won;
         const f = !decided ? flag(x) : won ? ui.badge(L('Accepted', 'مقبول'), 'navy', 'check') : '';
@@ -4057,8 +4073,18 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
           <div class="actions">${canAct ? `${ui.btn(L('Details', 'التفاصيل'), { act: 'mkQuoteInfo', arg: `${q.id}|${x.pid}` })}${ui.btn(L('Accept', 'قبول'), { kind: x.amount === minP ? 'primary' : 'dark', act: 'mkAccept', arg: `${q.id}|${x.pid}` })}` : won ? ui.btn(L('Message provider', 'راسل المزوّد'), { icon: 'chat', act: 'soon', arg: L('Messaging', 'المراسلة'), block: true }) : ui.btn(L('View provider', 'عرض المزوّد'), { go: `${role}-provider-${x.pid}`, block: true })}</div>
         </div>`;
       }).join('')}</div>
+      ${canAct && quotes.length < 2 && q.mkt ? `<div class="card" style="margin-top:14px"><div class="row wrap between"><div><b>${L('Want to compare?', 'تريد المقارنة؟')}</b><div class="small muted">${L('Invite 2 more verified providers to quote on the same request.', 'ادعُ مزوّدَين موثّقَين آخرين للتسعير على نفس الطلب.')}</div></div>${ui.btn(L('Invite 2 more', 'ادعُ اثنين آخرين'), { icon: 'userPlus', act: 'mkInviteMore', arg: q.id })}</div></div>` : ''}
       <div style="margin-top:18px">${ui.callout(L('Payment is only due after the work is completed and you confirm it in BENA. Quotes are fictional demo data.', 'لا يُستحق الدفع إلا بعد إنجاز العمل وتأكيدك له في بينا. العروض بيانات تجريبية وهمية.'), '', 'info')}</div>
     </div>`;
+  };
+  B.act.mkInviteMore = (rid) => {
+    const q = M.request(rid);
+    const b = D.building(q.building) || {};
+    const more = M.providers().filter((p) => p.cats.includes(q.cat) && !q.invited.includes(p.id)).sort((a, c) => (c.areas.includes(b.district) - a.areas.includes(b.district)) || c.rating - a.rating).slice(0, 2);
+    if (!more.length) { B.toast(L('No other providers cover this category yet', 'لا يوجد مزوّدون آخرون لهذه الفئة بعد'), 'info'); return; }
+    q.invited = q.invited.concat(more.map((p) => p.id));
+    B.toast(L(`${more.length} more providers invited — quotes received`, `تمت دعوة ${more.length} مزوّدين آخرين — وصلت العروض`));
+    B.refresh();
   };
   B.act.mkQuoteInfo = (arg) => {
     const [rid, pid] = arg.split('|');
@@ -4283,6 +4309,11 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
     .mk-filters .seg { flex: 1 1 100%; }
     .mk-filters .seg button { flex: 1; justify-content: center; }
   }
+  .mk-pin { cursor: pointer; }
+  .mk-pin rect, .mk-pin path { fill: #fff; stroke: rgba(20,43,59,.25); stroke-width: .6; }
+  .mk-pin text { font: 700 7.6px var(--font); fill: var(--ink); direction: ltr; }
+  .mk-pin:hover rect, .mk-pin:hover path, .mk-pin.on rect, .mk-pin.on path { fill: var(--navy); stroke: var(--navy); }
+  .mk-pin:hover text, .mk-pin.on text { fill: #fff; }
   .mk-mapgrid { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 16px; align-items: start; }
   .mk-mapgrid .map-shell { --map-h: calc(100dvh - 240px); min-height: 480px; }
   .mk-mapside { display: flex; flex-direction: column; gap: 10px; max-height: calc(100dvh - 240px); min-height: 480px; overflow-y: auto; padding-inline-end: 2px; }
@@ -4358,6 +4389,43 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
     rent: [{ v: '', l: T('Any price', 'أي سعر') }, { v: '0-2500', l: T('Under ₪2,500', 'أقل من 2,500 ₪') }, { v: '2500-3500', l: T('₪2,500 – 3,500', '2,500 – 3,500 ₪') }, { v: '3500-', l: T('Over ₪3,500', 'أكثر من 3,500 ₪') }],
     sale: [{ v: '', l: T('Any price', 'أي سعر') }, { v: '0-150000', l: T('Under $150k', 'أقل من 150 ألف $') }, { v: '150000-200000', l: T('$150k – 200k', '150 – 200 ألف $') }, { v: '200000-', l: T('Over $200k', 'أكثر من 200 ألف $') }],
   };
+  /** Price pills drawn inside the map SVG (world coordinates) so they pan/zoom with it. */
+  const short = (l) => (l.mode === 'rent' ? `₪${B.num1(l.price / 1000)}k` : `$${Math.round(l.price / 1000)}k`);
+  const pricePins = (html, list, pick) => {
+    const by = {};
+    list.forEach((l) => { (by[l.bid] = by[l.bid] || []).push(l); });
+    const pins = Object.entries(by).map(([bid, ls]) => {
+      const b = D.building(bid);
+      const [x, y] = B.map.centroid(b.poly);
+      const cheapest = ls.slice().sort((a, c) => a.price - c.price)[0];
+      const label = short(cheapest) + (ls.length > 1 ? ` +${ls.length - 1}` : '');
+      const w = 9 + label.length * 5.4;
+      const on = bid === pick;
+      return `<g class="mk-pin ${on ? 'on' : ''}" data-act="mkMapPick" data-arg="${bid}" data-x="${x.toFixed(1)}" data-y="${y.toFixed(1)}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(2)"><title>${esc(tx(b.name))}</title>
+        <path d="M-4 -5 L0 0 L4 -5Z" /><rect x="${-w / 2}" y="-19" width="${w}" height="14" rx="7"/><text y="-9.4" text-anchor="middle">${esc(label)}</text></g>`;
+    }).join('');
+    const i = html.indexOf('</svg>');
+    B.afterRender(bindPins);
+    return i < 0 ? html : html.slice(0, i) + `<g class="mk-pins">${pins}</g>` + html.slice(i);
+  };
+  /* keep pills at a constant on-screen size (≈11px text) whatever the zoom level */
+  const sizePins = (svg) => {
+    const r = svg.getBoundingClientRect();
+    const vb = svg.viewBox.baseVal;
+    if (!r.width || !vb || !vb.width) return;
+    const ppu = Math.max(r.width / vb.width, r.height / vb.height);
+    const k = Math.max(0.6, Math.min(6, 11 / (7.6 * ppu)));
+    svg.querySelectorAll('.mk-pin').forEach((g) => g.setAttribute('transform', `translate(${g.dataset.x} ${g.dataset.y}) scale(${k.toFixed(3)})`));
+  };
+  const bindPins = () => {
+    const shell = document.querySelector('.map-shell[data-map="mk-props"]');
+    const svg = shell && shell.querySelector('svg');
+    if (!svg) return;
+    sizePins(svg);
+    let raf = 0;
+    const again = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => sizePins(svg)); };
+    ['wheel', 'pointerup', 'pointermove', 'click'].forEach((ev) => shell.addEventListener(ev, again, { passive: true }));
+  };
   B.shared.properties = (id) => {
     if (id === 'rent' || id === 'sale') { if (B.vs['mk:pm:set'] !== id) { B.vs['mk:pm'] = id; B.vs['mk:pm:set'] = id; } }
     const role = R();
@@ -4387,7 +4455,7 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
     const pick = B.get('mk:ppick', null);
     const picked = pick ? list.filter((l) => l.bid === pick) : [];
     const results = list.length ? (view === 'map'
-      ? `<div class="mk-mapgrid"><div>${B.map.render({ id: 'mk-props', mode: 'type', visible: new Set(list.map((l) => l.bid)), selected: picked.length ? pick : null, onSelect: 'mkMapPick', legend: false, badge: L('Listings on the BENA map · sample area', 'العروض على خريطة بينا · منطقة نموذجية') })}</div>
+      ? `<div class="mk-mapgrid"><div>${pricePins(B.map.render({ id: 'mk-props', mode: 'type', visible: new Set(list.map((l) => l.bid)), selected: picked.length ? pick : null, onSelect: 'mkMapPick', legend: false, badge: L('Listings on the BENA map · sample area', 'العروض على خريطة بينا · منطقة نموذجية') }), list, pick)}</div>
           <div class="mk-mapside">${picked.length ? `<div class="row between"><span class="eyebrow">${L('Selected building', 'المبنى المحدد')}</span><button class="btn btn-text btn-sm" data-act="set" data-arg="mk:ppick=">${icon('x')}${L('Clear', 'مسح')}</button></div>${picked.map(M.listingCard).join('')}<div class="divider" style="margin:6px 0"></div>` : `<div class="callout small mint">${icon('pin')}<div>${L('Tap a highlighted building to see its listings.', 'اضغط على مبنى مُميّز لعرض عروضه.')}</div></div>`}
             ${list.filter((l) => !picked.includes(l)).map((l) => { const b = D.building(l.bid); return `<button class="mk-mrow" data-act="mkMapPick" data-arg="${l.bid}"><span class="media">${M.listingArt(l)}</span><span class="grow" style="min-width:0"><b>${price(l)}</b><span class="t" style="display:block">${esc(tx(l.title))}</span><span class="s" style="display:block">${esc(tx(D.district(b.district).name))} · ${M.facts(l).area} ${L('m²', 'م²')}</span></span></button>`; }).join('')}</div></div>`
       : `<div class="mk-lgrid">${list.map(M.listingCard).join('')}</div>`)
@@ -8988,6 +9056,7 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
   .fm-matrix .rl b { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .fm-matrix .cell { height: 44px; border-radius: 8px; display: grid; place-items: center; color: #fff; font-weight: 700; font-family: ui-monospace, Menlo, monospace; font-size: 12px; transition: transform .15s; }
   .fm-matrix .cell:hover { transform: scale(1.05); }
+  .fm-matrix .cell { direction: ltr; }
   .fm-matrix .cell.c-good, .fm-matrix .cell.c-fair { color: var(--navy); }
   .fm-matrix .cell.none { background: var(--line-2); color: var(--text-3); }
   @media (max-width: 640px) { .fm-matrix .cell { height: 34px; font-size: 11px; border-radius: 6px; } .fm-matrix .h { font-size: 9.5px; } .fm-matrix .h span { display: none; } .fm-matrix .rl b { font-size: 12px; } }
@@ -9093,6 +9162,7 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
   .fm-c .line-chart .hz:first-child .tip { left: auto; inset-inline-start: 0; transform: none; }
   .fm-c .line-chart .hz:last-child .tip { left: auto; inset-inline-end: 0; transform: none; }
   html[dir="rtl"] .fm-c .line-chart .hz:first-child .tip, html[dir="rtl"] .fm-c .line-chart .hz:last-child .tip { right: auto; }
+  .fm-sysl svg { width: 16px; height: 16px; color: var(--text-2); flex: none; }
   .fm-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--text-2); margin-top: 12px; }
   .fm-legend span { display: inline-flex; align-items: center; gap: 6px; }
   .fm-legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
@@ -9303,7 +9373,7 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
     { p: 'sp_shield', scope: T('Integrated pest management', 'المكافحة المتكاملة للآفات'), sites: ['311', '415', '618'], ref: 'SND-C-2025-012', resp: T('Monthly · 24 h call-out', 'شهري · 24 ساعة للطلب'), sla: 100, value: 9600, end: '2027-05-31' },
     { p: 'sp_pure', scope: T('Tank cleaning & water quality', 'تنظيف الخزانات وجودة المياه'), sites: ['415', '618'], ref: 'SND-C-2024-030', resp: T('Semi-annual · 48 h call-out', 'نصف سنوي · 48 ساعة للطلب'), sla: 98, value: 12400, end: '2027-04-30' },
   ];
-  const WEEKS = { created: [14, 17, 12, 19, 16, 21, 15, 18, 22, 17, 20, 16], closed: [13, 15, 14, 16, 17, 18, 16, 15, 19, 18, 21, 14] };
+  const WEEKS = { created: [15, 14, 17, 12, 19, 16, 21, 15, 18, 22, 17, 20, 16], closed: [14, 13, 15, 14, 16, 17, 18, 16, 15, 19, 18, 21, 14] };
 
   /* ======================================================================
      Helpers
@@ -9315,11 +9385,22 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
   const prio = (p) => `<span class="fm-prio ${p}">${icon(PRIO_I[p])}${ui.statusLabel(p)}</span>`;
   const due = (w) => (w.status === 'completed' ? `<span class="faint nowrap">${B.dateShort(w.closed)}</span>` : `<span class="fm-due nowrap ${isLate(w) ? 'over' : ''}">${B.dateShort(w.due)}${isLate(w) ? ' · ' + L(`${-B.daysFromToday(w.due)}d late`, `متأخر ${-B.daysFromToday(w.due)} ي`) : ''}</span>`);
   const catIcon = (c) => CATS[c].icon;
+  const who = (w) => (w.tech ? tname(w.tech) : w.contractor ? tx(D.provider(w.contractor).name) : L('Unassigned', 'غير مُسند'));
   const pmBy = (p) => (p.by === 'in' ? ui.status('fmInHouse') : `<span class="small">${tx(D.provider(p.by).name)}</span>`);
   const openWOs = () => WOS.filter(isOpen);
   const pmCompletion = () => Math.round(B.sum(PM, (p) => p.comp) / PM.length);
   const overdueInsp = () => ASSETS.filter((a) => a.ms === 'fmOverdue');
   const scale = () => `<div class="fm-scale">${COND_ORDER.map((c) => cond(c)).join('')}</div>`;
+  /* technical photo placeholders (plant room / panel / pipework) */
+  const photoArt = (seed) => {
+    const r = B.rng(seed * 53 + 7); const k = seed % 3;
+    const bg = ['#D9E2E8', '#E3E8E4', '#DCE3EC'][k];
+    let g = `<rect width="200" height="200" fill="${bg}"/><rect y="150" width="200" height="50" fill="#C9D3DA"/>`;
+    if (k === 0) { g += `<rect x="46" y="30" width="108" height="130" rx="6" fill="#F3F5F6" stroke="#9AA9B5"/><rect x="58" y="44" width="84" height="30" rx="3" fill="#142B3B"/><text x="64" y="64" font-family="monospace" font-size="11" fill="#36D6A0">LOOP 3 E/F</text>` + [0, 1, 2, 3, 4, 5].map((i) => `<circle cx="${64 + i * 14}" cy="90" r="4" fill="${i === 2 ? '#C2362F' : '#36D6A0'}"/>`).join('') + `<rect x="58" y="108" width="84" height="38" rx="3" fill="#E2E8EC"/>`; }
+    else if (k === 1) { g += [0, 1, 2].map((i) => `<rect x="${20 + i * 58}" y="20" width="16" height="140" fill="#8EA7BA"/><rect x="${14 + i * 58}" y="${60 + r() * 40}" width="28" height="18" rx="3" fill="#E5774C"/>`).join('') + `<rect x="10" y="40" width="180" height="12" fill="#7FA7C2"/><circle cx="150" cy="120" r="18" fill="#F3F5F6" stroke="#55667A" stroke-width="3"/><path d="M150 120 l10 -8" stroke="#C2362F" stroke-width="3"/>`; }
+    else { g += `<rect x="30" y="40" width="140" height="90" rx="8" fill="#B7C6D1"/>` + Array.from({ length: 9 }, (_, i) => `<rect x="${42 + i * 14}" y="52" width="8" height="66" rx="2" fill="#E8EEF2"/>`).join('') + `<rect x="30" y="130" width="140" height="10" fill="#8EA7BA"/>`; }
+    return `<svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${g}</svg>`;
+  };
   const backLink = (go, label) => `<div class="row-sm" style="margin-bottom:6px"><button class="btn btn-text btn-sm" data-go="${go}">${icon('chevL', 'flip')}${label}</button></div>`;
 
   const ALERTS = () => {
@@ -9370,12 +9451,12 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
     <div class="grid g-main" style="margin-top:16px">
       <div class="stack">
         ${ui.card({ title: L('Critical alerts', 'تنبيهات حرجة'), sub: L(`${al.length} items need attention`, `${al.length} عناصر بحاجة لانتباه`), headExtra: `<span class="badge bad">${icon('alert')}${al.filter((a) => a.sev === 'critical').length} ${L('critical', 'حرج')}</span>`, body: al.map(alertRow).join('') })}
-        ${ui.card({ title: L('Work-order trend', 'اتجاه أوامر العمل'), sub: L('Created vs closed · last 12 weeks · all sites', 'المُنشأة مقابل المُغلقة · آخر 12 أسبوعاً · جميع المواقع'), cls: 'fm-c', link: { label: L('Work orders', 'أوامر العمل'), go: `${R}-workorders` },
-          body: B.charts.line({ labels: WEEKS.created.map((_, i) => L(`W${36 + i}`, `أ${36 + i}`)), series: [{ name: L('Created', 'مُنشأة'), color: '#142B3B', values: WEEKS.created }, { name: L('Closed', 'مُغلقة'), color: '#36D6A0', values: WEEKS.closed, area: true }], height: 200, format: (v) => B.num(v) }) })}
+        ${ui.card({ title: L('Work-order trend', 'اتجاه أوامر العمل'), sub: L('Created vs closed · last 13 weeks · all sites', 'المُنشأة مقابل المُغلقة · آخر 13 أسبوعاً · جميع المواقع'), cls: 'fm-c', link: { label: L('Work orders', 'أوامر العمل'), go: `${R}-workorders` },
+          body: B.charts.line({ labels: WEEKS.created.map((_, i) => L(`W${35 + i}`, `أ${35 + i}`)), series: [{ name: L('Created', 'مُنشأة'), color: '#142B3B', values: WEEKS.created }, { name: L('Closed', 'مُغلقة'), color: '#36D6A0', values: WEEKS.closed, area: true }], height: 200, format: (v) => B.num(v) }) })}
         ${ui.card({ title: L('Asset health matrix', 'مصفوفة سلامة الأصول'), sub: L('Worst condition per system · number of assets', 'أسوأ حالة لكل نظام · عدد الأصول'), body: matrix() + `<div style="margin-top:14px">${scale()}</div>` })}
       </div>
       <div class="stack">
-        ${ui.card({ title: L('Priority work', 'أعمال ذات أولوية'), sub: L('Critical and high, open', 'حرجة وعالية، مفتوحة'), link: { label: L('All', 'الكل'), go: `${R}-workorders` }, body: ui.list(crit.map((w) => ui.li({ icon: catIcon(asset(w.asset).cat), tone: w.priority === 'critical' ? 'bad' : 'warn', title: tx(w.title), sub: `${ui.idMono(w.id)} · ${sshort(asset(w.asset).b)} · ${w.tech ? tname(w.tech) : tx(D.provider(w.contractor).name)}`, end: ui.status(w.status), go: `${R}-wo-${w.id}` }))) })}
+        ${ui.card({ title: L('Priority work', 'أعمال ذات أولوية'), sub: L('Critical and high, open', 'حرجة وعالية، مفتوحة'), link: { label: L('All', 'الكل'), go: `${R}-workorders` }, body: ui.list(crit.map((w) => ui.li({ icon: catIcon(asset(w.asset).cat), tone: w.priority === 'critical' ? 'bad' : 'warn', title: tx(w.title), sub: `${ui.idMono(w.id)} · ${sshort(asset(w.asset).b)} · ${who(w)}`, end: ui.status(w.status), go: `${R}-wo-${w.id}` }))) })}
         ${ui.card({ title: L('Open work by priority', 'الأعمال المفتوحة حسب الأولوية'), body: B.charts.donut({ size: 128, data: [['critical', '#C2362F'], ['high', '#E5774C'], ['medium', '#F2B35A'], ['low', '#C9D6DF']].map(([k, c]) => ({ label: ui.statusLabel(k), value: open.filter((w) => w.priority === k).length, color: c })), center: { value: open.length, label: L('open', 'مفتوح') } }) })}
         ${ui.card({ title: L('Technician workload', 'عبء عمل الفنيين'), sub: L('Open work orders per technician', 'أوامر العمل المفتوحة لكل فني'), body: B.charts.hbars({ data: techLoad.map((t) => ({ ...t, color: t.value >= 4 ? '#E5774C' : '#142B3B' })), max: 5, format: (v) => v }) })}
         ${ui.card({ title: L('PM due this week', 'صيانة وقائية مستحقة هذا الأسبوع'), link: { label: L('Schedule', 'الجدول'), go: `${R}-pm` }, body: ui.list(week.map((p) => ui.li({ icon: catIcon(p.cat), title: tx(p.n), sub: `${p.sites.map((s) => sshort('BN-RAM-00' + s)).join(' · ')}`, end: `<span class="xs faint nowrap">${B.dateShort(p.next)}</span>`, go: `${R}-pm` }))) })}
@@ -9423,7 +9504,7 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
         ${ui.card({ title: L('Contract', 'العقد'), body: ui.kv([[L('Service scope', 'نطاق الخدمة'), tx(s.contract)], [L('Client', 'العميل'), tx(s.client)], [L('Since', 'منذ'), B.date(s.since)], [L('SLA tier', 'مستوى الخدمة'), `SLA ${s.sla}`], [L('On-site team', 'فريق الموقع'), L(`${s.team} technicians · supervisor on call`, `${s.team} فنيين · مشرف مناوب`)], [L('Monthly energy', 'الطاقة الشهرية'), `${B.num(s.energy)} kWh`], [L('Monthly water', 'المياه الشهرية'), `${B.num(s.water)} m³`]]) })}
       </div><div class="stack">
         ${ui.card({ title: L('Location', 'الموقع'), sub: tx(b.address), body: B.map.render({ static: true, focus: bid, id: 'fm-' + bid, legend: false, selected: bid, height: '240px', focusW: 300 }), foot: ui.btn(L('Full building profile', 'ملف المبنى الكامل'), { icon: 'building', size: 'sm', kind: 'soft', go: `${R}-building-${bid}` }) })}
-        ${ui.card({ title: L('Systems at a glance', 'الأنظمة باختصار'), body: SYSTEMS.map((sy) => { const l = as.filter((a) => CATS[a.cat].sys === sy.id); return l.length ? `<div class="row between" style="padding:7px 0;border-bottom:1px solid var(--line-2)"><span class="row-sm small">${icon(sy.icon)}${tx(sy.n)}</span>${cond(worst(l))}</div>` : ''; }).join('') })}
+        ${ui.card({ title: L('Systems at a glance', 'الأنظمة باختصار'), body: SYSTEMS.map((sy) => { const l = as.filter((a) => CATS[a.cat].sys === sy.id); return l.length ? `<div class="row between" style="padding:7px 0;border-bottom:1px solid var(--line-2)"><span class="row-sm small fm-sysl">${icon(sy.icon)}${tx(sy.n)}</span>${cond(worst(l))}</div>` : ''; }).join('') })}
       </div></div>`;
     } else if (tab === 'systems') {
       body = `<div class="fm-sys">${SYSTEMS.map((sy) => {
@@ -9495,7 +9576,7 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
     const plans = PM.filter((p) => p.cat === a.cat && p.sites.includes(a.b.slice(-3)));
     const ci = COND_ORDER.indexOf(a.cond);
     const r = B.rng(a.tag.length * 131 + a.tag.charCodeAt(8));
-    const readings = Array.from({ length: 14 }, (_, i) => Math.round(60 + r() * 25 + (a.cond === 'poor' ? i * 1.6 : a.cond === 'fair' ? i * .8 : 0)));
+    const readings = Array.from({ length: 13 }, (_, i) => Math.round(60 + r() * 25 + (a.cond === 'poor' ? i * 1.6 : a.cond === 'fair' ? i * .8 : 0)));
     const hist = ws.map((w) => ({ d: w.closed || w.created, title: tx(w.title), meta: `${w.id} · ${ui.statusLabel(w.status)} · ${B.date(w.closed || w.created)}`, state: w.status === 'completed' ? 'done' : 'current', icon: w.status === 'completed' ? 'check' : 'wrench' }))
       .concat([{ d: a.last, title: L('Routine inspection', 'فحص دوري'), meta: `${L('Condition', 'الحالة')}: ${ui.statusLabel(a.cond)} · ${B.date(a.last)}`, state: 'done', icon: 'clipboard' }, { d: `${a.year}-06-01`, title: L('Installed & commissioned', 'التركيب والتشغيل'), meta: `${a.year}`, state: 'done', icon: 'flag' }])
       .sort((x, y) => (x.d < y.d ? 1 : -1));
@@ -9512,11 +9593,11 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
     <div class="grid g-main">
       <div class="stack">
         ${ui.card({ title: L('Specifications', 'المواصفات'), body: ui.kvGrid([[L('Asset tag', 'رمز الأصل'), tag(a.tag)], [L('Category', 'الفئة'), tx(CATS[a.cat].n)], [L('Rating', 'المواصفة'), esc(a.spec)], [L('Installed', 'التركيب'), a.year], [L('Facility', 'المرفق'), `<button class="mint-ink" style="font-weight:600;text-align:start" data-go="${R}-site-${a.b}">${sshort(a.b)}</button>`], [L('Location', 'الموقع'), tx(a.loc)], [L('Warranty', 'الضمان'), a.year >= 2024 ? L('Active until 2027', 'سارٍ حتى 2027') : L('Expired', 'منتهي')], [L('Maintained by', 'الصيانة بواسطة'), plans[0] && plans[0].by !== 'in' ? tx(D.provider(plans[0].by).name) : L('Sanad in-house', 'فريق سند الداخلي')]]) })}
-        ${ui.card({ title: L('Work orders', 'أوامر العمل'), link: { label: L('New', 'جديد'), act: 'fmNewWO', arg: a.tag }, body: ws.length ? ui.list(ws.map((w) => ui.li({ icon: 'clipboard', tone: w.status === 'completed' ? 'mint' : w.priority === 'critical' ? 'bad' : '', title: tx(w.title), sub: `${ui.idMono(w.id)} · ${w.tech ? tname(w.tech) : tx(D.provider(w.contractor).name)}`, end: ui.status(w.status), go: `${R}-wo-${w.id}` }))) : ui.empty({ icon: 'checkCircle', title: L('No work orders in the last 30 days', 'لا توجد أوامر عمل في آخر 30 يوماً') }) })}
+        ${ui.card({ title: L('Work orders', 'أوامر العمل'), link: { label: L('New', 'جديد'), act: 'fmNewWO', arg: a.tag }, body: ws.length ? ui.list(ws.map((w) => ui.li({ icon: 'clipboard', tone: w.status === 'completed' ? 'mint' : w.priority === 'critical' ? 'bad' : '', title: tx(w.title), sub: `${ui.idMono(w.id)} · ${who(w)}`, end: ui.status(w.status), go: `${R}-wo-${w.id}` }))) : ui.empty({ icon: 'checkCircle', title: L('No work orders in the last 30 days', 'لا توجد أوامر عمل في آخر 30 يوماً') }) })}
         ${ui.card({ title: L('Maintenance history', 'سجل الصيانة'), body: ui.timeline(hist) })}
       </div>
       <div class="stack">
-        ${ui.card({ title: L('Runtime index', 'مؤشر التشغيل'), sub: L('Load / duty cycle · 12–25 Nov (sample)', 'الحمل / دورة التشغيل · 12–25 ت٢ (نموذج)'), cls: 'fm-c', body: B.charts.line({ labels: readings.map((_, i) => String(12 + i)), series: [{ name: '%', color: a.cond === 'poor' || a.cond === 'fair' ? '#E5774C' : '#36D6A0', values: readings, area: true }], height: 150, format: (v) => Math.round(v) + '%' }) })}
+        ${ui.card({ title: L('Runtime index', 'مؤشر التشغيل'), sub: L('Load / duty cycle · 13–25 Nov (sample)', 'الحمل / دورة التشغيل · 13–25 ت٢ (نموذج)'), cls: 'fm-c', body: B.charts.line({ labels: readings.map((_, i) => String(13 + i)), series: [{ name: '%', color: a.cond === 'poor' || a.cond === 'fair' ? '#E5774C' : '#36D6A0', values: readings, area: true }], height: 150, format: (v) => Math.round(v) + '%' }) })}
         ${ui.card({ title: L('PM plans', 'خطط الصيانة الوقائية'), body: plans.length ? ui.list(plans.map((p) => ui.li({ icon: 'calendarCheck', tone: 'mint', title: tx(p.n), sub: `${p.id} · ${tx(FREQ[p.freq])} · ${L('next', 'القادم')} ${B.dateShort(p.next)}`, end: `<b class="small">${p.comp}%</b>`, go: `${R}-pm` }))) : `<p class="small muted">${L('Inspected under the general building checklist.', 'يُفحص ضمن قائمة الفحص العامة للمبنى.')}</p>` })}
         ${ui.card({ title: L('Documents', 'المستندات'), body: ui.list([ui.doc({ name: L('O&M manual', 'دليل التشغيل والصيانة') + ` — ${a.tag}.pdf`, date: `${a.year}-06-01`, size: '4.2 MB' }), ui.doc({ name: L('Last inspection report', 'تقرير آخر فحص') + '.pdf', date: a.last, size: '380 KB', icon: 'clipboard' })]), foot: ui.btn(L('QR label', 'ملصق QR'), { icon: 'qr', size: 'sm', act: 'fmQR', arg: a.tag }) })}
       </div>
@@ -9552,7 +9633,7 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
     const done = w.checklist.filter((c) => c.done).length;
     const partsTotal = B.sum(w.parts, (p) => p[1] * p[2]);
     const hist = [{ title: L('Work order created', 'تم إنشاء أمر العمل'), meta: `${w.ref ? w.ref + ' · ' : ''}${B.date(w.created)} · ${w.ref ? L('from tenant request', 'من طلب مستأجر') : D.pname('p_omar')}`, state: 'done', icon: 'plus' }];
-    if (w.status !== 'new') hist.push({ title: w.tech ? L(`Assigned to ${tname(w.tech)}`, `أُسند إلى ${tname(w.tech)}`) : L(`Dispatched to ${tx(D.provider(w.contractor).name)}`, `أُرسل إلى ${tx(D.provider(w.contractor).name)}`), meta: B.date(w.created), state: 'done', icon: 'user' });
+    if (w.status !== 'new') hist.push({ title: w.tech || !w.contractor ? L(`Assigned to ${who(w)}`, `أُسند إلى ${who(w)}`) : L(`Dispatched to ${who(w)}`, `أُرسل إلى ${who(w)}`), meta: B.date(w.created), state: 'done', icon: 'user' });
     if (['inProgress', 'onHold', 'completed'].includes(w.status)) hist.push({ title: L('Work started on site', 'بدء العمل في الموقع'), meta: L('Checked in via QR on asset', 'تسجيل الدخول عبر رمز QR على الأصل'), state: 'done', icon: 'play' });
     if (w.status === 'onHold') hist.push({ title: L('On hold — waiting for parts', 'معلّق — بانتظار القطع'), meta: L('Supplier ETA 27 Nov', 'موعد المورد 27 ت٢'), state: 'current', icon: 'clock' });
     if (w.status === 'inProgress') hist.push({ title: L('In progress', 'قيد التنفيذ'), meta: L(`${done} of ${w.checklist.length} checklist steps done`, `${done} من ${w.checklist.length} خطوات منجزة`), state: 'current', icon: 'wrench' });
@@ -9567,11 +9648,11 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
         ${w.desc ? ui.card({ title: L('Description', 'الوصف'), body: `<p class="muted" style="font-size:14px;line-height:1.6">${tx(w.desc)}</p>` }) : ''}
         ${ui.card({ title: L('Checklist', 'قائمة التحقق'), sub: L(`${done} of ${w.checklist.length} done`, `${done} من ${w.checklist.length} منجزة`), headExtra: `<div style="width:120px">${ui.progress((done / w.checklist.length) * 100)}</div>`, body: `<div class="fm-check">${w.checklist.map((c, i) => `<button class="${c.done ? 'on' : ''}" data-act="fmCheck" data-arg="${w.id}|${i}"><span class="bx">${icon('check')}</span><span>${tx(c.t)}</span></button>`).join('')}</div>` })}
         ${ui.card({ title: L('Parts & materials', 'القطع والمواد'), sub: w.parts.length ? L(`Total ${B.money(partsTotal)}`, `الإجمالي ${B.money(partsTotal)}`) : '', link: { label: L('Add part', 'إضافة قطعة'), act: 'fmPart', arg: w.id }, body: w.parts.length ? `<div class="table-wrap"><table class="table"><thead><tr><th>${L('Part', 'القطعة')}</th><th class="t-end">${L('Qty', 'الكمية')}</th><th class="t-end">${L('Unit cost', 'سعر الوحدة')}</th><th class="t-end">${L('Total', 'الإجمالي')}</th></tr></thead><tbody>${w.parts.map((p) => `<tr><td>${tx(p[0])}</td><td class="t-end">${p[1]}</td><td class="t-end">${B.money(p[2])}</td><td class="t-end"><b>${B.money(p[1] * p[2])}</b></td></tr>`).join('')}</tbody></table></div>` : `<p class="small muted">${L('No parts used yet.', 'لم تُستخدم قطع بعد.')}</p>` })}
-        ${ui.card({ title: L('Photos', 'الصور'), sub: L('Before / during / after', 'قبل / أثناء / بعد'), body: `<div class="fm-photos">${[1, 2, 3].slice(0, w.status === 'new' ? 0 : w.status === 'completed' ? 3 : 2).map((i) => `<button class="media" data-act="fmPhoto" data-arg="${w.id}">${B.art.interior(w.id.charCodeAt(9) + i * 7)}</button>`).join('')}<button class="add" data-act="fmPhoto" data-arg="${w.id}">${icon('camera')}<span>${L('Add photo', 'إضافة صورة')}</span></button></div>` })}
+        ${ui.card({ title: L('Photos', 'الصور'), sub: L('Before / during / after', 'قبل / أثناء / بعد'), body: `<div class="fm-photos">${[1, 2, 3].slice(0, w.status === 'new' ? 0 : w.status === 'completed' ? 3 : 2).map((i) => `<button class="media" data-act="fmPhoto" data-arg="${w.id}">${photoArt(w.id.charCodeAt(9) + i)}</button>`).join('')}<button class="add" data-act="fmPhoto" data-arg="${w.id}">${icon('camera')}<span>${L('Add photo', 'إضافة صورة')}</span></button></div>` })}
       </div>
       <div class="stack">
         ${ui.card({ title: L('Details', 'التفاصيل'), body: ui.kv([[L('Asset', 'الأصل'), `<button data-go="${R}-asset-${a.tag}">${tag(a.tag)}</button>`], [L('Facility', 'المرفق'), `<button class="mint-ink" style="font-weight:600" data-go="${R}-site-${a.b}">${sshort(a.b)}</button>`], [L('Technician', 'الفني'), w.tech ? tname(w.tech) : '—'], [L('Contractor', 'المقاول'), w.contractor ? tx(D.provider(w.contractor).name) : L('In-house', 'داخلي')], [L('Created', 'الإنشاء'), B.date(w.created)], [L('Due', 'الاستحقاق'), due(w)], [L('Labour', 'ساعات العمل'), `${w.labour} h`], w.ref ? [L('Tenant request', 'طلب المستأجر'), ui.idMono(w.ref)] : null]) })}
-        ${ui.card({ title: L('SLA', 'اتفاقية مستوى الخدمة'), body: (() => { const total = Math.max(1, B.daysBetween(w.created, w.due)); const used = Math.min(total, Math.max(0, B.daysBetween(w.created, w.status === 'completed' ? w.closed : TODAY))); const p = (used / total) * 100; return ui.meter(L('Time used', 'الوقت المستخدم'), w.status === 'completed' ? L('Met', 'تم الالتزام') : isLate(w) ? L('Breached', 'تم التجاوز') : L(`${total - used} d left`, `باقٍ ${total - used} ي`), w.status === 'completed' ? 100 : p, w.status === 'completed' ? '' : isLate(w) ? 'bad' : p > 70 ? 'warn' : ''); })() + `<div class="xs faint" style="margin-top:8px">${{ critical: L('Critical: respond 1 h · fix 24 h', 'حرج: استجابة ساعة · إصلاح 24 ساعة'), high: L('High: respond 4 h · fix 3 days', 'عالية: استجابة 4 ساعات · إصلاح 3 أيام'), medium: L('Medium: respond 24 h · fix 7 days', 'متوسطة: استجابة 24 ساعة · إصلاح 7 أيام'), low: L('Low: fix within 10 days', 'منخفضة: إصلاح خلال 10 أيام') }[w.priority]}</div>` })}
+        ${ui.card({ title: L('SLA', 'اتفاقية مستوى الخدمة'), body: (() => { const total = Math.max(1, B.daysBetween(w.created, w.due)); const used = Math.min(total, Math.max(0, B.daysBetween(w.created, w.status === 'completed' ? w.closed : TODAY))); const p = (used / total) * 100; return ui.meter(L('Time used', 'الوقت المستخدم'), w.status === 'completed' ? L('Met', 'تم الالتزام') : isLate(w) ? L('Breached', 'تم التجاوز') : total - used === 0 ? L('Due today', 'مستحق اليوم') : L(`${total - used} d left`, `باقٍ ${total - used} ي`), w.status === 'completed' ? 100 : p, w.status === 'completed' ? '' : isLate(w) ? 'bad' : p > 70 ? 'warn' : ''); })() + `<div class="xs faint" style="margin-top:8px">${{ critical: L('Critical: respond 1 h · fix 24 h', 'حرج: استجابة ساعة · إصلاح 24 ساعة'), high: L('High: respond 4 h · fix 3 days', 'عالية: استجابة 4 ساعات · إصلاح 3 أيام'), medium: L('Medium: respond 24 h · fix 7 days', 'متوسطة: استجابة 24 ساعة · إصلاح 7 أيام'), low: L('Low: fix within 10 days', 'منخفضة: إصلاح خلال 10 أيام') }[w.priority]}</div>` })}
         ${ui.card({ title: L('History', 'السجل'), body: ui.timeline(hist) })}
       </div>
     </div>`;
@@ -9582,7 +9663,14 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
     const mo = B.get('fm:pmM', 10);
     const year = 2026 + Math.floor(mo / 12), month = ((mo % 12) + 12) % 12;
     const events = [];
-    PM.forEach((p) => { if (!pmOccurs(p, year, month)) return; const d = Math.min(p.day, new Date(year, month + 1, 0).getDate()); const key = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`; const lateP = p.next < TODAY && key <= TODAY && key === p.next; events.push({ date: key, label: tx(p.n), tone: lateP ? 'bad' : key < TODAY ? 'mint' : p.by === 'in' ? '' : 'info', act: 'fmPM', arg: p.id }); });
+    const mkey = `${year}-${String(month + 1).padStart(2, '0')}`;
+    PM.forEach((p) => {
+      const dates = [];
+      if (String(p.last).startsWith(mkey)) dates.push([p.last, 'mint']);
+      if (String(p.next).startsWith(mkey)) dates.push([p.next, p.next < TODAY ? 'bad' : p.by === 'in' ? '' : 'info']);
+      if (!dates.length && pmOccurs(p, year, month) && `${mkey}-99` > p.next) { const d = Math.min(p.day, new Date(year, month + 1, 0).getDate()); const key = `${mkey}-${String(d).padStart(2, '0')}`; dates.push([key, key < TODAY ? 'mint' : p.by === 'in' ? '' : 'info']); }
+      dates.forEach(([date, tone]) => events.push({ date, label: tx(p.n), tone, act: 'fmPM', arg: p.id }));
+    });
     const sf = B.get('fm:pmSite', 'all');
     const rows = PM.filter((p) => sf === 'all' || p.sites.includes(sf.slice(-3)));
     return `${ui.pageHead({ eyebrow: L('Operations', 'العمليات'), title: L('Preventive maintenance', 'الصيانة الوقائية'), sub: L('Planned maintenance plans, schedule and statutory compliance.', 'خطط الصيانة المخططة والجدول والامتثال للمتطلبات القانونية.'), actions: ui.btn(L('Compliance report', 'تقرير الامتثال'), { icon: 'download', act: 'previewDoc', arg: L('PM compliance — November 2026.pdf', 'امتثال الصيانة الوقائية — ت٢ 2026.pdf') }) + ui.btn(L('New PM plan', 'خطة جديدة'), { icon: 'plus', kind: 'primary', act: 'fmNewPM' }) })}
@@ -9598,7 +9686,7 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
         ${ui.calendar({ year, month, events })}
         <div class="fm-legend"><span><i style="background:var(--navy)"></i>${L('In-house', 'داخلي')}</span><span><i style="background:#BBD0F5"></i>${L('Contractor', 'مقاول')}</span><span><i style="background:var(--mint)"></i>${L('Completed', 'مكتمل')}</span><span><i style="background:#F1B5B0"></i>${L('Overdue', 'متأخر')}</span></div></section>
       <div class="stack">
-        ${ui.card({ title: L('Compliance by facility', 'الامتثال حسب المرفق'), body: B.charts.hbars({ data: SITE_IDS.map((bid) => { const l = PM.filter((p) => p.sites.includes(bid.slice(-3))); const v = Math.round(B.sum(l, (p) => p.comp) / l.length); return { label: sshort(bid), sub: L(`${l.length} plans`, `${l.length} خطة`), value: v, color: v >= 92 ? '#36D6A0' : '#F2B35A' }; }), max: 100, format: (v) => v + '%' }) })}
+        ${ui.card({ title: L('Compliance by facility', 'الامتثال حسب المرفق'), body: B.charts.hbars({ data: SITE_IDS.map((bid) => { const l = PM.filter((p) => p.sites.includes(bid.slice(-3))); const v = { 'BN-RAM-00311': 91, 'BN-RAM-00415': 84, 'BN-RAM-00618': 97 }[bid]; return { label: sshort(bid), sub: L(`${l.length} plans`, `${l.length} خطة`), value: v, color: v >= 92 ? '#36D6A0' : '#F2B35A' }; }), max: 100, format: (v) => v + '%' }) })}
         ${ui.card({ title: L('Compliance by system', 'الامتثال حسب النظام'), body: B.charts.bars({ data: [['elevator', 'vt'], ['hvac', 'hvac'], ['fire', 'fire'], ['generator', 'power'], ['water', 'plumb']].map(([c]) => { const l = PM.filter((p) => p.cat === c || (c === 'water' && (p.cat === 'pump' || p.cat === 'medgas'))); const v = Math.round(B.sum(l, (p) => p.comp) / l.length); return { label: tx(CATS[c].n).split(' ')[0], value: v, color: v >= 92 ? '#142B3B' : '#F2B35A' }; }), height: 150, max: 100, showValues: true, format: (v) => Math.round(v) + '%' }) })}
       </div>
     </div>
@@ -9643,9 +9731,9 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
     const bid = B.get('fm:cnSite', SITE_IDS[0]);
     const b = D.building(bid);
     const r = B.rng(bid.charCodeAt(9) * 977);
-    const hours = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'));
+    const hours = Array.from({ length: 13 }, (_, i) => String(i * 2).padStart(2, '0'));
     const base = site(bid).energy / 30 / 24;
-    const energy = hours.map((_, i) => Math.round(base * (i < 6 ? 0.45 : i < 8 ? 0.8 : i < 18 ? 1.35 + r() * 0.15 : i < 21 ? 1.0 : 0.6)));
+    const energy = hours.map((_, j) => { const i = j * 2; return Math.round(base * 2 * (i < 6 ? 0.45 : i < 8 ? 0.8 : i < 18 ? 1.35 + r() * 0.15 : i < 21 ? 1.0 : 0.6)); });
     const elevs = assetsOf(bid).filter((a) => a.cat === 'elevator');
     const floors = b.floors;
     const heatColor = (v) => (v > 0.8 ? '#E5774C' : v > 0.6 ? '#F2B35A' : v > 0.35 ? '#9FE5CA' : '#36D6A0');
@@ -9654,7 +9742,6 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
       { ic: 'lock', n: L('Access control', 'التحكم بالدخول'), v: B.num(820 + Math.round(r() * 600)), l: L('Access events today', 'أحداث الدخول اليوم'), sub: [[L('Doors online', 'أبواب متصلة'), bid === 'BN-RAM-00618' ? '36/36' : '42/42'], [L('Forced door', 'باب مفتوح بالقوة'), '0'], [L('Held open', 'باب مفتوح طويلاً'), '1']], spark: [20, 140, 260, 180, 120, 210, 160, 90] },
       { ic: 'cctv', n: L('Security & CCTV', 'الأمن والكاميرات'), st: bid === 'BN-RAM-00311' ? 'warn' : '', v: bid === 'BN-RAM-00311' ? '63<small>/64</small>' : bid === 'BN-RAM-00415' ? '32<small>/32</small>' : '28<small>/28</small>', l: L('Cameras online', 'كاميرات متصلة'), sub: [[L('Recording', 'التسجيل'), '30 d'], [L('Guard rounds', 'جولات الحراسة'), '6/8'], [L('Incidents', 'حوادث'), '0']] },
       { ic: 'droplet', n: L('Water', 'المياه'), v: `${Math.round(70 + r() * 20)}<small>%</small>`, l: L('Roof tank level', 'مستوى خزان السطح'), sub: [[L('Flow now', 'التدفق الآن'), `${(2 + r() * 2).toFixed(1)} m³/h`], [L('Today', 'اليوم'), `${Math.round(site(bid).water / 30)} m³`], [L('Leak sensors', 'حساسات التسرب'), L('0 alarms', '0 إنذار')]], spark: [82, 80, 76, 74, 79, 85, 81, 78] },
-      { ic: 'zap', n: L('Power', 'الطاقة'), v: `${Math.round(base * 1.4)}<small> kW</small>`, l: L('Current demand', 'الطلب الحالي'), sub: [[L('Grid', 'الشبكة'), L('Normal', 'طبيعي')], [L('Generator', 'المولد'), L('Standby', 'استعداد')], [L('Power factor', 'معامل القدرة'), '0.96']] },
     ];
     const devAlerts = [
       { sev: 'warn', t: L('CO₂ 1,180 ppm — floor 9 meeting room', 'ثاني أكسيد الكربون 1,180 جزء بالمليون — قاعة اجتماعات ط9'), s: L('Fresh-air damper increased automatically', 'تمت زيادة فتحة الهواء النقي تلقائياً'), w: '09:52' },
@@ -9671,8 +9758,8 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
         <div class="dv-sub"><div><b>${elevs.filter((e) => e.ms !== 'fmRepair').length}/${elevs.length}</b>${L('In service', 'في الخدمة')}</div><div><b>${Math.round(18 + r() * 14)} s</b>${L('Avg. wait', 'متوسط الانتظار')}</div><div><b>${B.num(900 + Math.round(r() * 700))}</b>${L('Trips today', 'رحلات اليوم')}</div></div></div>
       ${tiles.map((t) => `<div class="device"><div class="dv-top"><span class="dv-name"><span class="li-icon">${icon(t.ic)}</span>${t.n}</span><span class="row-sm"><span class="fm-sim-tag">${L('Sim', 'محاكاة')}</span><span class="pulse ${t.st || ''}"></span></span></div><div><div class="dv-val">${t.v}</div><div class="xs faint" style="margin-top:4px">${t.l}</div></div>${t.spark ? B.charts.spark(t.spark, t.st === 'warn' ? '#E9A23B' : '#36D6A0') : ''}<div class="dv-sub">${t.sub.map(([k, v]) => `<div><b>${v}</b>${k}</div>`).join('')}</div></div>`).join('')}
       <div class="device wide fm-c"><div class="dv-top"><span class="dv-name"><span class="li-icon mint">${icon('activity')}</span>${L('Energy — today', 'الطاقة — اليوم')}</span><span class="fm-sim-tag">${L('Sim', 'محاكاة')}</span></div>
-        ${B.charts.line({ labels: hours, series: [{ name: 'kWh', color: '#36D6A0', values: energy, area: true }], height: 150, format: (v) => B.num(v) })}
-        <div class="dv-sub"><div><b>${B.num(B.sum(energy.slice(0, 11)))}</b>${L('kWh so far', 'ك.و.س حتى الآن')}</div><div><b>${B.num(Math.max(...energy))} kW</b>${L('Peak forecast', 'الذروة المتوقعة')}</div><div><b>−6%</b>${L('vs last Wed', 'مقابل الأربعاء الماضي')}</div></div></div>
+        ${B.charts.line({ labels: hours, series: [{ name: L('kWh / 2 h', 'ك.و.س / ساعتان'), color: '#36D6A0', values: energy, area: true }], height: 150, format: (v) => B.num(v) })}
+        <div class="dv-sub" style="grid-template-columns:repeat(4,minmax(0,1fr))"><div><b>${B.num(B.sum(energy.slice(0, 5)))}</b>${L('kWh so far', 'ك.و.س حتى الآن')}</div><div><b>${Math.round(base * 1.4)} kW</b>${L('Demand now', 'الطلب الآن')}</div><div><b>${B.num(Math.max(...energy) / 2)} kW</b>${L('Peak forecast', 'الذروة المتوقعة')}</div><div><b>${L('Grid', 'الشبكة')}</b>${L('Generator on standby', 'المولد في وضع الاستعداد')}</div></div></div>
       <div class="device"><div class="dv-top"><span class="dv-name"><span class="li-icon">${icon('thermo')}</span>${L('Smart sensors', 'الحساسات الذكية')}</span><span class="fm-sim-tag">${L('Sim', 'محاكاة')}</span></div>
         <div class="fm-floors-heat">${Array.from({ length: Math.min(floors, 8) }, (_, i) => floors - i).map((f) => `<span class="fm-mono">L${f}</span><div class="row-h">${Array.from({ length: 8 }, () => `<i style="background:${heatColor(r() * (f === 9 ? 1.2 : 0.85))}"></i>`).join('')}</div>`).join('')}</div>
         <div class="fm-legend" style="margin-top:4px"><span><i style="background:#36D6A0"></i>${L('Good', 'جيد')}</span><span><i style="background:#F2B35A"></i>${L('Elevated', 'مرتفع')}</span><span><i style="background:#E5774C"></i>${L('High CO₂', 'CO₂ مرتفع')}</span></div></div>
@@ -9749,7 +9836,7 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
   A.fmCheck = (arg) => { const [id, i] = String(arg).split('|'); const w = wo(id); if (!w || !w.checklist[+i]) return; w.checklist[+i].done = !w.checklist[+i].done; if (w.status === 'assigned' || w.status === 'scheduled' || w.status === 'new') { w.status = 'inProgress'; } B.refresh(); };
   A.fmPart = (id) => B.modal({ title: L('Add part', 'إضافة قطعة'), sub: id, form: 'fmPart', size: 'sm', body: `<input type="hidden" name="id" value="${esc(id)}"><div class="stack">${ui.field({ name: 'name', label: L('Part', 'القطعة'), required: true })}<div class="form-grid">${ui.field({ name: 'qty', label: L('Qty', 'الكمية'), type: 'number', value: 1, min: 1 })}${ui.field({ name: 'cost', label: L('Unit cost (₪)', 'سعر الوحدة (₪)'), type: 'number', value: 50, min: 0 })}</div></div>`, foot: foot(L('Add', 'إضافة'), 'plus') });
   B.submit.fmPart = (d) => { const w = wo(d.id); if (w) w.parts.push([{ en: d.name || 'Part', ar: d.name || 'قطعة' }, Math.max(1, +d.qty || 1), Math.max(0, +d.cost || 0)]); B.refresh(); B.closeModal(); B.toast(L('Part added and stock reserved', 'تمت إضافة القطعة وحجزها من المخزون')); };
-  A.fmPhoto = (id) => B.modal({ title: L('Work photos', 'صور العمل'), sub: id, size: 'md', body: `<div class="fm-photos" style="grid-template-columns:repeat(2,minmax(0,1fr))">${[1, 2, 3, 4].map((i) => `<div class="media">${B.art.interior(id.charCodeAt(9) + i * 7)}</div>`).join('')}</div><p class="xs faint" style="margin-top:10px">${L('Illustrative placeholders — technicians attach photos from the mobile app.', 'صور توضيحية — يرفق الفنيون الصور من تطبيق الجوال.')}</p>`, foot: ui.btn(L('Upload photo', 'رفع صورة'), { icon: 'upload', kind: 'primary', act: 'soon', arg: L('Photo upload', 'رفع الصور') }) });
+  A.fmPhoto = (id) => B.modal({ title: L('Work photos', 'صور العمل'), sub: id, size: 'md', body: `<div class="fm-photos" style="grid-template-columns:repeat(2,minmax(0,1fr))">${[1, 2, 3, 4].map((i) => `<div class="media">${photoArt(id.charCodeAt(9) + i)}</div>`).join('')}</div><p class="xs faint" style="margin-top:10px">${L('Illustrative placeholders — technicians attach photos from the mobile app.', 'صور توضيحية — يرفق الفنيون الصور من تطبيق الجوال.')}</p>`, foot: ui.btn(L('Upload photo', 'رفع صورة'), { icon: 'upload', kind: 'primary', act: 'soon', arg: L('Photo upload', 'رفع الصور') }) });
   A.fmInspect = (t) => { const a = asset(t); if (!a) return; B.modal({ title: L('Log inspection', 'تسجيل فحص'), sub: `${a.tag} · ${tx(a.name)}`, form: 'fmInspect', size: 'sm', body: `<input type="hidden" name="tag" value="${esc(t)}"><div class="stack">${ui.field({ name: 'cond', label: L('Condition', 'الحالة'), type: 'select', value: a.cond, options: COND_ORDER.map((c) => ({ v: c, l: ui.statusLabel(c) })) })}${ui.field({ name: 'notes', label: L('Findings', 'الملاحظات'), type: 'textarea' })}</div>`, foot: foot(L('Save inspection', 'حفظ الفحص'), 'clipboard') }); };
   B.submit.fmInspect = (d) => { const a = asset(d.tag); if (a) { if (COND_ORDER.includes(d.cond)) a.cond = d.cond; a.last = TODAY; if (a.ms === 'fmOverdue' || a.ms === 'fmDue') { a.ms = 'fmOk'; const n = new Date(B.today.getTime() + 30 * 86400000); a.next = n.toISOString().slice(0, 10); } } B.refresh(); B.success({ title: L('Inspection logged', 'تم تسجيل الفحص'), text: L('Next inspection was rescheduled automatically.', 'تمت إعادة جدولة الفحص القادم تلقائياً.'), ref: d.tag }); };
   A.fmQR = (t) => { const a = asset(t) || ASSETS[0]; B.modal({ title: L('Asset QR label', 'ملصق QR للأصل'), sub: tx(a.name), size: 'sm', body: `<div style="border:1px dashed #B9C6CF;border-radius:14px;padding:18px;display:flex;gap:16px;align-items:center"><div style="width:110px;height:110px;flex:none">${B.art.qr(a.tag.length * 17)}</div><div class="stack-sm"><span class="row-sm">${B.logo(18)}<b class="small">BENA · Sanad</b></span>${tag(a.tag)}<span class="xs muted">${bname(a.b)}</span><span class="xs faint">${tx(a.loc)}</span></div></div><p class="xs faint" style="margin-top:10px">${L('Technicians scan to open the asset, check in and log work.', 'يمسح الفنيون الرمز لفتح الأصل وتسجيل الدخول والعمل.')}</p>`, foot: ui.btn(L('Print labels', 'طباعة الملصقات'), { icon: 'download', kind: 'primary', act: 'soon', arg: L('Label printing', 'طباعة الملصقات') }) }); };
@@ -10242,7 +10329,7 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
         <div class="stack">
           ${ui.card({ body: M.distBlock(PID) })}
           <div>${ui.chips('pv:ff', [{ id: 'all', label: L('All', 'الكل'), count: all.length }, { id: 'reply', label: L('Needs reply', 'بحاجة لرد'), count: all.filter((r) => !hasReply(r)).length }, { id: 'top', label: '5★', count: all.filter((r) => r.stars === 5).length }, { id: 'low', label: L('3★ and below', '3★ فأقل'), count: all.filter((r) => r.stars <= 3).length }], f)}</div>
-          ${ui.card({ body: list.length ? list.map((r) => `${M.reviewItem(r)}<div class="row-sm" style="margin:-4px 0 14px;justify-content:flex-end">${hasReply(r) ? ui.status('replied') : ui.btn(L('Reply', 'رد'), { size: 'sm', kind: 'soft', icon: 'chat', act: 'pvReply', arg: r.id })}</div>`).join('') : ui.empty({ icon: 'chat', title: L('Nothing to show', 'لا يوجد ما يُعرض'), text: L('All caught up.', 'لا توجد مراجعات معلّقة.') }) })}
+          ${ui.card({ body: list.length ? list.map((r) => M.reviewItem(r, hasReply(r) ? ui.status('replied') : ui.btn(L('Reply', 'رد'), { size: 'sm', kind: 'soft', icon: 'chat', act: 'pvReply', arg: r.id }))).join('') : ui.empty({ icon: 'chat', title: L('Nothing to show', 'لا يوجد ما يُعرض'), text: L('All caught up.', 'لا توجد مراجعات معلّقة.') }) })}
         </div>
         <div class="stack">
           ${ui.card({ title: L('Rating breakdown', 'تفصيل التقييم'), body: `<div class="stack-sm">${[[L('Punctuality', 'الالتزام بالموعد'), 4.7], [L('Quality of work', 'جودة العمل'), 4.9], [L('Communication', 'التواصل'), 4.8], [L('Value for money', 'القيمة مقابل السعر'), 4.6], [L('Cleanliness', 'النظافة'), 4.9]].map(([l, v]) => ui.meter(l, B.num1(v), (v / 5) * 100)).join('')}</div>` })}
