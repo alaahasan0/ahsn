@@ -235,10 +235,11 @@
     const pool = M.providers().filter((p) => p.cats.includes(q.cat));
     pool.sort((a, c) => (c.areas.includes(b.district) - a.areas.includes(b.district)) || c.rating - a.rating);
     let list = [];
+    if (q.invited && q.invited.length) list = q.invited.map(M.provider).filter(Boolean);
     const fixed = q.provider || (q.invited && q.invited[0]);
     if (fixed && M.provider(fixed)) list.push(M.provider(fixed));
-    pool.forEach((p) => { if (list.length < 3 && !list.includes(p)) list.push(p); });
-    if (list.length < 2) M.providers().filter((p) => p.cats.includes('general') && !list.includes(p)).slice(0, 2 - list.length).forEach((p) => list.push(p));
+    if (!(q.invited && q.invited.length)) pool.forEach((p) => { if (list.length < 3 && !list.includes(p)) list.push(p); });
+    if (list.length < 2 && !(q.invited && q.invited.length)) M.providers().filter((p) => p.cats.includes('general') && !list.includes(p)).slice(0, 2 - list.length).forEach((p) => list.push(p));
     return list.map((p) => {
       const h = hash(q.id + p.id);
       const svc = M.services(p.id).filter((s) => s.cat === q.cat || !p.cats.includes(q.cat))[0] || M.services(p.id)[0];
@@ -481,7 +482,15 @@
 
   /* quotes comparison */
   .mk-qgrid { display: grid; grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); gap: 14px; align-items: stretch; }
-  @media (max-width: 900px) { .mk-qgrid { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 900px) {
+    .mk-wrap .mk-qgrid { display: flex; overflow-x: auto; scrollbar-width: none; scroll-snap-type: x mandatory; margin-inline: -16px; padding: 14px 16px 4px; gap: 12px; }
+    .mk-wrap .mk-qgrid::-webkit-scrollbar { display: none; }
+    .mk-wrap .mk-qgrid .mk-q { flex: 0 0 min(84%, 340px); scroll-snap-align: start; }
+    .mk-wrap .mk-qgrid .mk-q:only-child { flex-basis: 100%; }
+  }
+  .mk-swipe { display: none; font-size: 12px; color: var(--text-3); align-items: center; gap: 6px; margin-top: -6px; }
+  .mk-swipe svg { width: 14px; height: 14px; }
+  @media (max-width: 900px) { .mk-swipe { display: flex; } }
   .mk-q { position: relative; display: flex; flex-direction: column; gap: 14px; padding: 20px; border-radius: 18px; background: #fff; border: 1px solid var(--line); }
   .mk-q.best { border-color: var(--mint); box-shadow: 0 0 0 1px var(--mint) inset; }
   .mk-q.won { border-color: var(--navy); box-shadow: 0 0 0 1px var(--navy) inset; }
@@ -500,6 +509,7 @@
   .mk-q .actions { margin-top: auto; display: flex; gap: 8px; }
   .mk-q .actions .btn { flex: 1; }
   .mk-req-sum { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+  .mk-req-sum > .grow { flex: 1 1 220px; }
   .mk-req-sum .ri { width: 52px; height: 52px; border-radius: 16px; background: var(--navy); color: var(--mint); display: grid; place-items: center; flex: none; }
   .mk-req-sum .ri svg { width: 24px; height: 24px; }
 
@@ -912,7 +922,8 @@
       <button class="btn btn-text" style="padding:0;margin:4px 0 12px" data-act="back">${icon('arrowLeft', 'flip')}<span>${L('Back', 'رجوع')}</span></button>
       <div class="card"><div class="mk-req-sum"><span class="ri">${icon(D.cat(q.cat).icon)}</span><div class="grow"><div class="row-sm wrap">${ui.idMono(q.id)}${ui.status(decided ? 'accepted' : q.status === 'open' ? 'collecting' : q.status)}</div><h1 style="font-size:22px;margin-top:6px">${esc(tx(q.title))}</h1><div class="small muted" style="margin-top:4px">${b ? esc(M.placeLabel({ bid: q.building, unit: q.unit })) + ' · ' : ''}${L('Requested', 'تاريخ الطلب')} ${B.date(q.created)}</div></div>
         ${b ? ui.btn(L('Building profile', 'ملف المبنى'), { icon: 'building', size: 'sm', go: `${role}-building-${b.id}` }) : ''}</div></div>
-      <div class="mk-sec"><div><h2>${decided ? L('Quote accepted', 'تم قبول العرض') : L(`${quotes.length} quotes, side by side`, `${quotes.length} عروض جنباً إلى جنب`)}</h2><p>${decided ? L('The other quotes were closed automatically.', 'تم إغلاق العروض الأخرى تلقائياً.') : L('Prices are fixed for the stated scope. Accepting one closes the others.', 'الأسعار ثابتة للنطاق المحدد. قبول أحدها يغلق البقية.')}</p></div></div>
+      <div class="mk-sec"><div><h2>${decided ? L('Quote accepted', 'تم قبول العرض') : L(`${quotes.length} quotes, side by side`, quotes.length === 2 ? 'عرضان جنباً إلى جنب' : `${quotes.length} عروض جنباً إلى جنب`)}</h2><p>${decided ? L('The other quotes were closed automatically.', 'تم إغلاق العروض الأخرى تلقائياً.') : L('Prices are fixed for the stated scope. Accepting one closes the others.', 'الأسعار ثابتة للنطاق المحدد. قبول أحدها يغلق البقية.')}</p></div></div>
+      ${quotes.length > 1 ? `<div class="mk-swipe">${icon('arrowRight', 'flip')}${L('Swipe to compare', 'اسحب للمقارنة')}</div>` : ''}
       <div class="mk-qgrid" style="--n:${quotes.length}">${quotes.map((x) => {
         const won = decided === x.pid, lost = decided && !won;
         const f = !decided ? flag(x) : won ? ui.badge(L('Accepted', 'مقبول'), 'navy', 'check') : '';
@@ -929,8 +940,18 @@
           <div class="actions">${canAct ? `${ui.btn(L('Details', 'التفاصيل'), { act: 'mkQuoteInfo', arg: `${q.id}|${x.pid}` })}${ui.btn(L('Accept', 'قبول'), { kind: x.amount === minP ? 'primary' : 'dark', act: 'mkAccept', arg: `${q.id}|${x.pid}` })}` : won ? ui.btn(L('Message provider', 'راسل المزوّد'), { icon: 'chat', act: 'soon', arg: L('Messaging', 'المراسلة'), block: true }) : ui.btn(L('View provider', 'عرض المزوّد'), { go: `${role}-provider-${x.pid}`, block: true })}</div>
         </div>`;
       }).join('')}</div>
+      ${canAct && quotes.length < 2 && q.mkt ? `<div class="card" style="margin-top:14px"><div class="row wrap between"><div><b>${L('Want to compare?', 'تريد المقارنة؟')}</b><div class="small muted">${L('Invite 2 more verified providers to quote on the same request.', 'ادعُ مزوّدَين موثّقَين آخرين للتسعير على نفس الطلب.')}</div></div>${ui.btn(L('Invite 2 more', 'ادعُ اثنين آخرين'), { icon: 'userPlus', act: 'mkInviteMore', arg: q.id })}</div></div>` : ''}
       <div style="margin-top:18px">${ui.callout(L('Payment is only due after the work is completed and you confirm it in BENA. Quotes are fictional demo data.', 'لا يُستحق الدفع إلا بعد إنجاز العمل وتأكيدك له في بينا. العروض بيانات تجريبية وهمية.'), '', 'info')}</div>
     </div>`;
+  };
+  B.act.mkInviteMore = (rid) => {
+    const q = M.request(rid);
+    const b = D.building(q.building) || {};
+    const more = M.providers().filter((p) => p.cats.includes(q.cat) && !q.invited.includes(p.id)).sort((a, c) => (c.areas.includes(b.district) - a.areas.includes(b.district)) || c.rating - a.rating).slice(0, 2);
+    if (!more.length) { B.toast(L('No other providers cover this category yet', 'لا يوجد مزوّدون آخرون لهذه الفئة بعد'), 'info'); return; }
+    q.invited = q.invited.concat(more.map((p) => p.id));
+    B.toast(L(`${more.length} more providers invited — quotes received`, `تمت دعوة ${more.length} مزوّدين آخرين — وصلت العروض`));
+    B.refresh();
   };
   B.act.mkQuoteInfo = (arg) => {
     const [rid, pid] = arg.split('|');
