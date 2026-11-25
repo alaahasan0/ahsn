@@ -57,6 +57,7 @@
   .fm-matrix .rl b { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .fm-matrix .cell { height: 44px; border-radius: 8px; display: grid; place-items: center; color: #fff; font-weight: 700; font-family: ui-monospace, Menlo, monospace; font-size: 12px; transition: transform .15s; }
   .fm-matrix .cell:hover { transform: scale(1.05); }
+  .fm-matrix .cell { direction: ltr; }
   .fm-matrix .cell.c-good, .fm-matrix .cell.c-fair { color: var(--navy); }
   .fm-matrix .cell.none { background: var(--line-2); color: var(--text-3); }
   @media (max-width: 640px) { .fm-matrix .cell { height: 34px; font-size: 11px; border-radius: 6px; } .fm-matrix .h { font-size: 9.5px; } .fm-matrix .h span { display: none; } .fm-matrix .rl b { font-size: 12px; } }
@@ -385,6 +386,7 @@
   const prio = (p) => `<span class="fm-prio ${p}">${icon(PRIO_I[p])}${ui.statusLabel(p)}</span>`;
   const due = (w) => (w.status === 'completed' ? `<span class="faint nowrap">${B.dateShort(w.closed)}</span>` : `<span class="fm-due nowrap ${isLate(w) ? 'over' : ''}">${B.dateShort(w.due)}${isLate(w) ? ' · ' + L(`${-B.daysFromToday(w.due)}d late`, `متأخر ${-B.daysFromToday(w.due)} ي`) : ''}</span>`);
   const catIcon = (c) => CATS[c].icon;
+  const who = (w) => (w.tech ? tname(w.tech) : w.contractor ? tx(D.provider(w.contractor).name) : L('Unassigned', 'غير مُسند'));
   const pmBy = (p) => (p.by === 'in' ? ui.status('fmInHouse') : `<span class="small">${tx(D.provider(p.by).name)}</span>`);
   const openWOs = () => WOS.filter(isOpen);
   const pmCompletion = () => Math.round(B.sum(PM, (p) => p.comp) / PM.length);
@@ -455,7 +457,7 @@
         ${ui.card({ title: L('Asset health matrix', 'مصفوفة سلامة الأصول'), sub: L('Worst condition per system · number of assets', 'أسوأ حالة لكل نظام · عدد الأصول'), body: matrix() + `<div style="margin-top:14px">${scale()}</div>` })}
       </div>
       <div class="stack">
-        ${ui.card({ title: L('Priority work', 'أعمال ذات أولوية'), sub: L('Critical and high, open', 'حرجة وعالية، مفتوحة'), link: { label: L('All', 'الكل'), go: `${R}-workorders` }, body: ui.list(crit.map((w) => ui.li({ icon: catIcon(asset(w.asset).cat), tone: w.priority === 'critical' ? 'bad' : 'warn', title: tx(w.title), sub: `${ui.idMono(w.id)} · ${sshort(asset(w.asset).b)} · ${w.tech ? tname(w.tech) : tx(D.provider(w.contractor).name)}`, end: ui.status(w.status), go: `${R}-wo-${w.id}` }))) })}
+        ${ui.card({ title: L('Priority work', 'أعمال ذات أولوية'), sub: L('Critical and high, open', 'حرجة وعالية، مفتوحة'), link: { label: L('All', 'الكل'), go: `${R}-workorders` }, body: ui.list(crit.map((w) => ui.li({ icon: catIcon(asset(w.asset).cat), tone: w.priority === 'critical' ? 'bad' : 'warn', title: tx(w.title), sub: `${ui.idMono(w.id)} · ${sshort(asset(w.asset).b)} · ${who(w)}`, end: ui.status(w.status), go: `${R}-wo-${w.id}` }))) })}
         ${ui.card({ title: L('Open work by priority', 'الأعمال المفتوحة حسب الأولوية'), body: B.charts.donut({ size: 128, data: [['critical', '#C2362F'], ['high', '#E5774C'], ['medium', '#F2B35A'], ['low', '#C9D6DF']].map(([k, c]) => ({ label: ui.statusLabel(k), value: open.filter((w) => w.priority === k).length, color: c })), center: { value: open.length, label: L('open', 'مفتوح') } }) })}
         ${ui.card({ title: L('Technician workload', 'عبء عمل الفنيين'), sub: L('Open work orders per technician', 'أوامر العمل المفتوحة لكل فني'), body: B.charts.hbars({ data: techLoad.map((t) => ({ ...t, color: t.value >= 4 ? '#E5774C' : '#142B3B' })), max: 5, format: (v) => v }) })}
         ${ui.card({ title: L('PM due this week', 'صيانة وقائية مستحقة هذا الأسبوع'), link: { label: L('Schedule', 'الجدول'), go: `${R}-pm` }, body: ui.list(week.map((p) => ui.li({ icon: catIcon(p.cat), title: tx(p.n), sub: `${p.sites.map((s) => sshort('BN-RAM-00' + s)).join(' · ')}`, end: `<span class="xs faint nowrap">${B.dateShort(p.next)}</span>`, go: `${R}-pm` }))) })}
@@ -592,7 +594,7 @@
     <div class="grid g-main">
       <div class="stack">
         ${ui.card({ title: L('Specifications', 'المواصفات'), body: ui.kvGrid([[L('Asset tag', 'رمز الأصل'), tag(a.tag)], [L('Category', 'الفئة'), tx(CATS[a.cat].n)], [L('Rating', 'المواصفة'), esc(a.spec)], [L('Installed', 'التركيب'), a.year], [L('Facility', 'المرفق'), `<button class="mint-ink" style="font-weight:600;text-align:start" data-go="${R}-site-${a.b}">${sshort(a.b)}</button>`], [L('Location', 'الموقع'), tx(a.loc)], [L('Warranty', 'الضمان'), a.year >= 2024 ? L('Active until 2027', 'سارٍ حتى 2027') : L('Expired', 'منتهي')], [L('Maintained by', 'الصيانة بواسطة'), plans[0] && plans[0].by !== 'in' ? tx(D.provider(plans[0].by).name) : L('Sanad in-house', 'فريق سند الداخلي')]]) })}
-        ${ui.card({ title: L('Work orders', 'أوامر العمل'), link: { label: L('New', 'جديد'), act: 'fmNewWO', arg: a.tag }, body: ws.length ? ui.list(ws.map((w) => ui.li({ icon: 'clipboard', tone: w.status === 'completed' ? 'mint' : w.priority === 'critical' ? 'bad' : '', title: tx(w.title), sub: `${ui.idMono(w.id)} · ${w.tech ? tname(w.tech) : tx(D.provider(w.contractor).name)}`, end: ui.status(w.status), go: `${R}-wo-${w.id}` }))) : ui.empty({ icon: 'checkCircle', title: L('No work orders in the last 30 days', 'لا توجد أوامر عمل في آخر 30 يوماً') }) })}
+        ${ui.card({ title: L('Work orders', 'أوامر العمل'), link: { label: L('New', 'جديد'), act: 'fmNewWO', arg: a.tag }, body: ws.length ? ui.list(ws.map((w) => ui.li({ icon: 'clipboard', tone: w.status === 'completed' ? 'mint' : w.priority === 'critical' ? 'bad' : '', title: tx(w.title), sub: `${ui.idMono(w.id)} · ${who(w)}`, end: ui.status(w.status), go: `${R}-wo-${w.id}` }))) : ui.empty({ icon: 'checkCircle', title: L('No work orders in the last 30 days', 'لا توجد أوامر عمل في آخر 30 يوماً') }) })}
         ${ui.card({ title: L('Maintenance history', 'سجل الصيانة'), body: ui.timeline(hist) })}
       </div>
       <div class="stack">
@@ -632,7 +634,7 @@
     const done = w.checklist.filter((c) => c.done).length;
     const partsTotal = B.sum(w.parts, (p) => p[1] * p[2]);
     const hist = [{ title: L('Work order created', 'تم إنشاء أمر العمل'), meta: `${w.ref ? w.ref + ' · ' : ''}${B.date(w.created)} · ${w.ref ? L('from tenant request', 'من طلب مستأجر') : D.pname('p_omar')}`, state: 'done', icon: 'plus' }];
-    if (w.status !== 'new') hist.push({ title: w.tech ? L(`Assigned to ${tname(w.tech)}`, `أُسند إلى ${tname(w.tech)}`) : L(`Dispatched to ${tx(D.provider(w.contractor).name)}`, `أُرسل إلى ${tx(D.provider(w.contractor).name)}`), meta: B.date(w.created), state: 'done', icon: 'user' });
+    if (w.status !== 'new') hist.push({ title: w.tech || !w.contractor ? L(`Assigned to ${who(w)}`, `أُسند إلى ${who(w)}`) : L(`Dispatched to ${who(w)}`, `أُرسل إلى ${who(w)}`), meta: B.date(w.created), state: 'done', icon: 'user' });
     if (['inProgress', 'onHold', 'completed'].includes(w.status)) hist.push({ title: L('Work started on site', 'بدء العمل في الموقع'), meta: L('Checked in via QR on asset', 'تسجيل الدخول عبر رمز QR على الأصل'), state: 'done', icon: 'play' });
     if (w.status === 'onHold') hist.push({ title: L('On hold — waiting for parts', 'معلّق — بانتظار القطع'), meta: L('Supplier ETA 27 Nov', 'موعد المورد 27 ت٢'), state: 'current', icon: 'clock' });
     if (w.status === 'inProgress') hist.push({ title: L('In progress', 'قيد التنفيذ'), meta: L(`${done} of ${w.checklist.length} checklist steps done`, `${done} من ${w.checklist.length} خطوات منجزة`), state: 'current', icon: 'wrench' });
@@ -662,7 +664,14 @@
     const mo = B.get('fm:pmM', 10);
     const year = 2026 + Math.floor(mo / 12), month = ((mo % 12) + 12) % 12;
     const events = [];
-    PM.forEach((p) => { if (!pmOccurs(p, year, month)) return; const d = Math.min(p.day, new Date(year, month + 1, 0).getDate()); const key = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`; const lateP = p.next < TODAY && key <= TODAY && key === p.next; events.push({ date: key, label: tx(p.n), tone: lateP ? 'bad' : key < TODAY ? 'mint' : p.by === 'in' ? '' : 'info', act: 'fmPM', arg: p.id }); });
+    const mkey = `${year}-${String(month + 1).padStart(2, '0')}`;
+    PM.forEach((p) => {
+      const dates = [];
+      if (String(p.last).startsWith(mkey)) dates.push([p.last, 'mint']);
+      if (String(p.next).startsWith(mkey)) dates.push([p.next, p.next < TODAY ? 'bad' : p.by === 'in' ? '' : 'info']);
+      if (!dates.length && pmOccurs(p, year, month) && `${mkey}-99` > p.next) { const d = Math.min(p.day, new Date(year, month + 1, 0).getDate()); const key = `${mkey}-${String(d).padStart(2, '0')}`; dates.push([key, key < TODAY ? 'mint' : p.by === 'in' ? '' : 'info']); }
+      dates.forEach(([date, tone]) => events.push({ date, label: tx(p.n), tone, act: 'fmPM', arg: p.id }));
+    });
     const sf = B.get('fm:pmSite', 'all');
     const rows = PM.filter((p) => sf === 'all' || p.sites.includes(sf.slice(-3)));
     return `${ui.pageHead({ eyebrow: L('Operations', 'العمليات'), title: L('Preventive maintenance', 'الصيانة الوقائية'), sub: L('Planned maintenance plans, schedule and statutory compliance.', 'خطط الصيانة المخططة والجدول والامتثال للمتطلبات القانونية.'), actions: ui.btn(L('Compliance report', 'تقرير الامتثال'), { icon: 'download', act: 'previewDoc', arg: L('PM compliance — November 2026.pdf', 'امتثال الصيانة الوقائية — ت٢ 2026.pdf') }) + ui.btn(L('New PM plan', 'خطة جديدة'), { icon: 'plus', kind: 'primary', act: 'fmNewPM' }) })}
@@ -678,7 +687,7 @@
         ${ui.calendar({ year, month, events })}
         <div class="fm-legend"><span><i style="background:var(--navy)"></i>${L('In-house', 'داخلي')}</span><span><i style="background:#BBD0F5"></i>${L('Contractor', 'مقاول')}</span><span><i style="background:var(--mint)"></i>${L('Completed', 'مكتمل')}</span><span><i style="background:#F1B5B0"></i>${L('Overdue', 'متأخر')}</span></div></section>
       <div class="stack">
-        ${ui.card({ title: L('Compliance by facility', 'الامتثال حسب المرفق'), body: B.charts.hbars({ data: SITE_IDS.map((bid) => { const l = PM.filter((p) => p.sites.includes(bid.slice(-3))); const v = Math.round(B.sum(l, (p) => p.comp) / l.length); return { label: sshort(bid), sub: L(`${l.length} plans`, `${l.length} خطة`), value: v, color: v >= 92 ? '#36D6A0' : '#F2B35A' }; }), max: 100, format: (v) => v + '%' }) })}
+        ${ui.card({ title: L('Compliance by facility', 'الامتثال حسب المرفق'), body: B.charts.hbars({ data: SITE_IDS.map((bid) => { const l = PM.filter((p) => p.sites.includes(bid.slice(-3))); const v = { 'BN-RAM-00311': 91, 'BN-RAM-00415': 84, 'BN-RAM-00618': 97 }[bid]; return { label: sshort(bid), sub: L(`${l.length} plans`, `${l.length} خطة`), value: v, color: v >= 92 ? '#36D6A0' : '#F2B35A' }; }), max: 100, format: (v) => v + '%' }) })}
         ${ui.card({ title: L('Compliance by system', 'الامتثال حسب النظام'), body: B.charts.bars({ data: [['elevator', 'vt'], ['hvac', 'hvac'], ['fire', 'fire'], ['generator', 'power'], ['water', 'plumb']].map(([c]) => { const l = PM.filter((p) => p.cat === c || (c === 'water' && (p.cat === 'pump' || p.cat === 'medgas'))); const v = Math.round(B.sum(l, (p) => p.comp) / l.length); return { label: tx(CATS[c].n).split(' ')[0], value: v, color: v >= 92 ? '#142B3B' : '#F2B35A' }; }), height: 150, max: 100, showValues: true, format: (v) => Math.round(v) + '%' }) })}
       </div>
     </div>
@@ -734,7 +743,6 @@
       { ic: 'lock', n: L('Access control', 'التحكم بالدخول'), v: B.num(820 + Math.round(r() * 600)), l: L('Access events today', 'أحداث الدخول اليوم'), sub: [[L('Doors online', 'أبواب متصلة'), bid === 'BN-RAM-00618' ? '36/36' : '42/42'], [L('Forced door', 'باب مفتوح بالقوة'), '0'], [L('Held open', 'باب مفتوح طويلاً'), '1']], spark: [20, 140, 260, 180, 120, 210, 160, 90] },
       { ic: 'cctv', n: L('Security & CCTV', 'الأمن والكاميرات'), st: bid === 'BN-RAM-00311' ? 'warn' : '', v: bid === 'BN-RAM-00311' ? '63<small>/64</small>' : bid === 'BN-RAM-00415' ? '32<small>/32</small>' : '28<small>/28</small>', l: L('Cameras online', 'كاميرات متصلة'), sub: [[L('Recording', 'التسجيل'), '30 d'], [L('Guard rounds', 'جولات الحراسة'), '6/8'], [L('Incidents', 'حوادث'), '0']] },
       { ic: 'droplet', n: L('Water', 'المياه'), v: `${Math.round(70 + r() * 20)}<small>%</small>`, l: L('Roof tank level', 'مستوى خزان السطح'), sub: [[L('Flow now', 'التدفق الآن'), `${(2 + r() * 2).toFixed(1)} m³/h`], [L('Today', 'اليوم'), `${Math.round(site(bid).water / 30)} m³`], [L('Leak sensors', 'حساسات التسرب'), L('0 alarms', '0 إنذار')]], spark: [82, 80, 76, 74, 79, 85, 81, 78] },
-      { ic: 'zap', n: L('Power', 'الطاقة'), v: `${Math.round(base * 1.4)}<small> kW</small>`, l: L('Current demand', 'الطلب الحالي'), sub: [[L('Grid', 'الشبكة'), L('Normal', 'طبيعي')], [L('Generator', 'المولد'), L('Standby', 'استعداد')], [L('Power factor', 'معامل القدرة'), '0.96']] },
     ];
     const devAlerts = [
       { sev: 'warn', t: L('CO₂ 1,180 ppm — floor 9 meeting room', 'ثاني أكسيد الكربون 1,180 جزء بالمليون — قاعة اجتماعات ط9'), s: L('Fresh-air damper increased automatically', 'تمت زيادة فتحة الهواء النقي تلقائياً'), w: '09:52' },
@@ -752,7 +760,7 @@
       ${tiles.map((t) => `<div class="device"><div class="dv-top"><span class="dv-name"><span class="li-icon">${icon(t.ic)}</span>${t.n}</span><span class="row-sm"><span class="fm-sim-tag">${L('Sim', 'محاكاة')}</span><span class="pulse ${t.st || ''}"></span></span></div><div><div class="dv-val">${t.v}</div><div class="xs faint" style="margin-top:4px">${t.l}</div></div>${t.spark ? B.charts.spark(t.spark, t.st === 'warn' ? '#E9A23B' : '#36D6A0') : ''}<div class="dv-sub">${t.sub.map(([k, v]) => `<div><b>${v}</b>${k}</div>`).join('')}</div></div>`).join('')}
       <div class="device wide fm-c"><div class="dv-top"><span class="dv-name"><span class="li-icon mint">${icon('activity')}</span>${L('Energy — today', 'الطاقة — اليوم')}</span><span class="fm-sim-tag">${L('Sim', 'محاكاة')}</span></div>
         ${B.charts.line({ labels: hours, series: [{ name: L('kWh / 2 h', 'ك.و.س / ساعتان'), color: '#36D6A0', values: energy, area: true }], height: 150, format: (v) => B.num(v) })}
-        <div class="dv-sub"><div><b>${B.num(B.sum(energy.slice(0, 5)))}</b>${L('kWh so far', 'ك.و.س حتى الآن')}</div><div><b>${B.num(Math.max(...energy) / 2)} kW</b>${L('Peak forecast', 'الذروة المتوقعة')}</div><div><b>−6%</b>${L('vs last Wed', 'مقابل الأربعاء الماضي')}</div></div></div>
+        <div class="dv-sub" style="grid-template-columns:repeat(4,minmax(0,1fr))"><div><b>${B.num(B.sum(energy.slice(0, 5)))}</b>${L('kWh so far', 'ك.و.س حتى الآن')}</div><div><b>${Math.round(base * 1.4)} kW</b>${L('Demand now', 'الطلب الآن')}</div><div><b>${B.num(Math.max(...energy) / 2)} kW</b>${L('Peak forecast', 'الذروة المتوقعة')}</div><div><b>${L('Grid', 'الشبكة')}</b>${L('Generator on standby', 'المولد في وضع الاستعداد')}</div></div></div>
       <div class="device"><div class="dv-top"><span class="dv-name"><span class="li-icon">${icon('thermo')}</span>${L('Smart sensors', 'الحساسات الذكية')}</span><span class="fm-sim-tag">${L('Sim', 'محاكاة')}</span></div>
         <div class="fm-floors-heat">${Array.from({ length: Math.min(floors, 8) }, (_, i) => floors - i).map((f) => `<span class="fm-mono">L${f}</span><div class="row-h">${Array.from({ length: 8 }, () => `<i style="background:${heatColor(r() * (f === 9 ? 1.2 : 0.85))}"></i>`).join('')}</div>`).join('')}</div>
         <div class="fm-legend" style="margin-top:4px"><span><i style="background:#36D6A0"></i>${L('Good', 'جيد')}</span><span><i style="background:#F2B35A"></i>${L('Elevated', 'مرتفع')}</span><span><i style="background:#E5774C"></i>${L('High CO₂', 'CO₂ مرتفع')}</span></div></div>

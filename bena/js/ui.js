@@ -254,7 +254,7 @@
   };
 
   /** Document row */
-  ui.doc = (d) => ui.li({ icon: d.icon || 'doc', tone: d.tone || '', title: d.name, sub: d.sub || `${d.type || 'PDF'} · ${d.size || '1.2 MB'} · ${B.date(d.date)}`, act: 'previewDoc', arg: tx(d.name), end: icon('download', 'chev') });
+  ui.doc = (d) => ui.li({ icon: d.icon || 'doc', tone: d.tone || '', title: `<bdi>${tx(d.name)}</bdi>`, sub: d.sub || `${d.type || 'PDF'} · ${d.size || '1.2 MB'} · ${B.date(d.date)}`, act: 'previewDoc', arg: tx(d.name), end: icon('download', 'chev') });
   B.act.previewDoc = (name) => B.modal({
     title: esc(name), sub: L('Document preview (sample)', 'معاينة المستند (نموذج)'), size: 'md',
     body: `<div style="border:1px solid var(--line);border-radius:14px;padding:24px;background:var(--surface-2)"><div class="row between" style="margin-bottom:18px"><div class="brand dark">${B.logo(26)}<span>BENA</span></div><span class="badge">${L('Sample', 'نموذج')}</span></div>

@@ -225,7 +225,8 @@
     const hist = HIST.filter((h) => h.role === role || (role !== 'provider' && !['resident', 'owner', 'committee', 'manager', 'facility'].includes(role)));
     return created.concat(base, hist).sort(B.by((q) => q.created, -1));
   };
-  M.amountOf = (q) => q.amount || (q.status === 'completed' ? 100 + (hash(q.id) % 30) * 10 : null);
+  const KNOWN_AMOUNTS = { 'MR-24211': 180, 'MR-24288': 140 }; // match the provider-side invoices
+  M.amountOf = (q) => q.amount || KNOWN_AMOUNTS[q.id] || (q.status === 'completed' ? 100 + (hash(q.id) % 30) * 10 : null);
 
   /* ---------------- quotes ---------------- */
   /** Quotes a provider actually submitted in this session (roles/provider.js): key `${requestId}|${providerId}` */
@@ -625,7 +626,7 @@
         </div>
         ${catTiles(cat)}
       </div>
-      ${mine.length && !cat ? `<div style="margin-top:22px" class="mk-mine"><span class="mi">${icon('activity')}</span><div class="grow"><b>${L(`${mine.length} active request${mine.length > 1 ? 's' : ''}`, `${mine.length} طلبات نشطة`)}</b><div class="xs" style="margin-top:2px">${esc(tx(mine[0].title))} · ${ui.statusLabel(mine[0].status === 'open' ? 'collecting' : mine[0].status)}</div></div>
+      ${mine.length && !cat ? `<div style="margin-top:22px" class="mk-mine"><span class="mi">${icon('activity')}</span><div class="grow"><b>${L(`${mine.length} active request${mine.length > 1 ? 's' : ''}`, mine.length === 1 ? 'طلب نشط واحد' : mine.length === 2 ? 'طلبان نشطان' : `${mine.length} طلبات نشطة`)}</b><div class="xs" style="margin-top:2px">${esc(tx(mine[0].title))} · ${ui.statusLabel(mine[0].status === 'open' ? 'collecting' : mine[0].status)}</div></div>
         ${mine.some((r) => ['open', 'quoted'].includes(r.status)) ? ui.btn(L('Compare quotes', 'قارن العروض'), { kind: 'primary', size: 'sm', go: `${R()}-quotes-${mine.find((r) => ['open', 'quoted'].includes(r.status)).id}` }) : ''}
         ${ui.btn(L('Service history', 'سجل الخدمات'), { size: 'sm', go: `${R()}-servicehistory` })}</div>` : ''}
       ${svcs.length ? `<div class="mk-sec"><div><h2>${cat ? L('Popular in this category', 'الأكثر طلباً في هذه الفئة') : L('Popular right now', 'الأكثر طلباً الآن')}</h2><p>${L('Fixed starting prices from verified providers', 'أسعار بدء ثابتة من مزوّدين موثّقين')}</p></div></div>
@@ -673,11 +674,11 @@
     return `<div class="mk-rsum"><div><div class="big">${B.num1(p.rating)}</div><div style="margin-top:8px">${ui.stars(p.rating)}</div><div class="xs faint" style="margin-top:4px">${L(`${B.num(p.reviews)} verified reviews`, `${B.num(p.reviews)} مراجعة موثّقة`)}</div></div>
       <div class="mk-dist">${d.map((n, i) => `<div class="r"><span>${5 - i}★</span><span class="tr"><i style="width:${(n / tot) * 100}%"></i></span><em>${Math.round((n / tot) * 100)}%</em></div>`).join('')}</div></div>`;
   };
-  M.reviewItem = (rv) => {
+  M.reviewItem = (rv, foot = '') => {
     const b = D.building(rv.bid);
     const rep = M.replies[rv.id] || rv.reply;
     return `<div class="mk-rev"><div class="who">${ui.avatar(D.person(rv.by).name)}<div class="grow"><b>${esc(D.pname(rv.by))}</b><small>${tx(D.cat(rv.cat).name)}${b ? ' · ' + esc(tx(b.name)) : ''} · ${B.ago(rv.date)}</small></div>${ui.stars(rv.stars)}</div>
-      <p>${esc(tx(rv.text))}</p>${rep ? `<div class="reply"><b>${L('Response from the provider', 'رد المزوّد')}</b>${esc(tx(rep))}</div>` : ''}</div>`;
+      <p>${esc(tx(rv.text))}</p>${rep ? `<div class="reply"><b>${L('Response from the provider', 'رد المزوّد')}</b>${esc(tx(rep))}</div>` : ''}${foot ? `<div class="row-sm" style="justify-content:flex-end;margin-top:10px">${foot}</div>` : ''}</div>`;
   };
 
   B.shared.provider = (pid) => {

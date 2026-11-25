@@ -133,6 +133,11 @@
     .mk-filters .seg { flex: 1 1 100%; }
     .mk-filters .seg button { flex: 1; justify-content: center; }
   }
+  .mk-pin { cursor: pointer; }
+  .mk-pin rect, .mk-pin path { fill: #fff; stroke: rgba(20,43,59,.25); stroke-width: .6; }
+  .mk-pin text { font: 700 7.6px var(--font); fill: var(--ink); direction: ltr; }
+  .mk-pin:hover rect, .mk-pin:hover path, .mk-pin.on rect, .mk-pin.on path { fill: var(--navy); stroke: var(--navy); }
+  .mk-pin:hover text, .mk-pin.on text { fill: #fff; }
   .mk-mapgrid { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 16px; align-items: start; }
   .mk-mapgrid .map-shell { --map-h: calc(100dvh - 240px); min-height: 480px; }
   .mk-mapside { display: flex; flex-direction: column; gap: 10px; max-height: calc(100dvh - 240px); min-height: 480px; overflow-y: auto; padding-inline-end: 2px; }
@@ -208,6 +213,43 @@
     rent: [{ v: '', l: T('Any price', 'أي سعر') }, { v: '0-2500', l: T('Under ₪2,500', 'أقل من 2,500 ₪') }, { v: '2500-3500', l: T('₪2,500 – 3,500', '2,500 – 3,500 ₪') }, { v: '3500-', l: T('Over ₪3,500', 'أكثر من 3,500 ₪') }],
     sale: [{ v: '', l: T('Any price', 'أي سعر') }, { v: '0-150000', l: T('Under $150k', 'أقل من 150 ألف $') }, { v: '150000-200000', l: T('$150k – 200k', '150 – 200 ألف $') }, { v: '200000-', l: T('Over $200k', 'أكثر من 200 ألف $') }],
   };
+  /** Price pills drawn inside the map SVG (world coordinates) so they pan/zoom with it. */
+  const short = (l) => (l.mode === 'rent' ? `₪${B.num1(l.price / 1000)}k` : `$${Math.round(l.price / 1000)}k`);
+  const pricePins = (html, list, pick) => {
+    const by = {};
+    list.forEach((l) => { (by[l.bid] = by[l.bid] || []).push(l); });
+    const pins = Object.entries(by).map(([bid, ls]) => {
+      const b = D.building(bid);
+      const [x, y] = B.map.centroid(b.poly);
+      const cheapest = ls.slice().sort((a, c) => a.price - c.price)[0];
+      const label = short(cheapest) + (ls.length > 1 ? ` +${ls.length - 1}` : '');
+      const w = 9 + label.length * 5.4;
+      const on = bid === pick;
+      return `<g class="mk-pin ${on ? 'on' : ''}" data-act="mkMapPick" data-arg="${bid}" data-x="${x.toFixed(1)}" data-y="${y.toFixed(1)}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(2)"><title>${esc(tx(b.name))}</title>
+        <path d="M-4 -5 L0 0 L4 -5Z" /><rect x="${-w / 2}" y="-19" width="${w}" height="14" rx="7"/><text y="-9.4" text-anchor="middle">${esc(label)}</text></g>`;
+    }).join('');
+    const i = html.indexOf('</svg>');
+    B.afterRender(bindPins);
+    return i < 0 ? html : html.slice(0, i) + `<g class="mk-pins">${pins}</g>` + html.slice(i);
+  };
+  /* keep pills at a constant on-screen size (≈11px text) whatever the zoom level */
+  const sizePins = (svg) => {
+    const r = svg.getBoundingClientRect();
+    const vb = svg.viewBox.baseVal;
+    if (!r.width || !vb || !vb.width) return;
+    const ppu = Math.max(r.width / vb.width, r.height / vb.height);
+    const k = Math.max(0.6, Math.min(6, 11 / (7.6 * ppu)));
+    svg.querySelectorAll('.mk-pin').forEach((g) => g.setAttribute('transform', `translate(${g.dataset.x} ${g.dataset.y}) scale(${k.toFixed(3)})`));
+  };
+  const bindPins = () => {
+    const shell = document.querySelector('.map-shell[data-map="mk-props"]');
+    const svg = shell && shell.querySelector('svg');
+    if (!svg) return;
+    sizePins(svg);
+    let raf = 0;
+    const again = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => sizePins(svg)); };
+    ['wheel', 'pointerup', 'pointermove', 'click'].forEach((ev) => shell.addEventListener(ev, again, { passive: true }));
+  };
   B.shared.properties = (id) => {
     if (id === 'rent' || id === 'sale') { if (B.vs['mk:pm:set'] !== id) { B.vs['mk:pm'] = id; B.vs['mk:pm:set'] = id; } }
     const role = R();
@@ -237,7 +279,7 @@
     const pick = B.get('mk:ppick', null);
     const picked = pick ? list.filter((l) => l.bid === pick) : [];
     const results = list.length ? (view === 'map'
-      ? `<div class="mk-mapgrid"><div>${B.map.render({ id: 'mk-props', mode: 'type', visible: new Set(list.map((l) => l.bid)), selected: picked.length ? pick : null, onSelect: 'mkMapPick', legend: false, badge: L('Listings on the BENA map · sample area', 'العروض على خريطة بينا · منطقة نموذجية') })}</div>
+      ? `<div class="mk-mapgrid"><div>${pricePins(B.map.render({ id: 'mk-props', mode: 'type', visible: new Set(list.map((l) => l.bid)), selected: picked.length ? pick : null, onSelect: 'mkMapPick', legend: false, badge: L('Listings on the BENA map · sample area', 'العروض على خريطة بينا · منطقة نموذجية') }), list, pick)}</div>
           <div class="mk-mapside">${picked.length ? `<div class="row between"><span class="eyebrow">${L('Selected building', 'المبنى المحدد')}</span><button class="btn btn-text btn-sm" data-act="set" data-arg="mk:ppick=">${icon('x')}${L('Clear', 'مسح')}</button></div>${picked.map(M.listingCard).join('')}<div class="divider" style="margin:6px 0"></div>` : `<div class="callout small mint">${icon('pin')}<div>${L('Tap a highlighted building to see its listings.', 'اضغط على مبنى مُميّز لعرض عروضه.')}</div></div>`}
             ${list.filter((l) => !picked.includes(l)).map((l) => { const b = D.building(l.bid); return `<button class="mk-mrow" data-act="mkMapPick" data-arg="${l.bid}"><span class="media">${M.listingArt(l)}</span><span class="grow" style="min-width:0"><b>${price(l)}</b><span class="t" style="display:block">${esc(tx(l.title))}</span><span class="s" style="display:block">${esc(tx(D.district(b.district).name))} · ${M.facts(l).area} ${L('m²', 'م²')}</span></span></button>`; }).join('')}</div></div>`
       : `<div class="mk-lgrid">${list.map(M.listingCard).join('')}</div>`)

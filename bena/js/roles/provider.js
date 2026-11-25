@@ -435,7 +435,7 @@
         <div class="stack">
           ${ui.card({ body: M.distBlock(PID) })}
           <div>${ui.chips('pv:ff', [{ id: 'all', label: L('All', 'الكل'), count: all.length }, { id: 'reply', label: L('Needs reply', 'بحاجة لرد'), count: all.filter((r) => !hasReply(r)).length }, { id: 'top', label: '5★', count: all.filter((r) => r.stars === 5).length }, { id: 'low', label: L('3★ and below', '3★ فأقل'), count: all.filter((r) => r.stars <= 3).length }], f)}</div>
-          ${ui.card({ body: list.length ? list.map((r) => `${M.reviewItem(r)}<div class="row-sm" style="margin:-4px 0 14px;justify-content:flex-end">${hasReply(r) ? ui.status('replied') : ui.btn(L('Reply', 'رد'), { size: 'sm', kind: 'soft', icon: 'chat', act: 'pvReply', arg: r.id })}</div>`).join('') : ui.empty({ icon: 'chat', title: L('Nothing to show', 'لا يوجد ما يُعرض'), text: L('All caught up.', 'لا توجد مراجعات معلّقة.') }) })}
+          ${ui.card({ body: list.length ? list.map((r) => M.reviewItem(r, hasReply(r) ? ui.status('replied') : ui.btn(L('Reply', 'رد'), { size: 'sm', kind: 'soft', icon: 'chat', act: 'pvReply', arg: r.id }))).join('') : ui.empty({ icon: 'chat', title: L('Nothing to show', 'لا يوجد ما يُعرض'), text: L('All caught up.', 'لا توجد مراجعات معلّقة.') }) })}
         </div>
         <div class="stack">
           ${ui.card({ title: L('Rating breakdown', 'تفصيل التقييم'), body: `<div class="stack-sm">${[[L('Punctuality', 'الالتزام بالموعد'), 4.7], [L('Quality of work', 'جودة العمل'), 4.9], [L('Communication', 'التواصل'), 4.8], [L('Value for money', 'القيمة مقابل السعر'), 4.6], [L('Cleanliness', 'النظافة'), 4.9]].map(([l, v]) => ui.meter(l, B.num1(v), (v / 5) * 100)).join('')}</div>` })}
