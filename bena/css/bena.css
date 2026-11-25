@@ -876,3 +876,7 @@ html[dir="rtl"] .conn-node text { font-family: var(--font-ar); }
 /* small fixes */
 @media (max-width: 640px) { .bars.dense .col.alt .lbl { visibility: hidden; } }
 @media (max-width: 560px) { .welcome-top .demo-chip { display: none; } }
+svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
+@media (max-width: 767px) {
+  .map-legend.show-m { flex-direction: row; flex-wrap: wrap; gap: 4px 10px; max-width: calc(100% - 110px); }
+}

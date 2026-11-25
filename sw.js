@@ -45,6 +45,7 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET' || new URL(req.url).origin !== self.location.origin) return;
+  if (new URL(req.url).pathname.includes('/bena/')) return; // separate BENA prototype: never cache it here
 
   event.respondWith(
     caches.open(CACHE_VERSION).then(async (cache) => {
