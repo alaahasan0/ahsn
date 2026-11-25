@@ -79,7 +79,7 @@
     const grid = [0, .25, .5, .75, 1].map((f) => `<line x1="0" x2="${W}" y1="${H * f}" y2="${H * f}" stroke="#E2E9E6" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"/>`).join('');
     const ticks = [max, min + (max - min) * .75, min + (max - min) * .5, min + (max - min) * .25, min];
     const step = n > 8 ? Math.ceil(n / 6) : 1;
-    const xl = o.labels.map((l, i) => `<span style="${i % step && i !== n - 1 ? 'visibility:hidden' : ''}">${tx(l)}</span>`);
+    const xl = o.labels.map((l, i) => `<span style="${(n - 1 - i) % step ? 'visibility:hidden' : ''}">${tx(l)}</span>`);
     const zones = o.labels.map((l, i) => `<div class="hz"><span class="tip">${tx(l)}<br>${o.series.map((s) => `${o.series.length > 1 ? tx(s.name) + ': ' : ''}<b>${fmt(s.values[i])}</b>`).join('<br>')}</span></div>`);
     return `<div class="chart"><div class="line-chart" style="--h:${o.height || 220}px">
       <div class="y-axis">${ticks.map((t) => `<span>${fmt(t)}</span>`).join('')}</div>

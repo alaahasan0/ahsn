@@ -117,7 +117,7 @@
       seq += 1 + Math.floor(r() * 3);
       const num = 1 + Math.floor(r() * 140);
       const st = pick(STREETS_GENERIC[dist]);
-      const m = 1 + Math.floor(r() * 11), dd = 1 + Math.floor(r() * 27);
+      const m = 1 + Math.floor(r() * 11), dd = 1 + Math.floor(r() * (m === 11 ? 24 : 27));
       D.buildings.push({
         id: `BN-RAM-${String(seq).padStart(5, '0')}`,
         gis: independent ? null : `RM-GIS-${40000 + seq * 3 + Math.floor(r() * 3)}`,

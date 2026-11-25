@@ -880,3 +880,6 @@ svg.chev { width: 16px; height: 16px; flex: none; color: var(--text-3); }
 @media (max-width: 767px) {
   .map-legend.show-m { flex-direction: row; flex-wrap: wrap; gap: 4px 10px; max-width: calc(100% - 110px); }
 }
+.bottom-sheet-m.open { top: auto; }
+.nav { min-height: 0; }
+@media (max-width: 767px) { .bars .col .tip, .line-chart .hz .tip { display: none; } .line-chart .hz::after { display: none; } }
