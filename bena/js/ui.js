@@ -229,11 +229,11 @@
     const metas = o.cols.filter((c) => c.m === 'meta');
     const endC = o.cols.find((c) => c.m === 'end');
     const lead = o.mLead;
-    const mob = `<div class="m-list">${rows.map((r) => `<${clickable ? 'button' : 'div'} class="m-row ${clickable}" ${rowAttr(r)}>${lead ? lead(r) : ''}<div class="m-body">
+    const mob = `<div class="m-list">${rows.map((r) => `<div class="m-row ${clickable}" ${clickable ? 'role="button" tabindex="0"' : ''} ${rowAttr(r)}>${lead ? lead(r) : ''}<div class="m-body">
         <div class="m-title"><span>${tCol.mRender ? tCol.mRender(r) : cell(tCol, r)}</span>${endC ? `<span class="nowrap">${cell(endC, r)}</span>` : ''}</div>
         ${subs.map((c) => `<div class="m-sub">${cell(c, r)}</div>`).join('')}
         ${metas.length ? `<div class="m-meta">${metas.map((c) => `<span>${cell(c, r)}</span>`).join('')}</div>` : ''}
-      </div></${clickable ? 'button' : 'div'}>`).join('')}</div>`;
+      </div></div>`).join('')}</div>`;
     return `<div class="card pad-0 ${o.cls || ''}">${desk}${mob}${o.pageSize ? ui.pager(pk, total, o.pageSize) : ''}</div>`;
   };
 
