@@ -37,7 +37,7 @@ export default function NewSessionScreen() {
   const [venueId, setVenueId] = useState(prog.venueId ?? db.venues[0].id);
   const venue = getVenue(db, venueId);
   const [roomId, setRoomId] = useState(venue?.rooms[0]?.id ?? '');
-  const [link] = useState(`https://emeritus.zoom.example/j/84${Math.floor(10000000 + Math.random() * 89999999)}`);
+  const [link] = useState(() => `https://emeritus.zoom.example/j/84${String(Date.now()).slice(-8)}`);
   const [recurrence, setRecurrence] = useState<'None' | 'Daily' | 'Weekly'>('None');
   const [capacity, setCapacity] = useState(String(prog.capacity));
 

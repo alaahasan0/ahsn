@@ -51,7 +51,7 @@ export default function BookingScreen() {
   };
 
   const openConfirm = () => {
-    setConf(b.confirmationNumber ?? `${hotel.name.split(' ').map((w) => w[0]).join('').slice(0, 3).toUpperCase()}-${48500 + Math.floor(Math.random() * 400)}`);
+    setConf(b.confirmationNumber ?? `${hotel.name.split(' ').map((w) => w[0]).join('').slice(0, 3).toUpperCase()}-${48500 + (b.id.split('').reduce((n, ch) => n + ch.charCodeAt(0), 0) % 400)}`);
     setConfirmOpen(true);
   };
 

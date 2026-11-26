@@ -73,6 +73,14 @@ function slug(s: string) {
   return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z]+/g, '');
 }
 
+const DIAL: [string, number][] = [
+  ['UAE', 971], ['Singapore', 65], ['UK', 44], ['Saudi', 966], ['India', 91], ['Oman', 968], ['Spain', 34], ['Nigeria', 234], ['Qatar', 974], ['Germany', 49],
+  ['Kuwait', 965], ['Egypt', 20], ['Bahrain', 973], ['Kazakhstan', 7], ['Kenya', 254], ['Malaysia', 60], ['Hong Kong', 852], ['Indonesia', 62], ['Japan', 81], ['Italy', 39], ['China', 86],
+];
+function dialCode(base: string) {
+  return DIAL.find(([k]) => base.includes(k))?.[1] ?? 971;
+}
+
 const domains: Record<string, string> = {
   'Meridian Energy Group': 'meridian.example',
   'Atlas Bank': 'atlasbank.example',
@@ -89,7 +97,7 @@ export const learners: Learner[] = rows.map(([id, first, last, title, org, clien
   clientId,
   country: base,
   email: `${slug(first)}.${slug(last)}@${domains[org] ?? `${slug(org)}.example`}`,
-  phone: `+${[971, 65, 44, 966][i % 4]} ${50 + (i % 9)} ${String(100 + ((i * 37) % 900)).padStart(3, '0')} ${String(1000 + ((i * 173) % 9000)).padStart(4, '0')}`,
+  phone: `+${dialCode(base)} ${50 + (i % 9)} ${String(100 + ((i * 37) % 900)).padStart(3, '0')} ${String(1000 + ((i * 173) % 9000)).padStart(4, '0')}`,
   linkedIn: `linkedin.com/in/${slug(first)}-${slug(last)}`,
   dietary,
   accessibility,

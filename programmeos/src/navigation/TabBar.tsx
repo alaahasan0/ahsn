@@ -57,7 +57,7 @@ export function AppTabBar({ state, emitter, navigateToTab, insets, tabs }: Botto
                 </View>
               ) : null}
             </View>
-            <Text variant="caption" color={focused ? colors.accentText : colors.textTertiary} weight={focused ? 'semibold' : 'medium'} numberOfLines={1} style={{ fontSize: 10.5 }} maxFontSizeMultiplier={1.2}>
+            <Text variant="caption" color={focused ? colors.accentText : colors.textTertiary} weight={focused ? 'semibold' : 'medium'} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85} style={{ fontSize: cfg.label.length > 11 ? 9.5 : 10.5, letterSpacing: cfg.label.length > 11 ? -0.2 : 0 }} maxFontSizeMultiplier={1.2}>
               {cfg.label}
             </Text>
           </Touchable>

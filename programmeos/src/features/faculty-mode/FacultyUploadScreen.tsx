@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { View } from 'react-native';
 
 import { Button, Card, FileIcon, FormSection, Icon, ProgressBar, Screen, SegmentedField, SelectField, SelectSheet, SuccessState, Text, TextField, Touchable } from '@/components';
@@ -41,9 +41,12 @@ export default function FacultyUploadScreen() {
   const [done, setDone] = useState(false);
 
   const existing = scope.materials.find((m) => m.id === target);
-  useEffect(() => {
+  // Default the version stage to "Revised" when the reviewer asked for changes.
+  const [stageFor, setStageFor] = useState<string | undefined>(undefined);
+  if (existing?.id !== stageFor) {
+    setStageFor(existing?.id);
     if (existing?.status === 'Changes Requested') setStage('Revised');
-  }, [existing?.status]);
+  }
 
   const submit = () => {
     setProgress(8);

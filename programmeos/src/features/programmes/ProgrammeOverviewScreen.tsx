@@ -108,8 +108,8 @@ function Overview({ p }: { p: Programme }) {
     }
   };
 
-  const ringValue = phase === 'upcoming' ? r.overall : phase === 'in_delivery' ? deliveryProgress(p) : 100;
-  const ringTone = phase === 'upcoming' ? readinessTone(r.overall, r.threshold) : phase === 'in_delivery' ? 'violet' : 'success';
+  const ringValue = phase === 'upcoming' ? r.overall : phase === 'in_delivery' ? deliveryProgress(p) : phase === 'cancelled' ? 0 : 100;
+  const ringTone = phase === 'upcoming' ? readinessTone(r.overall, r.threshold) : phase === 'in_delivery' ? 'violet' : phase === 'cancelled' ? 'neutral' : 'success';
 
   return (
     <View style={{ flex: 1 }}>
@@ -124,9 +124,13 @@ function Overview({ p }: { p: Programme }) {
         <Card padding="lg" style={{ gap: 14 }}>
           <View style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
             <ProgressRing value={ringValue} size={76} stroke={7} color={toneColors(ringTone as never, colors).solid}>
-              <Text variant="title3" tabular>
-                {Math.round(ringValue)}%
-              </Text>
+              {phase === 'cancelled' ? (
+                <Icon name="ban" size={26} tone="tertiary" />
+              ) : (
+                <Text variant="title3" tabular>
+                  {Math.round(ringValue)}%
+                </Text>
+              )}
             </ProgressRing>
             <View style={{ flex: 1, gap: 4 }}>
               <Text variant="overline" tone="tertiary">

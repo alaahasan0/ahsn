@@ -2,7 +2,7 @@ import { router, useLocalSearchParams, usePreventRemove } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, TextInput, View } from 'react-native';
 
-import { Button, Card, DateField, DocumentPage, FormSection, Icon, IconTile, Screen, SelectField, Tag, Text, TextField, Touchable, useDialog, useToast } from '@/components';
+import { Button, Card, DateField, FileIcon, FormSection, Icon, IconTile, Screen, SelectField, Tag, Text, TextField, Touchable, useDialog, useToast } from '@/components';
 import { costCategories } from '@/data/mock';
 import type { CostCategory } from '@/data/models';
 import { getProgramme, getStaff, programmePhase } from '@/data/selectors';
@@ -160,9 +160,7 @@ export default function ExpenseNewScreen() {
           </Card>
         ) : receipt ? (
           <Card padding="md" style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
-            <View style={{ width: 72 }}>
-              <DocumentPage title="Receipt" format="PDF" lines={5} compact />
-            </View>
+            <FileIcon format={receipt.source === 'camera' ? 'JPG' : 'PDF'} size={52} />
             <View style={{ flex: 1, gap: 6 }}>
               <Text variant="headline" numberOfLines={1}>
                 {receipt.name}

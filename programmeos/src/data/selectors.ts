@@ -274,7 +274,21 @@ export function readinessFor(db: DB, programmeId: ID): ReadinessView {
         break;
       }
     }
-    const percent = c.applicable ? (total ? (done / total) * 100 : 100) : 0;
+    // An applicable category with nothing in it yet is not ready (e.g. no rooms booked).
+    if (c.applicable && total === 0) {
+      const empty: Partial<Record<ReadinessCategoryKey, { label: string; route: string }>> = {
+        hotel: { label: 'No hotel rooms booked yet', route: `/hotel-booking/new?programme=${programmeId}` },
+        travel: { label: 'No travel itineraries yet', route: `/travel?programme=${programmeId}` },
+        materials: { label: 'No learning materials requested yet', route: `/material/submit?programme=${programmeId}` },
+        venue: { label: 'No venue checklist yet', route: `/logistics/checklist/${programmeId}` },
+        equipment: { label: 'No equipment checklist yet', route: `/logistics/checklist/${programmeId}` },
+        client: { label: 'No client approvals defined yet', route: `/programme/${programmeId}` },
+        finance: { label: 'No financial checklist yet', route: `/programme/${programmeId}/finance` },
+      };
+      const e = empty[c.key];
+      if (e) pending.push({ id: `${programmeId}-${c.key}-empty`, label: e.label, route: e.route, ownerId: c.ownerId, due: c.due, critical: daysToStart < 30 });
+    }
+    const percent = c.applicable ? (total ? (done / total) * 100 : 0) : 0;
     if (!c.applicable) {
       pending = [];
       completed = [];
