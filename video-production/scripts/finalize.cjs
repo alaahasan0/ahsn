@@ -25,7 +25,10 @@ const aac = (br) => ['-c:a', 'aac', '-b:a', br, '-ar', '48000'];
 const cues = tl.subtitles.map((c, i) => ({ i, start: tl.voiceover[c.vo].at + c.from, end: tl.voiceover[c.vo].at + c.to }));
 const ins = ['-i', master];
 const parts = [];
-let last = '0:v';
+// Remotion writes BT.601 full-range; convert explicitly to BT.709 limited range for delivery.
+const CONV = 'scale=in_color_matrix=bt601:in_range=pc:out_color_matrix=bt709:out_range=tv,format=yuv420p';
+parts.push(`[0:v]${CONV}[base]`);
+let last = 'base';
 cues.forEach((c, k) => {
   const dur = c.end - c.start + 0.3;
   ins.push('-loop', '1', '-t', dur.toFixed(2), '-i', path.join(OUT, 'subtitle-cards', `cue-${String(c.i).padStart(2, '0')}.png`));
@@ -35,12 +38,12 @@ cues.forEach((c, k) => {
   last = `o${k}`;
 });
 const subbed = path.join(OUT, '_video_subtitled.mp4');
-run([...ins, '-filter_complex', parts.join(';'), '-map', `[${last}]`, ...enc(14), '-an', subbed]);
+run([...ins, '-filter_complex', parts.join(';'), '-map', `[${last}]`, ...enc(18), '-an', subbed]);
 
 /* 2 · mux */
 const final = path.join(OUT, 'BENA_Product_Film_90s.mp4');
 run(['-i', subbed, '-i', audio, '-map', '0:v', '-map', '1:a', '-c:v', 'copy', ...aac('256k'), '-t', '90', '-movflags', '+faststart', final]);
-run(['-i', master, '-i', audio, '-map', '0:v', '-map', '1:a', '-c:v', 'copy', ...aac('256k'), '-t', '90', '-movflags', '+faststart', path.join(OUT, 'BENA_Product_Film_90s_NoSubtitles.mp4')]);
+run(['-i', master, '-i', audio, '-map', '0:v', '-map', '1:a', '-vf', CONV, ...enc(18), ...aac('256k'), '-t', '90', '-movflags', '+faststart', path.join(OUT, 'BENA_Product_Film_90s_NoSubtitles.mp4')]);
 
 /* 3 · derived exports */
 run(['-i', final, '-vf', 'scale=1080:1920:flags=lanczos', ...enc(17), ...aac('192k'), '-movflags', '+faststart', path.join(OUT, 'BENA_Product_Film_1080x1920.mp4')]);

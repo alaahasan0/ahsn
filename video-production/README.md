@@ -22,6 +22,10 @@ Documents in this folder:
 - `BENA_Arabic_Subtitles.srt` (plus `subtitles/BENA_English_Reference.srt`)
 - `BENA_Storyboard.md`
 
+Encoding: 1440×2560 masters at x264 CRF 18 (slow), 1080×1920 at CRF 17, BT.709 limited range, 48 kHz AAC (256 kbps on masters), `+faststart` for mobile streaming.
+
+**Not included:** a 16:9 adaptation. The film is composed for vertical screens; a landscape version needs its own layout pass rather than a crop. The scene components (`Phone`, `Tablet`, `Headline`) are resolution-independent, so a `BenaFilm16x9` composition can reuse them.
+
 ## Project layout
 
 ```
