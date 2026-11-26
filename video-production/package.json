@@ -1,0 +1,22 @@
+{
+  "name": "bena-launch-film",
+  "version": "1.0.0",
+  "private": true,
+  "description": "BENA cinematic product launch film (Remotion project)",
+  "scripts": {
+    "studio": "remotion studio src/index.jsx",
+    "capture": "node scripts/capture-screens.cjs",
+    "render": "node scripts/render.cjs"
+  },
+  "dependencies": {
+    "@fontsource/ibm-plex-sans-arabic": "^5.1.1",
+    "@fontsource/inter": "^5.1.1",
+    "@fontsource/plus-jakarta-sans": "^5.1.1",
+    "@remotion/bundler": "^4.0.540",
+    "@remotion/cli": "^4.0.540",
+    "@remotion/renderer": "^4.0.540",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.540"
+  }
+}

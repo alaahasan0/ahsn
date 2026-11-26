@@ -1,0 +1,7 @@
+node_modules/
+output/_*
+output/audio-stems/
+output/stills/
+output/subtitle-cards/
+# large regenerable intermediates (see README → footage)
+public/footage/*_1440.mp4

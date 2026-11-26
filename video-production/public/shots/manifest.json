@@ -1,0 +1,359 @@
+{
+ "p_res_home": {
+  "w": 1170,
+  "h": 4986,
+  "bar": 171,
+  "tab": 215,
+  "dev": {
+   "width": 390,
+   "height": 844,
+   "scale": 3
+  }
+ },
+ "p_res_mybuilding": {
+  "w": 1170,
+  "h": 9183,
+  "bar": 171,
+  "tab": 215,
+  "dev": {
+   "width": 390,
+   "height": 844,
+   "scale": 3
+  }
+ },
+ "p_profile_overview": {
+  "w": 1170,
+  "h": 7299,
+  "bar": 171,
+  "tab": 215,
+  "dev": {
+   "width": 390,
+   "height": 844,
+   "scale": 3
+  }
+ },
+ "p_profile_identity": {
+  "w": 1170,
+  "h": 6060,
+  "bar": 171,
+  "tab": 215,
+  "dev": {
+   "width": 390,
+   "height": 844,
+   "scale": 3
+  }
+ },
+ "p_profile_units": {
+  "w": 1170,
+  "h": 5514,
+  "bar": 171,
+  "tab": 215,
+  "dev": {
+   "width": 390,
+   "height": 844,
+   "scale": 3
+  }
+ },
+ "p_res_find": {
+  "w": 1170,
+  "h": 4224,
+  "bar": 171,
+  "tab": 215,
+  "dev": {
+   "width": 390,
+   "height": 844,
+   "scale": 3
+  }
+ },
+ "p_owner_home": {
+  "w": 1170,
+  "h": 8502,
+  "bar": 171,
+  "tab": 215,
+  "dev": {
+   "width": 390,
+   "height": 844,
+   "scale": 3
+  }
+ },
+ "p_committee_home": {
+  "w": 1170,
+  "h": 9141,
+  "bar": 171,
+  "tab": 215,
+  "dev": {
+   "width": 390,
+   "height": 844,
+   "scale": 3
+  }
+ },
+ "p_committee_finance": {
+  "w": 1170,
+  "h": 7557,
+  "bar": 171,
+  "tab": 215,
+  "dev": {
+   "width": 390,
+   "height": 844,
+   "scale": 3
+  }
+ },
+ "p_res_requests": {
+  "w": 1170,
+  "h": 4896,
+  "bar": 171,
+  "tab": 215,
+  "dev": {
+   "width": 390,
+   "height": 844,
+   "scale": 3
+  }
+ },
+ "p_services": {
+  "w": 1170,
+  "h": 13362,
+  "bar": 171,
+  "tab": 215,
+  "dev": {
+   "width": 390,
+   "height": 844,
+   "scale": 3
+  }
+ },
+ "p_properties": {
+  "w": 1170,
+  "h": 16197,
+  "bar": 171,
+  "tab": 215,
+  "dev": {
+   "width": 390,
+   "height": 844,
+   "scale": 3
+  }
+ },
+ "p_listing": {
+  "w": 1170,
+  "h": 14133,
+  "bar": 171,
+  "tab": 215,
+  "dev": {
+   "width": 390,
+   "height": 844,
+   "scale": 3
+  }
+ },
+ "p_provider_home": {
+  "w": 1170,
+  "h": 7170,
+  "bar": 171,
+  "tab": 215,
+  "dev": {
+   "width": 390,
+   "height": 844,
+   "scale": 3
+  }
+ },
+ "t_muni_explorer": {
+  "w": 1640,
+  "h": 2360,
+  "dev": {
+   "width": 820,
+   "height": 1180,
+   "scale": 2
+  }
+ },
+ "t_muni_home": {
+  "w": 1640,
+  "h": 5458,
+  "dev": {
+   "width": 820,
+   "height": 1180,
+   "scale": 2
+  }
+ },
+ "t_muni_registry": {
+  "w": 1640,
+  "h": 3114,
+  "dev": {
+   "width": 820,
+   "height": 1180,
+   "scale": 2
+  }
+ },
+ "t_manager_home": {
+  "w": 1640,
+  "h": 5834,
+  "dev": {
+   "width": 820,
+   "height": 1180,
+   "scale": 2
+  }
+ },
+ "t_manager_workspace": {
+  "w": 1640,
+  "h": 4504,
+  "dev": {
+   "width": 820,
+   "height": 1180,
+   "scale": 2
+  }
+ },
+ "t_facility_home": {
+  "w": 1640,
+  "h": 5688,
+  "dev": {
+   "width": 820,
+   "height": 1180,
+   "scale": 2
+  }
+ },
+ "t_facility_assets": {
+  "w": 1640,
+  "h": 4790,
+  "dev": {
+   "width": 820,
+   "height": 1180,
+   "scale": 2
+  }
+ },
+ "t_facility_pm": {
+  "w": 1640,
+  "h": 5522,
+  "dev": {
+   "width": 820,
+   "height": 1180,
+   "scale": 2
+  }
+ },
+ "t_facility_wo": {
+  "w": 1640,
+  "h": 3258,
+  "dev": {
+   "width": 820,
+   "height": 1180,
+   "scale": 2
+  }
+ },
+ "t_committee_finance": {
+  "w": 1640,
+  "h": 5010,
+  "dev": {
+   "width": 820,
+   "height": 1180,
+   "scale": 2
+  }
+ },
+ "d_muni_explorer": {
+  "w": 2880,
+  "h": 1800,
+  "dev": {
+   "width": 1440,
+   "height": 900,
+   "scale": 2
+  }
+ },
+ "d_profile": {
+  "w": 2880,
+  "h": 2744,
+  "dev": {
+   "width": 1440,
+   "height": 900,
+   "scale": 2
+  }
+ },
+ "d_manager_home": {
+  "w": 2880,
+  "h": 1800,
+  "dev": {
+   "width": 1440,
+   "height": 900,
+   "scale": 2
+  }
+ },
+ "d_facility_home": {
+  "w": 2880,
+  "h": 1800,
+  "dev": {
+   "width": 1440,
+   "height": 900,
+   "scale": 2
+  }
+ },
+ "d_owner_home": {
+  "w": 2880,
+  "h": 1800,
+  "dev": {
+   "width": 1440,
+   "height": 900,
+   "scale": 2
+  }
+ },
+ "d_admin_home": {
+  "w": 2880,
+  "h": 1800,
+  "dev": {
+   "width": 1440,
+   "height": 900,
+   "scale": 2
+  }
+ },
+ "welcome": {
+  "w": 1170,
+  "h": 5382,
+  "dev": {
+   "width": 390,
+   "height": 844,
+   "scale": 3
+  }
+ },
+ "map_city_type": {
+  "w": 1440,
+  "h": 2559,
+  "view": {
+   "x": 150,
+   "y": 0,
+   "w": 394,
+   "h": 700
+  }
+ },
+ "map_city_ver": {
+  "w": 1440,
+  "h": 2559,
+  "view": {
+   "x": 150,
+   "y": 0,
+   "w": 394,
+   "h": 700
+  }
+ },
+ "map_zoom": {
+  "w": 1440,
+  "h": 2559,
+  "view": {
+   "x": 221.36356210149825,
+   "y": 293.31455109668894,
+   "w": 210,
+   "h": 373.1875
+  }
+ },
+ "map_zoom_ver": {
+  "w": 1440,
+  "h": 2559,
+  "view": {
+   "x": 221.36356210149825,
+   "y": 293.31455109668894,
+   "w": 210,
+   "h": 373.1875
+  }
+ },
+ "map_wide_source": {
+  "w": 1440,
+  "h": 2559,
+  "view": {
+   "x": 300,
+   "y": 0,
+   "w": 394,
+   "h": 700
+  }
+ }
+}
