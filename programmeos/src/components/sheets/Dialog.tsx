@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useRef, useState, type ReactNode } from 'react';
+import { createContext, useContext, useState, type ReactNode } from 'react';
 import { Modal, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import Animated, { FadeIn, FadeOut, ZoomIn } from 'react-native-reanimated';
 
@@ -27,21 +27,19 @@ const DialogContext = createContext<{ confirm: (o: DialogOptions) => Promise<{ c
 export function DialogProvider({ children }: { children: ReactNode }) {
   const [pending, setPending] = useState<Pending | null>(null);
   const [text, setText] = useState('');
-  const confirm = useCallback(
-    (o: DialogOptions) =>
+  const [api] = useState(() => ({
+    confirm: (o: DialogOptions) =>
       new Promise<{ confirmed: boolean; text?: string }>((resolve) => {
         setText('');
         setPending({ ...o, resolve });
       }),
-    [],
-  );
-  const apiRef = useRef({ confirm: (o: DialogOptions) => confirm(o) });
+  }));
   const close = (confirmed: boolean) => {
     pending?.resolve({ confirmed, text: text.trim() || undefined });
     setPending(null);
   };
   return (
-    <DialogContext.Provider value={apiRef.current}>
+    <DialogContext.Provider value={api}>
       {children}
       {pending ? <DialogView o={pending} text={text} setText={setText} onClose={close} /> : null}
     </DialogContext.Provider>

@@ -11,7 +11,7 @@ export default function LearnerTabsLayout() {
   if (mode !== 'learner') return <Redirect href={homeRouteFor(mode)} />;
   const tabs: TabConfig[] = [
     { name: 'index', label: 'Home', icon: 'house' },
-    { name: 'programme', label: 'My Programme', icon: 'graduation-cap' },
+    { name: 'programme', label: 'Programme', icon: 'graduation-cap' },
     { name: 'schedule', label: 'Schedule', icon: 'calendar-days' },
     { name: 'materials', label: 'Materials', icon: 'book-open' },
     { name: 'profile', label: 'Profile', icon: 'user-round' },

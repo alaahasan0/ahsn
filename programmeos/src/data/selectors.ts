@@ -183,7 +183,7 @@ export function readinessFor(db: DB, programmeId: ID): ReadinessView {
         total = list.length;
         for (const a of list) {
           const f = getFaculty(db, a.facultyId);
-          const item: PendingItem = { id: a.id, label: facultyName(f), detail: `${a.role} · ${a.status}`, route: `/faculty/${a.facultyId}`, ownerId: c.ownerId, due: c.due };
+          const item: PendingItem = { id: a.id, label: `${facultyName(f)} — confirmation`, detail: `${a.role} · ${a.status}`, route: `/faculty/${a.facultyId}`, ownerId: c.ownerId, due: c.due };
           if (READY_ASSIGNMENT.includes(a.status)) {
             done++;
             completed.push(item);
@@ -211,7 +211,7 @@ export function readinessFor(db: DB, programmeId: ID): ReadinessView {
         const list = db.hotelBookings.filter((b) => b.programmeId === programmeId && b.status !== 'Cancelled');
         total = list.length;
         for (const b of list) {
-          const item: PendingItem = { id: b.id, label: guestName(db, b.guest), detail: `${b.roomType} · ${b.status}`, route: `/booking/${b.id}`, ownerId: c.ownerId, due: b.cancellationDeadline };
+          const item: PendingItem = { id: b.id, label: `Room for ${guestName(db, b.guest)}`, detail: `${b.roomType} · ${b.status}`, route: `/booking/${b.id}`, ownerId: c.ownerId, due: b.cancellationDeadline };
           if (READY_BOOKING.includes(b.status)) {
             done++;
             completed.push(item);
@@ -224,7 +224,7 @@ export function readinessFor(db: DB, programmeId: ID): ReadinessView {
         total = Math.max(p.capacity, list.length);
         for (const e of list) {
           const l = getLearner(db, e.learnerId);
-          const item: PendingItem = { id: e.id, label: learnerName(l), detail: e.status, route: `/learner/${e.learnerId}`, ownerId: c.ownerId, due: c.due };
+          const item: PendingItem = { id: e.id, label: `${learnerName(l)} — registration`, detail: e.status, route: `/learner/${e.learnerId}`, ownerId: c.ownerId, due: c.due };
           if (READY_ENROLMENT.includes(e.status)) {
             done++;
             completed.push(item);
@@ -238,7 +238,7 @@ export function readinessFor(db: DB, programmeId: ID): ReadinessView {
         const list = db.itineraries.filter((t) => t.programmeId === programmeId);
         total = list.length;
         for (const t of list) {
-          const item: PendingItem = { id: t.id, label: personName(db, t.traveller.id), detail: t.status, route: `/travel/${t.id}`, ownerId: c.ownerId, due: c.due };
+          const item: PendingItem = { id: t.id, label: `Flights for ${personName(db, t.traveller.id)}`, detail: t.status, route: `/travel/${t.id}`, ownerId: c.ownerId, due: c.due };
           if (READY_TRAVEL.includes(t.status)) {
             done++;
             completed.push(item);

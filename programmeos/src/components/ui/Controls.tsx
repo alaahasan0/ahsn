@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ScrollView, TextInput, View, type LayoutChangeEvent, type StyleProp, type ViewStyle } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 
 import { fontFor, makeStyles, useStyles, useTheme } from '@/theme';
 
@@ -87,9 +87,13 @@ export function SegmentedControl<T extends string>({
   const index = Math.max(0, options.findIndex((o) => o.value === value));
   const segW = width ? (width - 4) / options.length : 0;
   const x = useSharedValue(0);
+  const [placed, setPlaced] = useState(false);
   useEffect(() => {
-    x.value = withSpring(index * segW, { damping: 24, stiffness: 300 });
-  }, [index, segW, x]);
+    if (!segW) return;
+    // Jump into place on first layout; ease (no overshoot) on later changes.
+    x.set(placed ? withTiming(index * segW, { duration: 220, easing: Easing.out(Easing.cubic) }) : index * segW);
+    if (!placed) setTimeout(() => setPlaced(true), 0);
+  }, [index, segW, x, placed]);
   const thumb = useAnimatedStyle(() => ({ transform: [{ translateX: x.value }] }));
   return (
     <View style={[s.segTrack, size === 'sm' && { height: 30 }, style]} onLayout={(e: LayoutChangeEvent) => setWidth(e.nativeEvent.layout.width)} accessibilityRole="tablist">
@@ -211,9 +215,9 @@ export function Checkbox({ checked, onChange, tone = 'success', size = 24, acces
       feedback="none"
       hitSlop={10}
       onPress={() => {
-        scale.value = withSpring(0.82, { damping: 12, stiffness: 400 }, () => {
-          scale.value = withSpring(1);
-        });
+        scale.set(withSpring(0.82, { damping: 12, stiffness: 400 }, () => {
+          scale.set(withSpring(1));
+        }));
         haptic(checked ? 'selection' : 'success');
         onChange?.(!checked);
       }}

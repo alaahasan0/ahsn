@@ -230,7 +230,7 @@ export function DonutChart({ data, size = 140, stroke = 18, centerLabel, centerV
   const total = data.reduce((s, d) => s + d.value, 0) || 1;
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;
-  let offset = 0;
+  const offsets = data.reduce<number[]>((acc, d, i) => [...acc, i === 0 ? 0 : acc[i - 1] + (data[i - 1].value / total) * c], []);
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 18 }}>
       <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
@@ -239,7 +239,7 @@ export function DonutChart({ data, size = 140, stroke = 18, centerLabel, centerV
           {data.map((d, i) => {
             const len = (d.value / total) * c;
             const gap = data.length > 1 ? 2.5 : 0;
-            const el = (
+            return (
               <Circle
                 key={d.label}
                 cx={size / 2}
@@ -250,12 +250,10 @@ export function DonutChart({ data, size = 140, stroke = 18, centerLabel, centerV
                 strokeOpacity={sel != null && sel !== i ? 0.35 : 1}
                 fill="none"
                 strokeDasharray={`${Math.max(0, len - gap)} ${c}`}
-                strokeDashoffset={-offset}
+                strokeDashoffset={-offsets[i]}
                 transform={`rotate(-90 ${size / 2} ${size / 2})`}
               />
             );
-            offset += len;
-            return el;
           })}
         </Svg>
         <View style={{ alignItems: 'center', maxWidth: size - stroke * 2 - 8 }}>

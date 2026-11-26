@@ -70,7 +70,9 @@ export function Screen({
   const s = useStyles(styles);
   const { colors, isDark } = useTheme();
   const insets = useSafeAreaInsets();
-  const tabBarHeight = useContext(BottomTabBarHeightContext) ?? 0;
+  const tabHeightCtx = useContext(BottomTabBarHeightContext);
+  const tabBarHeight = tabHeightCtx ?? 0;
+  const inTabs = tabHeightCtx !== undefined;
   const navigation = useNavigation();
   const toast = useToast();
   const [refreshing, setRefreshing] = useState(false);
@@ -79,7 +81,8 @@ export function Screen({
     y.value = e.contentOffset.y;
   });
 
-  const showBack = back ?? navigation.canGoBack();
+  // Tab roots have no back; pushed screens always do (deep links fall back to Home).
+  const showBack = back ?? (!inTabs || navigation.canGoBack());
   const handleBack = () => {
     if (onBack) return onBack();
     if (navigation.canGoBack()) navigation.goBack();

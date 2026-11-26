@@ -79,9 +79,11 @@ export function SelectSheet<T extends string>({
 }) {
   const s = useStyles(styles);
   const [q, setQ] = useState('');
-  useEffect(() => {
-    if (!visible) setQ('');
-  }, [visible]);
+  const [wasVisible, setWasVisible] = useState(visible);
+  if (visible !== wasVisible) {
+    setWasVisible(visible);
+    if (visible) setQ('');
+  }
   const shown = options.filter((o) => searchMatch(q, o.label, o.detail));
   const isSearch = searchable ?? options.length > 8;
   return (
@@ -224,12 +226,14 @@ export function MonthCalendar({
 export function DatePickerSheet({ visible, onClose, value, onChange, title = 'Select date', minDate }: { visible: boolean; onClose: () => void; value?: string; onChange: (d: string) => void; title?: string; minDate?: string }) {
   const [month, setMonth] = useState(startOfMonth(value ?? DEMO_TODAY));
   const [draft, setDraft] = useState(value ?? DEMO_TODAY);
-  useEffect(() => {
+  const [wasVisible, setWasVisible] = useState(visible);
+  if (visible !== wasVisible) {
+    setWasVisible(visible);
     if (visible) {
       setDraft(value ?? DEMO_TODAY);
       setMonth(startOfMonth(value ?? DEMO_TODAY));
     }
-  }, [visible, value]);
+  }
   return (
     <Sheet
       visible={visible}
@@ -299,15 +303,20 @@ function Wheel({ items, value, onChange, label }: { items: string[]; value: stri
 
 export function TimePickerSheet({ visible, onClose, value = '09:00', onChange, title = 'Select time', zoneLabel }: { visible: boolean; onClose: () => void; value?: string; onChange: (t: string) => void; title?: string; zoneLabel?: string }) {
   const s = useStyles(styles);
+  const snap = (v: string) => {
+    const mm = Math.round(Number(v.slice(3, 5)) / 5) * 5;
+    return String(mm === 60 ? 55 : mm).padStart(2, '0');
+  };
   const [h, setH] = useState(value.slice(0, 2));
-  const [m, setM] = useState(value.slice(3, 5));
-  useEffect(() => {
+  const [m, setM] = useState(snap(value));
+  const [wasVisible, setWasVisible] = useState(visible);
+  if (visible !== wasVisible) {
+    setWasVisible(visible);
     if (visible) {
       setH(value.slice(0, 2));
-      const mm = Math.round(Number(value.slice(3, 5)) / 5) * 5;
-      setM(String(mm === 60 ? 55 : mm).padStart(2, '0'));
+      setM(snap(value));
     }
-  }, [visible, value]);
+  }
   const hours = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'));
   const mins = Array.from({ length: 12 }, (_, i) => String(i * 5).padStart(2, '0'));
   return (

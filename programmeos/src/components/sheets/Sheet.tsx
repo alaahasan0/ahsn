@@ -38,54 +38,66 @@ export function Sheet({ visible, onClose, title, subtitle, children, footer, siz
   const insets = useSafeAreaInsets();
   const { height: winH } = useWindowDimensions();
   const [mounted, setMounted] = useState(visible);
+  // Mount as soon as the sheet is asked to show (render-phase state adjustment).
+  if (visible && !mounted) setMounted(true);
   const maxH = winH * 0.92;
   const ty = useSharedValue(winH);
   const backdrop = useSharedValue(0);
   const closingRef = useRef(false);
+  const onCloseRef = useRef(onClose);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   useEffect(() => {
     if (visible) {
       closingRef.current = false;
-      setMounted(true);
-      ty.value = winH;
-      backdrop.value = 0;
-      requestAnimationFrame(() => {
-        ty.value = reduceMotion ? withTiming(0, { duration: 1 }) : withSpring(0, { damping: 26, stiffness: 260, mass: 0.9 });
-        backdrop.value = withTiming(1, { duration: 220 });
+      ty.set(winH);
+      backdrop.set(0);
+      const raf = requestAnimationFrame(() => {
+        ty.set(reduceMotion ? withTiming(0, { duration: 1 }) : withSpring(0, { damping: 26, stiffness: 260, mass: 0.9, overshootClamping: true }));
+        backdrop.set(withTiming(1, { duration: 220 }));
       });
-    } else if (mounted) {
-      backdrop.value = withTiming(0, { duration: 200 });
-      ty.value = withTiming(winH, { duration: reduceMotion ? 1 : 230, easing: Easing.in(Easing.cubic) }, (done) => {
-        if (done) runOnJS(setMounted)(false);
-      });
+      return () => cancelAnimationFrame(raf);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visible]);
+    backdrop.set(withTiming(0, { duration: 200 }));
+    ty.set(
+      withTiming(winH, { duration: reduceMotion ? 1 : 230, easing: Easing.in(Easing.cubic) }, (done) => {
+        if (done) runOnJS(setMounted)(false);
+      }),
+    );
+  }, [visible, winH, reduceMotion, ty, backdrop]);
 
   const requestClose = () => {
     if (closingRef.current) return;
     closingRef.current = true;
-    onClose();
+    onCloseRef.current();
   };
 
-  const pan = useRef(
+  // PanResponder callbacks only ever run in gesture events, never during render, so reading
+  // refs inside them is safe; the compiler lint cannot see that through the factory.
+  // eslint-disable-next-line react-hooks/refs
+  const [pan] = useState(() =>
     PanResponder.create({
       onMoveShouldSetPanResponder: (_, g) => g.dy > 6 && Math.abs(g.dy) > Math.abs(g.dx),
       onPanResponderMove: (_, g) => {
-        ty.value = Math.max(0, g.dy);
-        backdrop.value = Math.max(0, 1 - g.dy / 500);
+        ty.set(Math.max(0, g.dy));
+        backdrop.set(Math.max(0, 1 - g.dy / 500));
       },
       onPanResponderRelease: (_, g) => {
-        if (g.dy > 110 || g.vy > 1.1) requestCloseRef.current();
-        else {
-          ty.value = withSpring(0, { damping: 24, stiffness: 280 });
-          backdrop.value = withTiming(1, { duration: 150 });
+        if (g.dy > 110 || g.vy > 1.1) {
+          if (!closingRef.current) {
+            closingRef.current = true;
+            onCloseRef.current();
+          }
+        } else {
+          ty.set(withSpring(0, { damping: 24, stiffness: 280, overshootClamping: true }));
+          backdrop.set(withTiming(1, { duration: 150 }));
         }
       },
     }),
-  ).current;
-  const requestCloseRef = useRef(requestClose);
-  requestCloseRef.current = requestClose;
+  );
 
   const sheetStyle = useAnimatedStyle(() => ({ transform: [{ translateY: ty.value }] }));
   const backdropStyle = useAnimatedStyle(() => ({ opacity: backdrop.value }));

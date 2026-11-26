@@ -52,7 +52,6 @@ export function useTheme(): Theme {
 const styleCache = new WeakMap<object, Map<string, unknown>>();
 
 export type NamedStyles<T> = { [P in keyof T]: ViewStyle | TextStyle | ImageStyle };
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyStyles = NamedStyles<any>;
 
 export function useStyles<T extends NamedStyles<T>>(factory: (t: Theme) => T & AnyStyles): T {

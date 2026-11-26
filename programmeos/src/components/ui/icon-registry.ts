@@ -188,6 +188,75 @@ import ListTodo from 'lucide-react-native/icons/list-todo';
 import CircleHelp from 'lucide-react-native/icons/circle-help';
 import CirclePlus from 'lucide-react-native/icons/circle-plus';
 import Import from 'lucide-react-native/icons/import';
+import CalendarPlus from 'lucide-react-native/icons/calendar-plus';
+import CalendarX from 'lucide-react-native/icons/calendar-x';
+import IdCard from 'lucide-react-native/icons/id-card';
+import Ticket from 'lucide-react-native/icons/ticket';
+import Sparkle from 'lucide-react-native/icons/sparkle';
+import CircleUser from 'lucide-react-native/icons/circle-user';
+import UserCog from 'lucide-react-native/icons/user-cog';
+import Wrench from 'lucide-react-native/icons/wrench';
+import Gift from 'lucide-react-native/icons/gift';
+import MailCheck from 'lucide-react-native/icons/mail-check';
+import MailOpen from 'lucide-react-native/icons/mail-open';
+import SendHorizontal from 'lucide-react-native/icons/send-horizontal';
+import ListFilter from 'lucide-react-native/icons/list-filter';
+import FilePlus from 'lucide-react-native/icons/file-plus';
+import FolderPlus from 'lucide-react-native/icons/folder-plus';
+import FileSearch from 'lucide-react-native/icons/file-search';
+import Scan from 'lucide-react-native/icons/scan';
+import Camera from 'lucide-react-native/icons/camera';
+import Image from 'lucide-react-native/icons/image';
+import SquareCheck from 'lucide-react-native/icons/square-check';
+import Percent from 'lucide-react-native/icons/percent';
+import DollarSign from 'lucide-react-native/icons/dollar-sign';
+import Euro from 'lucide-react-native/icons/euro';
+import Timer from 'lucide-react-native/icons/timer';
+import AlarmClock from 'lucide-react-native/icons/alarm-clock';
+import Bookmark from 'lucide-react-native/icons/bookmark';
+import Tag from 'lucide-react-native/icons/tag';
+import Tags from 'lucide-react-native/icons/tags';
+import Hash from 'lucide-react-native/icons/hash';
+import Quote from 'lucide-react-native/icons/quote';
+import Reply from 'lucide-react-native/icons/reply';
+import Forward from 'lucide-react-native/icons/forward';
+import Pin from 'lucide-react-native/icons/pin';
+import PinOff from 'lucide-react-native/icons/pin-off';
+import CloudUpload from 'lucide-react-native/icons/cloud-upload';
+import CloudOff from 'lucide-react-native/icons/cloud-off';
+import Server from 'lucide-react-native/icons/server';
+import Shield from 'lucide-react-native/icons/shield';
+import ShieldAlert from 'lucide-react-native/icons/shield-alert';
+import UserSearch from 'lucide-react-native/icons/user-search';
+import LayoutList from 'lucide-react-native/icons/layout-list';
+import LayoutDashboard from 'lucide-react-native/icons/layout-dashboard';
+import Kanban from 'lucide-react-native/icons/kanban';
+import Columns3 from 'lucide-react-native/icons/columns-3';
+import Rows3 from 'lucide-react-native/icons/rows-3';
+import Grid3x3 from 'lucide-react-native/icons/grid-3x3';
+import BadgeAlert from 'lucide-react-native/icons/badge-alert';
+import BadgeInfo from 'lucide-react-native/icons/badge-info';
+import BadgeDollarSign from 'lucide-react-native/icons/badge-dollar-sign';
+import Sigma from 'lucide-react-native/icons/sigma';
+import Calculator from 'lucide-react-native/icons/calculator';
+import Wifi from 'lucide-react-native/icons/wifi';
+import BatteryMedium from 'lucide-react-native/icons/battery-medium';
+import Sofa from 'lucide-react-native/icons/sofa';
+import Monitor from 'lucide-react-native/icons/monitor';
+import Laptop from 'lucide-react-native/icons/laptop';
+import TabletSmartphone from 'lucide-react-native/icons/tablet-smartphone';
+import Headphones from 'lucide-react-native/icons/headphones';
+import MicVocal from 'lucide-react-native/icons/mic-vocal';
+import PhoneCall from 'lucide-react-native/icons/phone-call';
+import VideoOff from 'lucide-react-native/icons/video-off';
+import Cast from 'lucide-react-native/icons/cast';
+import Radio from 'lucide-react-native/icons/radio';
+import SunMoon from 'lucide-react-native/icons/sun-moon';
+import Contrast from 'lucide-react-native/icons/contrast';
+import Palette from 'lucide-react-native/icons/palette';
+import Type from 'lucide-react-native/icons/type';
+import Text from 'lucide-react-native/icons/text';
+import TypeOutline from 'lucide-react-native/icons/type-outline';
 
 export const iconRegistry = {
   'house': House,
@@ -376,6 +445,75 @@ export const iconRegistry = {
   'circle-help': CircleHelp,
   'circle-plus': CirclePlus,
   'import': Import,
+  'calendar-plus': CalendarPlus,
+  'calendar-x': CalendarX,
+  'id-card': IdCard,
+  'ticket': Ticket,
+  'sparkle': Sparkle,
+  'circle-user': CircleUser,
+  'user-cog': UserCog,
+  'wrench': Wrench,
+  'gift': Gift,
+  'mail-check': MailCheck,
+  'mail-open': MailOpen,
+  'send-horizontal': SendHorizontal,
+  'list-filter': ListFilter,
+  'file-plus': FilePlus,
+  'folder-plus': FolderPlus,
+  'file-search': FileSearch,
+  'scan': Scan,
+  'camera': Camera,
+  'image': Image,
+  'square-check': SquareCheck,
+  'percent': Percent,
+  'dollar-sign': DollarSign,
+  'euro': Euro,
+  'timer': Timer,
+  'alarm-clock': AlarmClock,
+  'bookmark': Bookmark,
+  'tag': Tag,
+  'tags': Tags,
+  'hash': Hash,
+  'quote': Quote,
+  'reply': Reply,
+  'forward': Forward,
+  'pin': Pin,
+  'pin-off': PinOff,
+  'cloud-upload': CloudUpload,
+  'cloud-off': CloudOff,
+  'server': Server,
+  'shield': Shield,
+  'shield-alert': ShieldAlert,
+  'user-search': UserSearch,
+  'layout-list': LayoutList,
+  'layout-dashboard': LayoutDashboard,
+  'kanban': Kanban,
+  'columns-3': Columns3,
+  'rows-3': Rows3,
+  'grid-3x3': Grid3x3,
+  'badge-alert': BadgeAlert,
+  'badge-info': BadgeInfo,
+  'badge-dollar-sign': BadgeDollarSign,
+  'sigma': Sigma,
+  'calculator': Calculator,
+  'wifi': Wifi,
+  'battery-medium': BatteryMedium,
+  'sofa': Sofa,
+  'monitor': Monitor,
+  'laptop': Laptop,
+  'tablet-smartphone': TabletSmartphone,
+  'headphones': Headphones,
+  'mic-vocal': MicVocal,
+  'phone-call': PhoneCall,
+  'video-off': VideoOff,
+  'cast': Cast,
+  'radio': Radio,
+  'sun-moon': SunMoon,
+  'contrast': Contrast,
+  'palette': Palette,
+  'type': Type,
+  'text': Text,
+  'type-outline': TypeOutline,
 } satisfies Record<string, ComponentType<LucideProps>>;
 
 export type IconName = keyof typeof iconRegistry;

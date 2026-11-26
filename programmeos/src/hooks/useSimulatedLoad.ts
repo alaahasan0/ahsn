@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useSession } from '@/data/session';
 
@@ -11,26 +11,25 @@ const seen = new Set<string>();
  */
 export function useSimulatedLoad(key: string) {
   const { simulateSlowLoading, simulateErrors } = useSession();
-  const first = !seen.has(key);
-  const [state, setState] = useState<'loading' | 'ready' | 'error'>(first || simulateSlowLoading ? 'loading' : simulateErrors ? 'error' : 'ready');
-  const attempt = useRef(0);
-
-  const run = () => {
-    setState('loading');
-    const delay = simulateSlowLoading ? 1800 : 450;
-    const t = setTimeout(() => {
-      seen.add(key);
-      const fail = simulateErrors && attempt.current === 0;
-      attempt.current += 1;
-      setState(fail ? 'error' : 'ready');
-    }, delay);
-    return () => clearTimeout(t);
-  };
+  const [state, setState] = useState<'loading' | 'ready' | 'error'>(() => (!seen.has(key) || simulateSlowLoading || simulateErrors ? 'loading' : 'ready'));
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
-    if (state === 'loading') return run();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (state !== 'loading') return;
+    const t = setTimeout(
+      () => {
+        seen.add(key);
+        setState(simulateErrors && attempt === 0 ? 'error' : 'ready');
+      },
+      simulateSlowLoading ? 1800 : 450,
+    );
+    return () => clearTimeout(t);
+  }, [state, attempt, key, simulateErrors, simulateSlowLoading]);
 
-  return { loading: state === 'loading', error: state === 'error', retry: run };
+  const retry = () => {
+    setAttempt((a) => a + 1);
+    setState('loading');
+  };
+
+  return { loading: state === 'loading', error: state === 'error', retry };
 }

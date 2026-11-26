@@ -15,7 +15,7 @@ export default function FacultyTabsLayout() {
   const tabs: TabConfig[] = [
     { name: 'index', label: 'Home', icon: 'house' },
     { name: 'schedule', label: 'My Schedule', icon: 'calendar-days' },
-    { name: 'programmes', label: 'My Programmes', icon: 'layers' },
+    { name: 'programmes', label: 'Programmes', icon: 'layers' },
     { name: 'inbox', label: 'Inbox', icon: 'inbox', badge: unreadCount(db, 'faculty') },
     { name: 'profile', label: 'Profile', icon: 'user-round' },
   ];
