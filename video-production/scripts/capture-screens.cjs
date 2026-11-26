@@ -56,8 +56,8 @@ const SHOTS = [
 const MAPS = [
   { id: 'map_city_type', mode: 'type', view: { x: 150, y: 0, w: 394, h: 700 } },
   { id: 'map_city_ver', mode: 'verification', view: { x: 150, y: 0, w: 394, h: 700 } },
-  { id: 'map_zoom', mode: 'type', focus: B142, w: 210 },
-  { id: 'map_zoom_ver', mode: 'verification', focus: B142, w: 210 },
+  { id: 'map_zoom', mode: 'type', focus: B142, w: 210, noLabels: true },
+  { id: 'map_zoom_ver', mode: 'verification', focus: B142, w: 210, noLabels: true },
   { id: 'map_wide_source', mode: 'source', view: { x: 300, y: 0, w: 394, h: 700 } },
 ];
 
@@ -106,6 +106,7 @@ const MAPS = [
       if (m.focus) { const c = B.map.centroid(B.data.building(m.focus).poly); const h = m.w * 853 / 480; m.view = { x: c[0] - m.w / 2, y: c[1] - h * 0.55, w: m.w, h }; B.map.setView('film', m.view); }
       document.body.style.margin = '0';
       document.getElementById('app').innerHTML = `<div style="height:100vh">${B.map.render({ id: 'film', mode: m.mode, static: true, legend: false, badge: false, selected: m.selected || null, height: '100vh' })}</div>`;
+      if (m.noLabels) document.querySelectorAll('.map-label').forEach((el) => el.remove());
       document.querySelector('.map-shell').style.borderRadius = '0';
       document.querySelector('.map-shell').style.border = '0';
       return m.view;

@@ -26,7 +26,7 @@ export const S03 = () => {
   const ty = lerp(0, (V1.y - V2.y) * S2, z);
   const drift = lerp(1.0, 1.035, prog(f, 0, t(17.3), E.soft));
   const sharp = prog(f, t(18.85), t(19.2));
-  const push = lerp(1, 1.12, prog(f, t(19.1), t(26.4), E.soft));
+  const push = lerp(1, 1.55, prog(f, t(19.1), t(21.2), E.inOut)) * lerp(1, 1.06, prog(f, t(21.2), t(26.4), E.soft));
   const c = [(B142.c[0] - V2.x) * S2, (B142.c[1] - V2.y) * S2];
   const draw = prog(f, t(19.15), t(20.3), E.inOut);
   const fillP = prog(f, t(19.9), t(20.6));

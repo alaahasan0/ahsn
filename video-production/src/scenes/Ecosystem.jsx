@@ -164,8 +164,9 @@ export const S10 = () => {
       <div style={{ position: 'absolute', top: 1430, left: 720 - 160 * rule, width: 320 * rule, height: 5, borderRadius: 5, background: C.mint }} />
       <div style={{ position: 'absolute', top: 1500, left: 0, right: 0, display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '6px 24px', paddingInline: 100 }}>
         {WORDS.map(([w, at], i) => {
-          const p = prog(f, t10(at) - 3, t10(at) + 14);
-          return <span key={w} style={{ fontFamily: FONT.display, fontWeight: i === 3 ? 700 : 600, fontSize: 62, color: i === 3 ? C.mintInk : C.navy, opacity: p, filter: `blur(${(1 - p) * 6}px)`, transform: `translateY(${(1 - p) * 16}px)`, display: 'inline-block' }}>{w}</span>;
+          const base = prog(f, t10(84.3), t10(84.9));
+          const p = prog(f, t10(at) - 3, t10(at) + 12);
+          return <span key={w} style={{ fontFamily: FONT.display, fontWeight: i === 3 ? 700 : 600, fontSize: 62, color: i === 3 ? C.mintInk : C.navy, opacity: base * lerp(0.16, 1, p), transform: `translateY(${(1 - p) * 6}px)`, display: 'inline-block' }}>{w}</span>;
         })}
       </div>
       <div style={{ position: 'absolute', top: 2405, left: 0, right: 0, textAlign: "center", fontFamily: FONT.text, fontWeight: 500, fontSize: 25, letterSpacing: '0.06em', color: C.slate, opacity: prog(f, t10(86.0), t10(87.0)) * 0.85 }}>
