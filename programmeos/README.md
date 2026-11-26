@@ -195,6 +195,10 @@ is in the faculty directory, and every hotel booking points at a real programme 
   persist. Settings → Reset sample data restores the scenario at any time.
 - **Fixed offsets for time zones.** Conversions use offsets valid for spring 2027 instead of a
   full time-zone database.
-- **Verification so far.** The prototype was checked in a phone-sized browser through the Expo web
-  build. It uses only Expo Go-compatible modules, but it has not been run on a physical device or
-  simulator from this environment.
+- **Verification so far.** Every route (about 125 screens) was screenshotted in light and dark mode
+  in a phone-sized browser through the Expo web build, with no console errors. Ten key flows were
+  click-tested end to end. The iOS and Android bundles compile to Hermes bytecode and use only
+  Expo Go-compatible modules, but the app has not been run on a physical device or simulator from
+  this environment.
+- **History before March 2027.** Some reports chart earlier months from illustrative series kept in
+  `src/features/reports/data.ts`. Those rows don't link through to programme records.
