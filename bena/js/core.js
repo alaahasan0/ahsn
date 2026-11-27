@@ -174,6 +174,8 @@
   /* Title override for the current page (set during page render). */
   B.title = (t, sub) => { B._title = t; B._sub = sub; };
   B.navActive = (id) => { B._navActive = id; };
+  /** Enterprise breadcrumbs for the current page: B.crumbs([{ label, go }, …, { label }]) — last item is the current page. */
+  B.crumbs = (items) => { B._crumbs = items; };
 
   const after = [];
   /** Run fn after the current render is in the DOM (bind maps etc). */
@@ -182,7 +184,7 @@
   B.render = ({ keepScroll = true, animate = false } = {}) => {
     const root = document.getElementById('app');
     const y = window.scrollY;
-    B._title = null; B._sub = null; B._navActive = null;
+    B._title = null; B._sub = null; B._navActive = null; B._crumbs = null;
     after.length = 0;
     let markup;
     try {

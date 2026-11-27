@@ -63,6 +63,8 @@
     return m ? m.id : null;
   };
 
+  const groupOf = (r, id) => { let g = null; for (const m of r.menu) { if (m.group) g = m.group; else if (m.id === id) return g; } return null; };
+
   B.shell = {
     render(route) {
       const r = B.roles[route.role];
@@ -74,30 +76,39 @@
       const D = B.data;
       const me = D.person(D.me[r.id]);
       const tabs = r.nav === 'tabs';
-      return `<div class="app">
+      const collapsed = B.store.get('sbc', false);
+      const home = `${r.id}-${r.home || 'home'}`;
+      const g = act ? groupOf(r, act) : null;
+      const crumbs = B._crumbs || [{ label: r.org || r.name, go: home }, ...(g ? [{ label: g }] : []), ...(actItem && B._title && route.page !== act ? [{ label: actItem.label, go: `${r.id}-${act}` }] : []), { label: title }];
+      const crumbHtml = crumbs.map((c, i) => (i === crumbs.length - 1 ? `<b class="truncate">${tx(c.label)}</b>` : c.go ? `<button class="cr-link truncate" data-go="${c.go}">${tx(c.label)}</button>` : `<span class="truncate">${tx(c.label)}</span>`)).join(icon('chevR', 'flip'));
+      const ws = r.workspaces && r.workspaces.length ? r.workspaces : null;
+      const wsCur = ws ? (ws.find((w) => w.id === B.get(`ws:${r.id}`)) || ws[0]) : null;
+      return `<div class="app ${collapsed ? 'sb-collapsed' : ''}">
         <aside class="sidebar" id="sidebar">
-          <button class="brand" data-go="${r.id}-${r.home || 'home'}" style="background:none">${B.logo(30)}<span>BENA</span></button>
+          <div class="sb-top"><button class="brand" data-go="${home}" style="background:none">${B.logo(30)}<span>BENA</span></button><button class="sb-collapse" data-act="sbCollapse" title="${esc(collapsed ? L('Expand sidebar', 'توسيع الشريط') : L('Collapse sidebar', 'طيّ الشريط'))}">${icon(collapsed ? 'chevR' : 'chevL', 'flip')}</button></div>
           <button class="org-card" data-act="roleSwitcher"><span class="oi">${icon(r.icon)}</span><span class="grow" style="min-width:0"><span class="on" style="display:block">${tx(r.org || r.name)}</span><span class="or" style="display:block">${tx(r.name)} · ${L('demo', 'تجريبي')}</span></span>${icon('swap', 'chev')}</button>
           <nav class="nav" aria-label="${L('Main', 'الرئيسية')}">${r.menu.map((m) => m.group ? `<div class="nav-group">${tx(m.group)}</div>` : `<button class="nav-item ${m.id === act ? 'active' : ''}" data-go="${r.id}-${m.id}" title="${esc(tx(m.label))}">${icon(m.icon)}<span>${tx(m.label)}</span>${m.count ? `<span class="count">${m.count}</span>` : ''}</button>`).join('')}</nav>
           <div class="side-foot">
             <button class="side-btn" data-act="lang" title="${B.isAr() ? 'English' : 'العربية'}">${icon('globe')}<span>${B.isAr() ? 'English' : 'العربية'}</span></button>
             <button class="side-btn" data-act="roleSwitcher" title="${L('Switch demo role', 'تبديل الدور')}">${icon('swap')}<span>${L('Switch demo role', 'تبديل الدور التجريبي')}</span></button>
-            <button class="side-btn" data-go="welcome" title="${L('Exit to welcome', 'الخروج للبداية')}">${icon('logout', 'flip')}<span>${L('Exit to welcome', 'الخروج إلى البداية')}</span></button>
-            <div class="demo-note">${L('Demo data only — resets on reload.', 'بيانات تجريبية فقط — تُعاد عند التحديث.')}</div>
+            <button class="side-btn" data-go="hub" title="${L('Demo hub', 'مركز العرض')}">${icon('grid')}<span>${L('Demo hub', 'مركز العرض')}</span></button>
+            <div class="demo-note">${L('Prototype · sample data — resets on reload.', 'نموذج أولي · بيانات نموذجية — تُعاد عند التحديث.')}</div>
           </div>
         </aside>
         <div class="drawer-scrim" data-act="drawer"></div>
         <div class="main">
           <header class="topbar">
-            <div class="crumbs"><span>${tx(r.name)}</span>${icon('chevR', 'flip')}<b class="truncate">${title}</b></div>
-            <div class="top-search">${icon('search')}<input type="search" placeholder="${esc(L('Search buildings, IDs, people…', 'ابحث عن مبانٍ أو أرقام أو أشخاص…'))}" data-act="globalSearch" readonly></div>
-            <span class="demo-chip">${icon('info')}${L('Demo data', 'بيانات تجريبية')}</span>
+            <nav class="crumbs" aria-label="${L('Breadcrumb', 'مسار التنقل')}">${crumbHtml}</nav>
+            ${wsCur ? `<button class="ws-select" data-act="wsMenu" data-menu title="${L('Workspace', 'مساحة العمل')}">${icon('layers')}<span class="truncate">${tx(wsCur.label)}</span>${icon('chevD', 'chev')}</button>` : ''}
+            <div class="top-search">${icon('search')}<input type="search" placeholder="${esc(L('Search buildings, IDs, people…', 'ابحث عن مبانٍ أو أرقام أو أشخاص…'))}" data-act="globalSearch" readonly><kbd>/</kbd></div>
+            <span class="demo-chip" title="${esc(L('All data in this prototype is fictional sample data', 'جميع البيانات في هذا النموذج بيانات نموذجية وهمية'))}">${icon('info')}${L('Sample data', 'بيانات نموذجية')}</span>
             <button class="icon-btn" data-act="notifications" aria-label="${L('Notifications', 'الإشعارات')}">${icon('bell')}<span class="dot"></span></button>
+            <button class="icon-btn" data-act="expMenu" data-menu aria-label="${L('Switch experience', 'تبديل التجربة')}" title="${L('Website · Web app · Mobile', 'الموقع · الويب · الجوال')}">${icon('grid')}</button>
             <button class="lang-btn" data-act="lang">${B.isAr() ? 'EN' : 'عربي'}</button>
-            <button class="avatar-btn" data-act="roleSwitcher" title="${esc(tx(me.name))}">${B.ui.avatar(me.name)}</button>
+            <button class="avatar-btn" data-act="userMenu" data-menu title="${esc(tx(me.name))}">${B.ui.avatar(me.name)}</button>
           </header>
           <header class="mbar">
-            ${tabs ? `<button data-go="${r.id}-${r.home || 'home'}" aria-label="BENA" style="flex:none">${B.logo(30)}</button>` : `<button class="icon-btn" data-act="drawer" aria-label="${L('Menu', 'القائمة')}">${icon('menu')}</button>`}
+            ${tabs ? `<button data-go="${home}" aria-label="BENA" style="flex:none">${B.logo(30)}</button>` : `<button class="icon-btn" data-act="drawer" aria-label="${L('Menu', 'القائمة')}">${icon('menu')}</button>`}
             <div class="mt"><b>${title}</b><small>${tx(r.org || r.name)}</small></div>
             <button class="icon-btn" data-act="globalSearch" aria-label="${L('Search', 'بحث')}">${icon('search')}</button>
             <button class="role-pill" data-act="roleSwitcher"><span class="rp-i">${icon(r.icon)}</span><span class="truncate">${tx(r.short || r.name)}</span>${icon('chevD', 'chev')}</button>
@@ -108,6 +119,29 @@
       </div>`;
     },
   };
+
+  B.act.sbCollapse = () => { B.store.set('sbc', !B.store.get('sbc', false)); B.refresh(); };
+  B.act.wsMenu = (_, el) => {
+    const r = B.roles[B.route.role];
+    B.menu(el, r.workspaces.map((w) => ({ label: tx(w.label), icon: w.icon || 'layers', act: 'wsPick', arg: w.id })));
+  };
+  B.act.wsPick = (id) => { const r = B.roles[B.route.role]; B.set(`ws:${r.id}`, id); const w = r.workspaces.find((x) => x.id === id); B.toast(L(`Workspace: ${tx(w.label)}`, `مساحة العمل: ${tx(w.label)}`), 'layers'); };
+  B.act.expMenu = (_, el) => {
+    const mr = Object.keys(B.mroles || {}).includes(B.route.role) ? `m-${B.route.role}-${B.mroles[B.route.role].home || 'home'}` : 'm';
+    B.menu(el, [
+      { label: L('Public website', 'الموقع العام'), icon: 'globe', go: 'site' },
+      { label: L('Enterprise web app (current)', 'تطبيق الويب المؤسسي (الحالي)'), icon: 'grid', go: `${B.route.role}-${B.roles[B.route.role].home || 'home'}` },
+      { label: L('Mobile app', 'تطبيق الجوال'), icon: 'phone', go: mr },
+      { label: L('Demo hub', 'مركز العرض'), icon: 'compass', go: 'hub' },
+    ]);
+  };
+  B.act.userMenu = (_, el) => B.menu(el, [
+    { label: L('Switch demo role', 'تبديل الدور التجريبي'), icon: 'swap', act: 'roleSwitcher' },
+    { label: B.isAr() ? 'English' : 'العربية', icon: 'globe', act: 'lang' },
+    { label: L('Profile & preferences (simulated)', 'الملف والتفضيلات (محاكاة)'), icon: 'user', act: 'soon', arg: L('Profile', 'الملف') },
+    { label: L('Sign out to website', 'الخروج إلى الموقع'), icon: 'logout', go: 'site' },
+  ]);
+  document.addEventListener('keydown', (e) => { if (e.key === '/' && B.route.exp === 'app' && !/input|textarea|select/i.test(document.activeElement?.tagName || '')) { e.preventDefault(); B.act.globalSearch(); } });
 
   function tabbar(r, act) {
     const items = navItems(r).filter((m) => m.tab);
@@ -137,7 +171,7 @@
       title: L('Switch demo role', 'تبديل الدور التجريبي'),
       sub: L('Each role is a separate experience over the same connected data.', 'كل دور تجربة مستقلة فوق نفس البيانات المتصلة.'),
       body: `<div class="role-list">${roles().map((r) => `<button class="role-opt ${r.id === cur ? 'active' : ''}" data-go="${r.id}-${r.home || 'home'}"><span class="ri">${icon(r.icon)}</span><span style="min-width:0"><b>${tx(r.name)}</b><small>${esc(B.data.pname(B.data.me[r.id]))} · ${tx(r.tag)}</small></span></button>`).join('')}</div>
-        <div class="row between wrap" style="margin-top:16px"><button class="btn btn-ghost" data-act="lang">${icon('globe')}${B.isAr() ? 'English' : 'العربية'}</button><button class="btn btn-ghost" data-go="welcome">${icon('logout', 'flip')}${L('Back to welcome', 'العودة للبداية')}</button></div>`,
+        <div class="row between wrap" style="margin-top:16px"><button class="btn btn-ghost" data-act="lang">${icon('globe')}${B.isAr() ? 'English' : 'العربية'}</button><button class="btn btn-ghost" data-go="hub">${icon('grid')}${L('Demo hub', 'مركز العرض')}</button></div>`,
     });
   };
   B.act.moreSheet = () => {

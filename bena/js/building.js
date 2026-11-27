@@ -111,18 +111,34 @@
         <div class="bh-art">${B.art.facade(seedOf(b), { type: b.type, floors: b.floors, sky: 'navy' })}</div>
       </section>`;
 
-    const tabs = [
-      { id: 'overview', label: L('Overview', 'نظرة عامة'), icon: 'grid' },
-      { id: 'identity', label: L('Identity & location', 'الهوية والموقع'), icon: 'fingerprint' },
-      { id: 'units', label: L('Floors & units', 'الطوابق والوحدات'), icon: 'stack', count: b.units },
-      { id: 'people', label: L('Ownership & governance', 'الملكية والإدارة'), icon: 'users' },
-      { id: 'services', label: L('Utilities & assets', 'الخدمات والأصول'), icon: 'zap' },
-      { id: 'maintenance', label: L('Maintenance', 'الصيانة'), icon: 'wrench', count: openReqs.length || null },
-      { id: 'finance', label: L('Finance', 'المالية'), icon: 'wallet' },
-      { id: 'related', label: L('Related services', 'خدمات ذات صلة'), icon: 'sparkles' },
+    // Building Identity workspace: grouped section navigator (sticky on desktop, chips on phones)
+    const ALIAS = { people: 'ownership', services: 'assets', related: 'services' };
+    const sec = ALIAS[tab] || tab;
+    const us = data.unitsOf(b.id);
+    const SECTIONS = [
+      { group: L('Identity', 'الهوية'), items: [
+        ['overview', L('Building overview', 'نظرة عامة على المبنى'), 'grid'], ['identity', L('BENA Building ID', 'رقم المبنى في BENA'), 'fingerprint'], ['location', L('Location & map', 'الموقع والخريطة'), 'pin'],
+        ['municipal', L('Municipal reference', 'المرجع البلدي'), 'landmark'], ['external', L('External identifiers', 'المعرّفات الخارجية'), 'link'], ['classification', L('Classification', 'التصنيف'), 'tag']] },
+      { group: L('Structure', 'البنية'), items: [['floors', L('Floors', 'الطوابق'), 'stairs', b.floors], ['units', L('Units', 'الوحدات'), 'stack', b.units]] },
+      { group: L('Relationships', 'العلاقات'), items: [
+        ['ownership', L('Ownership relationships', 'علاقات الملكية'), 'key'], ['occupancy', L('Occupancy relationships', 'علاقات الإشغال'), 'users'],
+        ['management', L('Building management', 'إدارة المبنى'), 'briefcase'], ['committee', L('Committee / association', 'اللجنة / الجمعية'), 'gavel']] },
+      { group: L('Operations', 'التشغيل'), items: [
+        ['assets', L('Assets & utilities', 'الأصول والمرافق'), 'cpu'], ['maintenance', L('Maintenance', 'الصيانة'), 'wrench', openReqs.length || null], ['finance', L('Finance', 'المالية'), 'wallet'],
+        ['services', L('Services', 'الخدمات'), 'sparkles'], ['documents', L('Documents', 'المستندات'), 'folder']] },
+      { group: L('Data governance', 'حوكمة البيانات'), items: [['sources', L('Data sources', 'مصادر البيانات'), 'database'], ['verification', L('Verification history', 'سجل التحقق'), 'shieldCheck'], ['activity', L('Activity history', 'سجل النشاط'), 'history']] },
     ];
-    const body = { overview, identity, units, people, services, maintenance, finance, related }[tab] || overview;
-    return `${hero}<div style="height:20px"></div>${ui.tabs('bp:tab', tabs, tab)}${body({ b, o, com, mgr, fac, reqs, openReqs, assets, role })}`;
+    const all = SECTIONS.flatMap((g) => g.items);
+    const cur = all.find((x) => x[0] === sec) || all[0];
+    const FN = { overview, identity: identityCard, location, municipal, external, classification, floors, units, ownership, occupancy, management, committee: people, assets: services, maintenance, finance, services: related, documents, sources, verification, activity };
+    const navHtml = `<nav class="bw-nav" aria-label="${L('Building sections', 'أقسام المبنى')}">${SECTIONS.map((g) => `<div class="bw-group">${tx(g.group)}</div>${g.items.map(([id, label, ic, count]) => `<button class="bw-item ${id === cur[0] ? 'on' : ''}" data-act="set" data-arg="bp:tab=${id}">${icon(ic)}<span>${label}</span>${count ? `<em>${count}</em>` : ''}</button>`).join('')}`).join('')}</nav>`;
+    const chips = `<div class="bw-chips">${all.map(([id, label, ic]) => `<button class="chip ${id === cur[0] ? 'active' : ''}" data-act="set" data-arg="bp:tab=${id}">${icon(ic)}${label}</button>`).join('')}</div>`;
+    const ctx = { b, o, com, mgr, fac, reqs, openReqs, assets, role, us };
+    const R = B.roles[role];
+    if (R) B.crumbs([{ label: R.org || R.name, go: `${role}-${R.home || 'home'}` }, { label: L('Building Identity', 'هوية المبنى') }, { label: tx(b.name) }]);
+    return `${hero}
+      <div class="bw-legend"><span class="bw-legend-l">${L('Data provenance', 'مصدر البيانات')}</span>${ui.provLegend()}<span class="bw-legend-n">${L('BENA Building ID is a digital reference identity — not proof of legal ownership.', 'رقم المبنى في BENA هوية مرجعية رقمية — وليس إثباتاً قانونياً للملكية.')}</span></div>
+      <div class="bw">${navHtml}<div class="bw-main">${chips}<div class="bw-head"><h2>${icon(cur[2])}${cur[1]}</h2></div>${FN[cur[0]](ctx)}</div></div>`;
   };
 
   /* ---------------- tabs ---------------- */
@@ -294,6 +310,172 @@
       <div class="grid g2">${provs.map((p) => `<button class="card link" data-go="${role}-provider-${p.id}"><div class="row"><span class="avatar lg sq" style="background:var(--mint-50);color:var(--mint-ink)">${esc(B.initials(p.name))}</span><div class="grow"><div class="row-sm"><b>${tx(p.name)}</b>${p.verified ? `<span class="mint-ink" title="verified">${icon('badgeCheck')}</span>` : ''}</div><div class="small muted">${tx(p.tagline)}</div><div class="row-sm" style="margin-top:6px">${ui.stars(p.rating)}<span class="xs faint">${p.rating} · ${p.reviews} ${L('reviews', 'تقييم')}</span></div></div>${icon('chevR', 'flip chev')}</div></button>`).join('') || ui.empty({ icon: 'sparkles', title: L('No providers cover this area yet', 'لا يوجد مزودون يغطون هذه المنطقة بعد') })}</div>
       ${ui.card({ cls: 'mint', body: `<div class="row between wrap"><div><b>${L('Need something else for this building?', 'تحتاج خدمة أخرى لهذا المبنى؟')}</b><div class="small muted">${L('Browse all categories in the BENA services marketplace.', 'تصفح جميع الفئات في سوق خدمات بينا.')}</div></div>${ui.btn(L('Open marketplace', 'فتح السوق'), { kind: 'dark', icon: 'store', go: `${role}-services` })}</div>` })}
     </div>`;
+  }
+
+  /* ---------------- Building Identity workspace sections ---------------- */
+  const tbl = (head, rows) => `<div class="card pad-0"><div class="table-wrap"><table class="table"><thead><tr>${head.map((h) => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map((r) => `<tr>${r.map((c) => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`;
+  const priv = (role) => role === 'resident' || role === 'provider';
+  const isOfficial = (b) => b.source === 'gis';
+
+  function identityCard({ b }) {
+    return `<div class="grid g-side">
+      <div class="stack">
+        <div class="id-card">
+          <div class="idc-top"><div><div class="eyebrow" style="color:var(--mint)">${L('BENA Building Identity', 'هوية المبنى في BENA')}</div><div class="idc-id">${b.id}</div></div><div class="qr">${B.art.qr(seedOf(b))}</div></div>
+          <div class="idc-grid">
+            <div>${L('Issued', 'تاريخ الإصدار')}<b>${B.date(b.key ? '2025-03-0' + (seedOf(b) % 9 + 1) : '2025-06-14')}</b></div>
+            <div>${L('Status', 'الحالة')}<b>${ui.statusLabel(b.verification)}</b></div>
+            <div>${L('Type', 'النوع')}<b>${D().typeLabel(b.type)}</b></div>
+            <div>${L('District (sample)', 'الحي (نموذج)')}<b>${tx(D().district(b.district).name)}</b></div>
+          </div>
+        </div>
+        ${ui.callout(L('<b>What the BENA ID is:</b> a permanent internal reference that links this building\'s information, units, relationships and services. <b>What it is not:</b> a title deed, a land-registry record or proof of ownership.', '<b>ما هو رقم BENA:</b> مرجع داخلي دائم يربط معلومات المبنى ووحداته وعلاقاته وخدماته. <b>ما ليس هو:</b> سند ملكية أو قيد في سجل الأراضي أو إثبات للملكية.'), '', 'fingerprint')}
+      </div>
+      <div class="stack">
+        ${ui.card({ title: L('Identity at a glance', 'الهوية باختصار'), body: ui.kv([
+          [L('BENA Building ID', 'رقم المبنى في BENA'), `${ui.idMono(b.id)} ${ui.prov('official').replace('Official source', 'BENA').replace('مصدر رسمي', 'BENA')}`],
+          [L('Sample municipal reference', 'مرجع بلدي نموذجي'), b.gis ? `${ui.idMono(b.gis)} ${ui.prov('official')}` : `<span class="faint">${L('Not linked', 'غير مرتبط')}</span> ${ui.prov('pending')}`],
+          [L('Record origin', 'أصل السجل'), isOfficial(b) ? L('Imported from a sample municipal GIS layer', 'مستورد من طبقة نظم معلومات بلدية نموذجية') : L('Independently submitted by an owner', 'مُسجّل بشكل مستقل من قبل مالك')],
+          [L('Verification', 'التحقق'), ui.status(b.verification)],
+          [L('Last updated', 'آخر تحديث'), B.date(b.updated)],
+        ]) })}
+        ${ui.card({ title: L('BENA identity vs. official ownership records', 'هوية BENA مقابل سجلات الملكية الرسمية'), body: `<div class="bw-compare">
+          <div><b>${icon('fingerprint')}${L('BENA Building ID', 'رقم المبنى في BENA')}</b><ul><li>${L('Digital reference for coordination', 'مرجع رقمي للتنسيق')}</li><li>${L('Links units, people, services and data sources', 'يربط الوحدات والأشخاص والخدمات ومصادر البيانات')}</li><li>${L('Maintained in BENA with provenance and verification history', 'يُدار في BENA مع مصدر البيانات وسجل التحقق')}</li></ul></div>
+          <div><b>${icon('landmark')}${L('Official ownership records', 'سجلات الملكية الرسمية')}</b><ul><li>${L('Held by the competent land and property authorities', 'تحتفظ بها جهات الأراضي والعقارات المختصة')}</li><li>${L('The legal source of title and rights', 'المصدر القانوني للملكية والحقوق')}</li><li>${L('BENA may reference them — it never replaces them', 'قد تشير إليها BENA — ولا تحلّ محلها')}</li></ul></div></div>` })}
+      </div></div>`;
+  }
+
+  function location({ b }) {
+    const c = coords(b);
+    const ly = B.get('bp:ly', 'parcels');
+    return `<div class="grid g-main">
+      ${ui.card({ title: L('Location', 'الموقع'), sub: tx(b.address), headExtra: ui.seg('bp:ly', [{ id: 'parcels', label: L('Parcels', 'القطع') }, { id: 'plain', label: L('Footprints', 'المباني') }, { id: 'ver', label: L('Verification', 'التحقق') }], ly), body: B.map.render({ id: 'bw-loc-' + b.id, focus: b.id, focusW: 240, selected: b.id, mode: ly === 'ver' ? 'verification' : 'type', layers: { parcels: ly !== 'plain' }, legend: ly === 'ver', height: '440px', badge: L('Sample geometry · not cadastral data', 'هندسة نموذجية · ليست بيانات مساحية') }) })}
+      <div class="stack">
+        ${ui.card({ title: L('Coordinates & address', 'الإحداثيات والعنوان'), body: ui.kv([[L('Latitude', 'خط العرض'), `<span class="id-mono">${c.lat}° N</span>`], [L('Longitude', 'خط الطول'), `<span class="id-mono">${c.lon}° E</span>`], [L('Street address', 'العنوان'), esc(tx(b.address))], [L('District', 'الحي'), tx(D().district(b.district).name)], [L('Geometry source', 'مصدر الهندسة'), isOfficial(b) ? ui.prov('official') : ui.prov('submitted')]]) })}
+        ${ui.card({ title: L('Land parcel (sample reference)', 'قطعة الأرض (مرجع نموذجي)'), body: ui.kv([[L('Basin', 'الحوض'), b.parcel.basin], [L('Parcel', 'القطعة'), b.parcel.parcel], [L('Source', 'المصدر'), isOfficial(b) ? ui.prov('official') : ui.prov('pending')]]) + `<p class="xs faint" style="margin-top:10px">${L('Parcel outlines on this map are illustrative demonstration geometry.', 'حدود القطع في هذه الخريطة هندسة توضيحية للعرض.')}</p>` })}
+      </div></div>`;
+  }
+
+  function municipal({ b }) {
+    if (!b.gis) return ui.card({ body: ui.empty({ icon: 'landmark', title: L('No municipal reference linked yet', 'لا يوجد مرجع بلدي مرتبط بعد'), text: L('This record was submitted independently. A municipal officer can match it to a sample municipal reference in the Building Matching workspace.', 'قُدّم هذا السجل بشكل مستقل. يمكن لموظف البلدية مطابقته مع مرجع بلدي نموذجي في مساحة مطابقة المباني.'), action: `<div class="row wrap" style="justify-content:center">${ui.prov('submitted')}${ui.prov('pending')}</div>` }) });
+    return `<div class="grid g2">
+      ${ui.card({ title: L('Sample municipal reference', 'المرجع البلدي النموذجي'), headExtra: ui.prov('official'), body: ui.kv([[L('Municipal GIS ID', 'رقم نظم المعلومات البلدية'), ui.idMono(b.gis)], [L('Municipal file reference', 'مرجع الملف البلدي'), ui.idMono(b.ref)], [L('Building permit', 'رخصة البناء'), b.permit ? ui.idMono(b.permit) : '—'], [L('Sample municipality', 'البلدية النموذجية'), tx(D().municipality.name) + ` <span class="faint xs">(${L('sample', 'نموذج')})</span>`], [L('Last synchronised', 'آخر مزامنة'), B.date(b.updated)]]) })}
+      ${ui.card({ title: L('How the link works (designed capability)', 'كيف يعمل الربط (قدرة مصمَّمة)'), body: ui.timeline([
+        { title: L('Municipal layer published', 'نشر الطبقة البلدية'), meta: L('Municipality maintains geometry and references', 'تحتفظ البلدية بالهندسة والمراجع'), state: 'done', icon: 'landmark' },
+        { title: L('Matched to BENA identity', 'المطابقة مع هوية BENA'), meta: L('Parcel, address and footprint compared', 'مقارنة القطعة والعنوان والمسقط'), state: 'done', icon: 'link' },
+        { title: L('Changes flow both ways for review', 'تتدفق التغييرات في الاتجاهين للمراجعة'), meta: L('Corrections are proposed, never overwritten', 'تُقترح التصحيحات ولا تُستبدل تلقائياً'), state: 'current', icon: 'refresh' },
+      ]) + ui.callout(L('In this prototype the municipal reference is sample data. BENA is designed to connect with municipal systems; no live connection exists.', 'في هذا النموذج المرجع البلدي بيانات نموذجية. صُمّمت BENA للارتباط بأنظمة البلديات؛ ولا يوجد اتصال فعلي.'), 'dashed', 'info') })}
+    </div>`;
+  }
+
+  function external({ b, role }) {
+    const rows = [
+      [L('BENA Building ID', 'رقم المبنى في BENA'), ui.idMono(b.id), L('BENA', 'BENA'), B.date(b.updated), ui.prov('official').replace('Official source', 'BENA').replace('مصدر رسمي', 'BENA')],
+      [L('Municipal GIS ID', 'رقم نظم المعلومات البلدية'), b.gis ? ui.idMono(b.gis) : '—', L('Sample municipal GIS layer', 'طبقة نظم معلومات بلدية نموذجية'), b.gis ? B.date(b.updated) : '—', b.gis ? ui.prov('official') : ui.prov('pending')],
+      [L('Municipal file reference', 'مرجع الملف البلدي'), b.ref ? ui.idMono(b.ref) : '—', L('Sample municipal records', 'سجلات بلدية نموذجية'), b.ref ? '2026-02-11' : '—', b.ref ? ui.prov('official') : ui.prov('pending')],
+      [L('Land parcel', 'قطعة الأرض'), L(`Basin ${b.parcel.basin} · Parcel ${b.parcel.parcel}`, `حوض ${b.parcel.basin} · قطعة ${b.parcel.parcel}`), L('Sample land reference', 'مرجع أراضٍ نموذجي'), '2025-11-02', isOfficial(b) ? ui.prov('official') : ui.prov('pending')],
+      [L('Building permit', 'رخصة البناء'), b.permit ? ui.idMono(b.permit) : '—', L('Sample permit archive', 'أرشيف رخص نموذجي'), b.permit ? '2025-09-18' : '—', b.permit ? ui.prov('official') : ui.prov('submitted')],
+      [L('Utility service points', 'نقاط خدمة المرافق'), L('4 accounts', '4 حسابات'), L('Committee / manager', 'اللجنة / المدير'), '2026-10-30', ui.prov('submitted')],
+      [L('Postal address', 'العنوان البريدي'), esc(tx(b.street || b.name)), L('Owner submission', 'تقديم المالك'), '2026-06-01', ui.prov('submitted')],
+      [L('Coordinates', 'الإحداثيات'), `<span class="id-mono">${coords(b).lat}, ${coords(b).lon}</span>`, L('Derived from footprint (demo)', 'مشتقة من المسقط (عرض)'), '—', ui.prov('demo')],
+    ];
+    return tbl([L('Identifier', 'المعرّف'), L('Value', 'القيمة'), L('Source', 'المصدر'), L('Last synced', 'آخر مزامنة'), L('Provenance', 'المصدر')], rows.map((r) => [ `<b>${r[0]}</b>`, r[1], `<span class="muted">${r[2]}</span>`, r[3] === '—' ? '—' : B.date(r[3]), r[4] ])) + `<div style="margin-top:12px" class="row wrap">${role === 'municipality' || role === 'admin' ? ui.btn(L('Link another reference', 'ربط مرجع آخر'), { icon: 'link', act: 'soon', arg: L('Reference linking', 'ربط المراجع'), size: 'sm' }) : ''}${ui.btn(L('Propose a correction', 'اقتراح تصحيح'), { icon: 'edit', act: 'bpReport', arg: b.id, size: 'sm' })}</div>`;
+  }
+
+  function classification({ b, us }) {
+    const t = D().types[b.type] || {};
+    const height = b.floors >= 10 ? L('High-rise (10+ floors)', 'مرتفع (10 طوابق فأكثر)') : b.floors >= 5 ? L('Mid-rise (5–9 floors)', 'متوسط الارتفاع (5–9 طوابق)') : L('Low-rise (1–4 floors)', 'منخفض (1–4 طوابق)');
+    const kinds = {}; us.forEach((u) => { kinds[u.kind] = (kinds[u.kind] || 0) + 1; });
+    return `<div class="grid g2">
+      ${ui.card({ title: L('Building classification', 'تصنيف المبنى'), body: ui.kv([[L('Primary use', 'الاستخدام الرئيسي'), `${tx(t)} ${isOfficial(b) ? ui.prov('official') : ui.prov('submitted')}`], [L('Height class', 'فئة الارتفاع'), `${height} ${ui.prov('demo')}`], [L('Year built', 'سنة البناء'), `${b.year} ${isOfficial(b) ? ui.prov('official') : ui.prov('submitted')}`], [L('Construction', 'الإنشاء'), `${b.type === 'heritage' ? L('Load-bearing limestone', 'حجر جيري حامل') : L('Reinforced concrete, limestone cladding', 'خرسانة مسلّحة بواجهة حجرية')} ${ui.prov('submitted')}`], [L('Heritage designation', 'التصنيف التراثي'), b.type === 'heritage' ? `${L('Listed in sample heritage zone', 'ضمن منطقة تراثية نموذجية')} ${ui.prov('pending')}` : L('None', 'لا يوجد')], [L('Gross floor area', 'المساحة الطابقية'), b.area ? `${B.num(b.area)} m² ${ui.prov('submitted')}` : '—']]) })}
+      ${ui.card({ title: L('Unit categories', 'فئات الوحدات'), body: us.length ? B.charts.hbars({ data: Object.entries(kinds).map(([k, v], i) => ({ label: tx(D().unitKinds[k]), value: v, color: ['#142B3B', '#36D6A0', '#7FA7C2', '#F2B35A'][i] })) }) : ui.empty({ icon: 'stack', title: L('Units not mapped yet', 'لم تُدخل الوحدات بعد') }) })}
+    </div>`;
+  }
+
+  function floors({ b, us }) {
+    const by = {}; us.forEach((u) => { (by[u.floor] = by[u.floor] || []).push(u); });
+    const rows = Array.from({ length: b.floors }, (_, i) => b.floors - 1 - i).map((f) => {
+      const list = by[f] || [];
+      const use = f === 0 ? L('Lobby & shops', 'الردهة والمحلات') : list[0] ? tx(D().unitKinds[list[0].kind]) : L('Not mapped', 'غير مُدخل');
+      const occ = list.filter((u) => u.status === 'rented' || u.status === 'ownerOccupied').length;
+      return [`<b class="num">${f === 0 ? L('Ground', 'الأرضي') : f}</b>`, use, list.length || '—', list.length ? `${occ}/${list.length}` : '—', list.length ? ui.progress((occ / list.length) * 100, '', 'thin') : '<span class="faint">—</span>'];
+    });
+    return tbl([L('Floor', 'الطابق'), L('Use', 'الاستخدام'), L('Units', 'الوحدات'), L('Occupied', 'المشغولة'), L('Occupancy', 'الإشغال')], rows);
+  }
+
+  function ownership({ b, us, role }) {
+    if (!us.length) return ui.card({ body: ui.empty({ icon: 'key', title: L('No ownership relationships recorded', 'لا توجد علاقات ملكية مسجّلة'), text: L('Owners can register their relationship to a unit; it stays "pending verification" until supporting documents are reviewed.', 'يمكن للمالكين تسجيل علاقتهم بالوحدة؛ وتبقى «بانتظار التحقق» حتى تُراجع المستندات الداعمة.') }) });
+    const note = ui.callout(L('<b>Relationship records, not title.</b> BENA records who is associated with each unit so people and services can coordinate. Legal ownership is established only by the competent authorities.', '<b>سجلات علاقات وليست سندات ملكية.</b> تسجّل BENA الأشخاص المرتبطين بكل وحدة لتسهيل التنسيق. تُثبت الملكية القانونية فقط من الجهات المختصة.'), 'warn', 'key');
+    if (priv(role)) return note + ui.card({ body: ui.empty({ icon: 'lock', title: L('Ownership relationships are private', 'علاقات الملكية خاصة'), text: L('Visible to the unit owners, the committee, authorised managers and the municipality.', 'متاحة لمالكي الوحدات واللجنة والمدراء المخوّلين والبلدية.') }) });
+    const rows = us.slice(0, 14).map((u, i) => [ui.idMono(u.number), esc(D().pname(u.owner)) + (u.coOwners ? ` <span class="faint xs">+ ${u.coOwners.map((c) => esc(D().pname(c))).join(', ')}</span>` : ''), u.coOwners ? '50%' : '100%', B.date(`20${14 + (i % 10)}-0${1 + (i % 9)}-1${i % 9}`), i % 5 === 3 ? ui.prov('pending') : ui.prov('submitted')]);
+    return note + `<div style="height:12px"></div>` + tbl([L('Unit', 'الوحدة'), L('Owner(s) of record', 'المالك/المالكون'), L('Share', 'الحصة'), L('Since', 'منذ'), L('Provenance', 'المصدر')], rows) + (us.length > 14 ? `<p class="xs faint" style="margin-top:8px">${L(`Showing 14 of ${us.length} units`, `عرض 14 من ${us.length} وحدة`)}</p>` : '');
+  }
+
+  function occupancy({ b, o, us, role }) {
+    if (!o) return ui.card({ body: ui.empty({ icon: 'users', title: L('Occupancy not mapped yet', 'لم يُدخل الإشغال بعد') }) });
+    const rows = us.filter((u) => u.status === 'rented' || u.status === 'ownerOccupied').slice(0, 12).map((u) => { const l = D().leaseOfUnit(u.id); return [ui.idMono(u.number), u.status === 'rented' ? ui.status('rented') : ui.status('ownerOccupied'), priv(role) ? `<span class="faint">${L('Private', 'خاص')}</span>` : esc(D().pname(u.tenant)), l ? ui.idMono(l.id) : '—', l ? B.date(l.end) : '—', l ? ui.status(l.status) : ui.prov('submitted')]; });
+    return `<div class="grid g4" style="margin-bottom:14px">${ui.kpi({ label: L('Occupied', 'مشغولة'), value: o.rate + '%', icon: 'users', tone: 'mint' })}${ui.kpi({ label: L('Rented', 'مؤجرة'), value: o.rented, icon: 'key' })}${ui.kpi({ label: L('Owner-occupied', 'يسكنها المالك'), value: o.ownerOccupied, icon: 'home' })}${ui.kpi({ label: L('Vacant', 'شاغرة'), value: o.vacant, icon: 'door', tone: 'warn' })}</div>` + tbl([L('Unit', 'الوحدة'), L('Relationship', 'العلاقة'), L('Occupant', 'الشاغل'), L('Lease', 'العقد'), L('Lease ends', 'ينتهي العقد'), L('Status', 'الحالة')], rows);
+  }
+
+  function management({ mgr, fac, b }) {
+    const card = (org, label, scope) => ui.card({ title: label, headExtra: ui.prov('submitted'), body: `<div class="row"><span class="li-icon navy">${icon(org.type === 'facility' ? 'settings' : 'briefcase')}</span><div class="grow"><b>${tx(org.name)}</b><div class="small muted">${L('Since', 'منذ')} ${B.date(org.since)}${org.license ? ` · <span class="id-mono">${org.license}</span>` : ''}</div></div></div><div class="divider" style="margin:14px 0"></div>${ui.kv([[L('Scope', 'النطاق'), scope], [L('Account manager', 'مدير الحساب'), esc(D().pname(org.contact))], [L('Agreement', 'الاتفاقية'), L('Signed by the owners\' association (sample)', 'موقّعة من جمعية المالكين (نموذج)')]])}` });
+    if (!mgr && !fac) return ui.card({ body: ui.empty({ icon: 'briefcase', title: L('Self-managed building', 'مبنى بإدارة ذاتية'), text: L('No property or facility manager is linked to this building.', 'لا يوجد مدير عقار أو مرافق مرتبط بهذا المبنى.') }) });
+    return `<div class="grid g2">${mgr ? card(mgr, L('Property management', 'إدارة العقار'), L('Leasing, rent collection, owner reporting, maintenance coordination', 'التأجير وتحصيل الإيجارات وتقارير المالكين وتنسيق الصيانة')) : ''}${fac ? card(fac, L('Facility management', 'إدارة المرافق'), L('Assets, preventive maintenance, inspections, contractors', 'الأصول والصيانة الوقائية والفحوصات والمقاولون')) : ''}</div>`;
+  }
+
+  function documents({ b, role }) {
+    const docs = [
+      [L('Building permit (sample copy)', 'رخصة البناء (نسخة نموذجية)'), 'official', '2015-08-02', '1.8 MB'],
+      [L('Site plan & parcel extract (sample)', 'مخطط الموقع ومخطط القطعة (نموذج)'), 'official', '2016-01-20', '3.2 MB'],
+      [L('Owners\' association bylaws', 'النظام الداخلي لجمعية المالكين'), 'submitted', '2018-04-12', '640 KB'],
+      [L('Fire safety certificate', 'شهادة السلامة من الحريق'), 'submitted', '2026-07-20', '310 KB'],
+      [L('Elevator inspection report — Sep 2026', 'تقرير فحص المصاعد — أيلول 2026'), 'submitted', '2026-09-14', '1.1 MB'],
+      [L('Unit-count correction request', 'طلب تصحيح عدد الوحدات'), 'pending', '2026-11-18', '220 KB'],
+    ];
+    return tbl([L('Document', 'المستند'), L('Provenance', 'المصدر'), L('Date', 'التاريخ'), L('Size', 'الحجم'), ''], docs.map(([n, p, d, sz]) => [`<b>${n}</b>`, ui.prov(p), B.date(d), sz, `<button class="btn btn-sm btn-ghost" data-act="previewDoc" data-arg="${esc(n)}">${icon('eye')}${L('Preview', 'معاينة')}</button>`]));
+  }
+
+  function sources({ b }) {
+    const rows = [
+      [L('Sample municipal GIS layer', 'طبقة نظم معلومات بلدية نموذجية'), L('Footprint, GIS ID, file reference', 'المسقط ورقم النظام ومرجع الملف'), isOfficial(b) ? ui.prov('official') : '—', L('Weekly (designed)', 'أسبوعياً (مصمَّم)'), B.date(b.updated)],
+      [L('Owner & resident submissions', 'تقديمات المالكين والسكان'), L('Units, relationships, contacts', 'الوحدات والعلاقات وجهات الاتصال'), ui.prov('submitted'), L('On change', 'عند التغيير'), B.date('2026-11-20')],
+      [L('Committee records', 'سجلات اللجنة'), L('Governance, budget, documents', 'الحوكمة والموازنة والمستندات'), ui.prov('submitted'), L('On change', 'عند التغيير'), B.date('2026-11-18')],
+      [L('Manager & facility systems', 'أنظمة المدير والمرافق'), L('Leases, assets, work orders', 'العقود والأصول وأوامر العمل'), ui.prov('submitted'), L('Daily (simulated)', 'يومياً (محاكاة)'), B.date('2026-11-25')],
+      [L('BENA field survey', 'مسح BENA الميداني'), L('Photos, floor count check', 'الصور والتحقق من عدد الطوابق'), ui.prov('pending'), L('Ad hoc', 'عند الحاجة'), B.date('2026-10-02')],
+      [L('Prototype demonstration data', 'بيانات العرض في النموذج'), L('Figures, people and IDs on this page', 'الأرقام والأشخاص والمعرّفات في هذه الصفحة'), ui.prov('demo'), '—', '—'],
+    ];
+    return tbl([L('Source', 'المصدر'), L('Provides', 'يوفّر'), L('Provenance', 'المصدر'), L('Refresh', 'التحديث'), L('Last update', 'آخر تحديث')], rows.map((r) => [`<b>${r[0]}</b>`, `<span class="muted">${r[1]}</span>`, r[2], r[3], r[4]]));
+  }
+
+  function verification({ b }) {
+    const ok = b.verification === 'verified';
+    const items = isOfficial(b) ? [
+      { title: L('Record imported from sample municipal layer', 'استيراد السجل من الطبقة البلدية النموذجية'), meta: B.date('2025-03-02') + ' · ' + L('System', 'النظام'), state: 'done', icon: 'database' },
+      { title: L('Parcel & permit matched', 'مطابقة القطعة والرخصة'), meta: B.date('2025-03-02') + ' · ' + L('Automated check', 'فحص آلي'), state: 'done', icon: 'link' },
+      { title: L('BENA Building ID issued', 'إصدار رقم المبنى في BENA'), meta: B.date('2025-03-02'), state: 'done', icon: 'fingerprint' },
+      { title: L('Units mapped by the committee', 'إدخال الوحدات من قبل اللجنة'), meta: B.date('2025-05-19') + ' · ' + L('User-submitted', 'مُقدَّم من مستخدم'), state: 'done', icon: 'stack' },
+      { title: ok ? L('Verified by municipal officer (sample)', 'تحقق موظف البلدية (نموذج)') : L('Awaiting municipal verification', 'بانتظار تحقق البلدية'), meta: ok ? B.date('2025-06-03') + ' · Eng. Maha Awad' : L('In queue', 'في قائمة الانتظار'), state: ok ? 'done' : 'current', icon: 'shieldCheck' },
+      { title: L('Unit-count correction proposed', 'اقتراح تصحيح عدد الوحدات'), meta: B.date('2026-11-18') + ' · ' + L('Pending review', 'بانتظار المراجعة'), state: 'current', icon: 'edit' },
+    ] : [
+      { title: L('Submitted independently by an owner', 'قدّمه مالك بشكل مستقل'), meta: B.date('2026-10-28'), state: 'done', icon: 'userCheck' },
+      { title: L('Documents uploaded', 'رفع المستندات'), meta: B.date('2026-10-28'), state: 'done', icon: 'doc' },
+      { title: L('BENA Building ID issued (independent)', 'إصدار رقم BENA (مستقل)'), meta: B.date('2026-10-29'), state: 'done', icon: 'fingerprint' },
+      { title: ok ? L('Verified with documents', 'تم التحقق بالمستندات') : L('Municipal verification pending', 'تحقق البلدية معلّق'), meta: ok ? B.date('2026-11-10') : L('In queue · SLA 10 working days', 'في الانتظار · المهلة 10 أيام عمل'), state: ok ? 'done' : 'current', icon: 'shieldCheck' },
+    ];
+    return `<div class="grid g-main">${ui.card({ title: L('Verification history', 'سجل التحقق'), headExtra: ui.status(b.verification), body: ui.timeline(items) })}${ui.card({ title: L('Verification rules (sample)', 'قواعد التحقق (نموذج)'), body: ui.list([ui.li({ icon: 'landmark', tone: 'navy', title: L('Municipal match', 'مطابقة بلدية'), sub: L('Footprint overlap ≥ 85% and parcel agreement', 'تداخل المسقط ≥ 85% وتطابق القطعة') }), ui.li({ icon: 'doc', tone: 'mint', title: L('Documentary evidence', 'أدلة مستندية'), sub: L('Permit or site plan for independent records', 'رخصة أو مخطط موقع للسجلات المستقلة') }), ui.li({ icon: 'users', tone: 'info', title: L('Two-person review', 'مراجعة من شخصين'), sub: L('Changes to identity fields need a second reviewer', 'تحتاج تغييرات حقول الهوية لمراجع ثانٍ') })]) })}</div>`;
+  }
+
+  function activity({ b, reqs }) {
+    const ev = [
+      ['2026-11-25', 'wrench', L('Maintenance request updated', 'تحديث طلب صيانة'), reqs[0] ? tx(reqs[0].title) : '', 'submitted'],
+      ['2026-11-23', 'megaphone', L('Announcement published by the committee', 'نشر إعلان من اللجنة'), L('Water cut Thursday 09:00–13:00', 'انقطاع المياه الخميس 09:00–13:00'), 'submitted'],
+      ['2026-11-20', 'key', L('Ownership relationship added', 'إضافة علاقة ملكية'), L('Unit 1102 · pending documents', 'الوحدة 1102 · بانتظار المستندات'), 'pending'],
+      ['2026-11-18', 'edit', L('Correction proposed', 'اقتراح تصحيح'), L('Unit count 54 → 56', 'عدد الوحدات 54 ← 56'), 'pending'],
+      ['2026-11-09', 'refresh', L('Municipal layer synchronised (simulated)', 'مزامنة الطبقة البلدية (محاكاة)'), L('No geometry changes', 'لا تغييرات في الهندسة'), 'official'],
+      ['2026-10-30', 'contract', L('Lease registered', 'تسجيل عقد إيجار'), 'L-2026-0803', 'submitted'],
+      ['2026-10-02', 'camera', L('Field survey photos added', 'إضافة صور المسح الميداني'), L('6 photos', '6 صور'), 'pending'],
+    ];
+    return ui.card({ body: `<div class="bw-feed">${ev.map(([d, ic, t, sub, p]) => `<div class="bw-ev"><span class="li-icon">${icon(ic)}</span><div class="grow"><b>${t}</b><div class="small muted">${sub}</div></div><div class="bw-ev-end">${ui.prov(p)}<span class="xs faint">${B.date(d)}</span></div></div>`).join('')}</div>` });
   }
 
   /* ---------------- actions ---------------- */
