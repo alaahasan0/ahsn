@@ -185,7 +185,7 @@
     let body = '';
     if (view === 'schedule') {
       const sf = B.get('fm:insS', 'all'), q = B.get('fm:insQ', '');
-      const rows = all.filter((x) => (sf === 'all' || x.st === sf) && B.match(q, x.asset.tag, x.asset.name, x.regime));
+      const rows = all.filter((x) => (sf === 'all' || x.st === sf) && B.match(q, x.asset.tag, x.asset.name, x.regime)).sort(B.by('next'));
       const sel = B.get('fm:insSel', '') || (rows[0] && rows[0].id); const cur = all.find((x) => x.id === sel);
       const pn = cur ? `<aside class="card mg-panel"><div class="mp-h"><div class="grow" style="min-width:0"><div class="mg-h4" style="margin-bottom:4px">${tag(cur.asset.tag)}</div><h3>${tx(cur.regime)}</h3><div class="sub">${tx(cur.asset.name)} · ${sshort(cur.asset.b)}</div></div><button class="icon-btn" style="width:32px;height:32px" data-act="set" data-arg="fm:insSel=" aria-label="${L('Close', 'إغلاق')}">${icon('x')}</button></div>
         <div class="mp-b"><div class="row-sm wrap">${inspSt(cur.st)}<span class="badge">${tx(FREQ[cur.freq])}</span>${resBadge(cur.res)}</div>
@@ -199,7 +199,7 @@
           cols: [
             { key: 'tag', label: L('Asset', 'الأصل'), sort: (x) => x.asset.tag, m: 'title', render: (x) => `${tag(x.asset.tag)}<span class="xt-sub">${tx(x.asset.name)}</span>`, mRender: (x) => tx(x.asset.name) },
             { key: 'regime', label: L('Inspection', 'الفحص'), sort: (x) => tx(x.regime), m: 'sub', render: (x) => `<span class="xt-strong">${tx(x.regime)}</span><span class="xt-sub">${tx(FREQ[x.freq])} · ${x.by ? esc(tx(x.by)) : esc(tname(x.lane))}</span>` },
-            { key: 'site', label: L('Site', 'الموقع'), sort: (x) => x.asset.b, mid: true, m: 'hide', render: (x) => sshort(x.asset.b) },
+            { key: 'site', label: L('Site', 'الموقع'), sort: (x) => x.asset.b, wide: true, m: 'hide', render: (x) => sshort(x.asset.b) },
             { key: 'res', label: L('Last result', 'آخر نتيجة'), sort: (x) => ['fail', 'minor', 'pass'].indexOf(x.res), wide: true, m: 'hide', render: (x) => resBadge(x.res) },
             { key: 'next', label: L('Next due', 'الاستحقاق'), sort: true, m: 'meta', render: (x) => nextCell(x.asset) },
             { key: 'st', label: L('Status', 'الحالة'), sort: (x) => ['fail', 'overdue', 'due', 'scheduled'].indexOf(x.st), m: 'end', render: (x) => inspSt(x.st) },
@@ -281,7 +281,7 @@
           { key: 'date', label: L('Date', 'التاريخ'), sort: true, m: 'meta', render: (x) => `<span class="fm-mono nowrap">${x.date}</span>` },
           { key: 'title', label: L('Work performed', 'العمل المنفّذ'), sort: (x) => tx(x.title), m: 'title', render: (x) => `<span class="xt-strong">${tx(x.title)}</span><span class="xt-sub">${ui.idMono(x.id)} · ${ui.statusLabel(x.type)}</span>`, mRender: (x) => tx(x.title) },
           { key: 'asset', label: L('Asset', 'الأصل'), sort: true, m: 'meta', render: (x) => `${tag(x.asset)}<span class="xt-sub">${sshort(asset(x.asset).b)}</span>` },
-          { key: 'by', label: L('Performed by', 'المنفّذ'), sort: (x) => byName(x.by), mid: true, m: 'sub', render: (x) => esc(byName(x.by)) },
+          { key: 'by', label: L('Performed by', 'المنفّذ'), sort: (x) => byName(x.by), wide: true, m: 'sub', render: (x) => esc(byName(x.by)) },
           { key: 'hours', label: L('Hours', 'الساعات'), num: true, sort: true, wide: true, m: 'hide', render: (x) => x.hours, total: (rs) => B.sum(rs, (x) => x.hours) },
           { key: 'cost', label: L('Cost', 'التكلفة'), num: true, sort: true, m: 'end', render: (x) => `<span class="fm-mono">${B.money(x.cost)}</span>`, total: (rs) => B.money(B.sum(rs, (x) => x.cost)) },
         ] })}${pn}</div>`;
@@ -316,7 +316,7 @@
       ${ui.simRibbon(L('Estimated / simulated sample readings — no live meters are connected. Figures are derived from sample bills and manual readings.', 'قراءات تقديرية / نموذجية محاكاة — لا توجد عدادات متصلة مباشرة. الأرقام مشتقة من فواتير نموذجية وقراءات يدوية.'))}
       <div style="height:14px"></div>
       ${opsStrip([[B.num1(ytd(el) / 1000), L('Electricity YTD · MWh (est.)', 'الكهرباء منذ بداية العام · م.و.س (تقديري)')], [B.num(ytd(wt)), L('Water YTD · m³ (est.)', 'المياه منذ بداية العام · م³ (تقديري)')], [B.num(B.sum(ids, (b) => B.sum(el[b])) / B.sum(ids, (b) => D.building(b).area)), L('kWh / m² · 12 months', 'ك.و.س / م² · 12 شهراً')], [B.compact(ytd(el) * TARIFF.el + ytd(wt) * TARIFF.wt), L('Est. utility cost YTD · ₪', 'التكلفة التقديرية · ₪')], [anomalies.length, L('Anomalies flagged', 'حالات شاذة'), '', anomalies.length ? 'warn' : '']])}
-      <div class="row between wrap" style="gap:10px;margin-bottom:12px">${ui.seg('fm:enM', [{ id: 'el', label: L('Electricity · kWh', 'الكهرباء · ك.و.س'), icon: 'zap' }, { id: 'wt', label: L('Water · m³', 'المياه · م³'), icon: 'droplet' }], metric)}${siteSel()}</div>
+      <div class="mg-fbar">${ui.seg('fm:enM', [{ id: 'el', label: L('Electricity · kWh', 'الكهرباء · ك.و.س'), icon: 'zap' }, { id: 'wt', label: L('Water · m³', 'المياه · م³'), icon: 'droplet' }], metric)}<div class="mg-fbar-r">${siteSel()}</div></div>
       <div class="grid g-main">
         ${ui.card({ cls: 'fm-c', title: metric === 'el' ? L('Electricity by site · last 12 months', 'الكهرباء حسب الموقع · آخر 12 شهراً') : L('Water by site · last 12 months', 'المياه حسب الموقع · آخر 12 شهراً'), sub: `<span class="fm-est">${icon('info')}${L('Estimated', 'تقديري')}</span>`, body: B.charts.line({ labels: MONTHS.map((ym) => B.mon(+ym.slice(5) - 1)), series: ids.map((b, i) => ({ name: sshort(b), color: COLORS[SITE_IDS.indexOf(b)], values: metric === 'el' ? el[b] : wt[b], area: ids.length === 1 })), height: 220, format: (v) => B.compact(v) }) })}
         ${ui.card({ title: L('Energy intensity vs benchmark', 'كثافة الطاقة مقابل المرجع'), sub: L('kWh / m² / year · benchmark = typical for building type (sample)', 'ك.و.س / م² / سنة · المرجع = المعتاد لنوع المبنى (نموذج)'), body: ids.map((b) => { const v = intensity(b); const bm = BENCH[b]; return `<div style="margin-bottom:14px"><div class="row between small" style="margin-bottom:6px"><b>${sshort(b)}</b><span class="fm-mono">${B.num(v)} <span class="faint">/ ${bm}</span></span></div><div style="position:relative">${ui.progress(Math.min(100, (v / (bm * 1.4)) * 100), v > bm ? 'warn' : '')}<i style="position:absolute;top:-3px;bottom:-3px;inset-inline-start:${(bm / (bm * 1.4)) * 100}%;width:2px;background:var(--navy);border-radius:2px"></i></div></div>`; }).join('') + `<div class="fm-legend"><span><i style="background:var(--navy);width:3px"></i>${L('Benchmark', 'المرجع')}</span></div>` })}

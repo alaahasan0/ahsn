@@ -405,7 +405,7 @@
     crumbs({ label: L('Expenses', 'المصاريف') });
     const ids = sIds(); const base = MX.exp.filter((e) => ids.includes(e.b));
     const sf = B.get('mg:exs', 'all'), cf = B.get('mg:exc', 'all'), mf = B.get('mg:exm', 'all'), q = B.get('mg:exq', '');
-    const rows = base.filter((e) => (sf === 'all' || e.status === sf) && (cf === 'all' || e.cat === cf) && (mf === 'all' || e.ym === mf) && B.match(q, e.id, e.inv, vendorName(e.vendor)));
+    const rows = base.filter((e) => (sf === 'all' || e.status === sf) && (cf === 'all' || e.cat === cf) && (mf === 'all' || e.ym === mf) && B.match(q, e.id, e.inv, vendorName(e.vendor))).sort(B.by('date', -1));
     const nov = base.filter((e) => e.ym === '2026-11'), oct = base.filter((e) => e.ym === '2026-10');
     const pend = base.filter((e) => e.status === 'pending');
     const sel = B.get('mg:exsel', '') || (rows[0] && rows[0].id); const cur = base.find((e) => e.id === sel);
@@ -522,7 +522,7 @@
     crumbs({ label: L('Documents', 'المستندات') });
     const f = B.get('mg:df', 'all'); const q = B.get('mg:dq', ''); const pv = B.get('mg:dp', 'all');
     const base = MX.repo.filter((d) => inScope(d.b));
-    const rows = base.filter((d) => (f === 'all' || d.f === f) && (pv === 'all' || d.prov === pv) && B.match(q, d.n, d.id));
+    const rows = base.filter((d) => (f === 'all' || d.f === f) && (pv === 'all' || d.prov === pv) && B.match(q, d.n, d.id)).sort(B.by('date', -1));
     const sel = B.get('mg:dsel', '') || (rows[0] && rows[0].id); const cur = base.find((d) => d.id === sel);
     const folders = `<section class="card pad-sm mg-frail" style="align-self:start"><div class="mg-h4" style="padding:0 6px">${L('Folders', 'المجلدات')}</div><div class="mg-folders"><button class="${f === 'all' ? 'on' : ''}" data-act="set" data-arg="mg:df=all">${icon('folder')}<span>${L('All documents', 'كل المستندات')}</span><span class="c">${base.length}</span></button>${MX.folders.map((x) => `<button class="${f === x.id ? 'on' : ''}" data-act="set" data-arg="mg:df=${x.id}">${icon(x.icon)}<span>${tx(x.n)}</span><span class="c">${base.filter((d) => d.f === x.id).length}</span></button>`).join('')}</div>
       <div style="border-top:1px solid var(--line-2);margin:12px 0 10px"></div><div class="mg-h4" style="padding:0 6px">${L('Storage', 'التخزين')}</div><div style="padding:0 6px">${ui.progress(38)}<div class="xs faint" style="margin-top:6px">${L('3.8 GB of 10 GB used (sample)', '3.8 غيغابايت من 10 مستخدمة (نموذج)')}</div></div></section>`;

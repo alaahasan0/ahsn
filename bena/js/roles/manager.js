@@ -469,7 +469,7 @@
   .mg-wl { display: grid; grid-template-columns: minmax(0, 1fr) 60px; gap: 8px; align-items: center; }
   @media (max-width: 1360px) { .xt-t .xt-wide { display: none; } }
   @media (max-width: 1640px) { .mg-split .xt-t .xt-wide { display: none; } }
-  @media (max-width: 1400px) { .mg-split .xt-t .xt-mid { display: none; } .mg-split { grid-template-columns: minmax(0, 1fr) 300px; } }
+  @media (max-width: 1500px) { .mg-split .xt-t .xt-mid { display: none; } .mg-split { grid-template-columns: minmax(0, 1fr) 300px; } }
   .mg-thumb { height: 96px; }
   @media (max-width: 1240px) { .mg-split { grid-template-columns: minmax(0, 1fr) 320px; } .mg-ws-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   @media (max-width: 1100px) { .mg-split { grid-template-columns: minmax(0, 1fr); } .mg-panel { position: static; max-height: none; } .mg-board { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
@@ -1138,7 +1138,7 @@
     crumbs({ label: L('Owners', 'المالكون') });
     const q = B.get('mg:oq', ''); const fl = B.get('mg:of', 'all');
     const all = ownerRows();
-    const rows = all.filter((o) => B.match(q, D.person(o.p).name, ...o.units.map((u) => u.number)) && (fl === 'all' || (fl === 'multi' ? o.units.length > 1 : fl === 'arrears' ? o.sc > 0 : fl === 'vacant' ? o.units.some((u) => u.status === 'vacant') : true)));
+    const rows = all.slice().sort((a, b) => b.units.length - a.units.length).filter((o) => B.match(q, D.person(o.p).name, ...o.units.map((u) => u.number)) && (fl === 'all' || (fl === 'multi' ? o.units.length > 1 : fl === 'arrears' ? o.sc > 0 : fl === 'vacant' ? o.units.some((u) => u.status === 'vacant') : true)));
     const sel = B.get('mg:osel', '') || (rows[0] && rows[0].id); const o = all.find((x) => x.id === sel);
     const pn = o ? panel({ title: esc(D.pname(o.p)), sub: L(`${o.units.length} unit${o.units.length > 1 ? 's' : ''} · ${o.bset.map(sName).join(', ')}`, `${o.units.length} وحدة · ${o.bset.map(sName).join('، ')}`), lead: ui.avatar(D.pname(o.p)), close: 'mg:osel', body: `
         ${pstats([[moneyC(o.col), L('rent collected · Nov', 'محصّل · ت٢')], [moneyC(o.fee), L('Arkan fee', 'أتعاب أركان')], [moneyC(o.net), L('net to owner', 'الصافي للمالك')]])}

@@ -479,8 +479,8 @@
     const week = PM.filter((p) => p.next >= TODAY && p.next <= '2026-12-02').sort(B.by('next'));
     return `
     <section class="fm-ops">
-      <div class="fm-ops-top"><div><div class="fm-k">${L('Sanad Facility Services · Operations', 'سند لخدمات إدارة المرافق · العمليات')}</div><h1 style="margin-top:4px">${L('Operations overview', 'نظرة عامة على العمليات')}</h1></div>
-        <div class="row-sm wrap"><span class="fm-shift"><span class="pulse"></span>${L('Day shift · Wed 25 Nov · 10:00', 'الوردية النهارية · الأربعاء 25 ت٢ · 10:00')}</span>${ui.btn(L('New work order', 'أمر عمل جديد'), { icon: 'plus', kind: 'primary', size: 'sm', act: 'fmNewWO' })}</div></div>
+      <div class="fm-ops-top"><div><div class="fm-k">${L('Sanad Facility Services · Operations', 'سند لخدمات إدارة المرافق · العمليات')}</div><h1 style="margin-top:4px">${L('Facility overview', 'نظرة عامة على المرافق')}</h1></div>
+        <div class="row-sm wrap"><span class="fm-shift"><span class="pulse"></span>${L('Day shift · Wed 25 Nov · 10:00 (sample)', 'الوردية النهارية · الأربعاء 25 ت٢ · 10:00 (نموذج)')}</span>${ui.btn(L('New work order', 'أمر عمل جديد'), { icon: 'plus', kind: 'primary', size: 'sm', act: 'fmNewWO' })}</div></div>
       <div class="fm-stats">${stats.map((s) => `<button class="${s.cls || ''}" data-go="${s.go}"><b>${s.v}${s.u ? `<small>${s.u}</small>` : ''}</b><span>${s.l}</span></button>`).join('')}</div>
       <div class="fm-sites">${SITE_IDS.map((bid) => `<button class="fm-site-chip" data-go="${R}-site-${bid}"><span class="pulse ${assetsOf(bid).some((a) => a.ms === 'fmFault') ? 'bad' : assetsOf(bid).some((a) => a.ms === 'fmOverdue') ? 'warn' : ''}"></span>${sshort(bid)}<em>${healthScore(assetsOf(bid))}</em></button>`).join('')}</div>
     </section>
