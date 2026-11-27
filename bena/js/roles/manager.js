@@ -469,9 +469,10 @@
   .mg-wl { display: grid; grid-template-columns: minmax(0, 1fr) 60px; gap: 8px; align-items: center; }
   @media (max-width: 1360px) { .xt-t .xt-wide { display: none; } }
   @media (max-width: 1640px) { .mg-split .xt-t .xt-wide { display: none; } }
-  @media (max-width: 1500px) { .mg-split .xt-t .xt-mid { display: none; } .mg-split { grid-template-columns: minmax(0, 1fr) 300px; } }
+  @media (max-width: 1500px) { .mg-split .mg-occcell { grid-template-columns: 42px; } .mg-split .mg-occcell .mg-occ { display: none; } .mg-split .xt-t th[style*="width"] { width: auto !important; }
+  .mg-split .xt-t .xt-mid { display: none; } .mg-split { grid-template-columns: minmax(0, 1fr) 300px; } }
   .mg-thumb { height: 96px; }
-  @media (max-width: 1240px) { .mg-split { grid-template-columns: minmax(0, 1fr) 320px; } .mg-ws-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 1240px) { .mg-ws-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   @media (max-width: 1100px) { .mg-split { grid-template-columns: minmax(0, 1fr); } .mg-panel { position: static; max-height: none; } .mg-board { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 900px) { .mg-ws-head { grid-template-columns: 120px minmax(0, 1fr); } .mg-ws-head > .acts { grid-column: 1 / -1; } .mg-ws-head .mg-art { height: 96px; } }
   @media (max-width: 767px) {
@@ -495,6 +496,7 @@
     .mg-chart .bars { margin-bottom: 14px; }
     .xt-bulk .xt-x { margin-inline-start: 0; }
     .mg-board-seg { display: block !important; }
+    .mg-fin .h-m { display: none; }
   }
   .mg-board-seg { display: none; }
   `);
@@ -768,7 +770,7 @@
     ].filter(Boolean);
     const trendB = MX.months.map((_, i) => finSum(ids, i).rentBilled), trendC = MX.months.map((_, i) => finSum(ids, i).rentCol);
     const sm = (v) => (v < 0 ? `(${money(-v)})` : money(v));
-    const finRow = (label, a, b, y, o = {}) => `<tr class="${o.cls || ''}"><td>${label}</td><td>${o.fmt ? o.fmt(a) : sm(a)}</td><td class="faint">${o.fmt ? o.fmt(b) : sm(b)}</td><td>${o.noDelta ? '' : dTag(a, b, o.inv)}</td><td>${y == null ? '' : o.fmt ? o.fmt(y) : sm(y)}</td></tr>`;
+    const finRow = (label, a, b, y, o = {}) => `<tr class="${o.cls || ''}"><td>${label}</td><td>${o.fmt ? o.fmt(a) : sm(a)}</td><td class="faint h-m">${o.fmt ? o.fmt(b) : sm(b)}</td><td class="h-m">${o.noDelta ? '' : dTag(a, b, o.inv)}</td><td>${y == null ? '' : o.fmt ? o.fmt(y) : sm(y)}</td></tr>`;
     return `${phead({ title: L('Portfolio overview', 'نظرة عامة على المحفظة'), sub: L(`Good morning, Rania — ${ids.length} building${ids.length > 1 ? 's' : ''}, ${s.units} units under management.`, `صباح الخير يا رانيا — ${ids.length} ${ids.length > 1 ? 'مبانٍ' : 'مبنى'} و${s.units} وحدة تحت الإدارة.`),
       actions: `${exportBtn(L('Portfolio summary', 'ملخص المحفظة'))}${ui.btn(L('New request', 'طلب جديد'), { icon: 'plus', act: 'mgNewReq', arg: '' })}${ui.btn(L('Send reminders', 'إرسال التذكيرات'), { kind: 'primary', icon: 'bell', act: 'mgRemindAll' })}` })}
       <div class="stack">
@@ -784,9 +786,9 @@
         kb('wallet', L('Rent collected · Nov MTD', 'الإيجار المحصّل · ت٢ حتى تاريخه'), moneyC(nov.rentCol), L(`${pct1((nov.rentCol / (nov.rentBilled || 1)) * 100)} of billed · target 95%`, `${pct1((nov.rentCol / (nov.rentBilled || 1)) * 100)} من المفوتر · الهدف 95%`), '', `${R}-rent`),
         kb('coins', L('Net to owners · Nov', 'الصافي للمالكين · ت٢'), moneyC(nov.ownerNet), L('after fees and unit repairs', 'بعد الأتعاب وإصلاحات الوحدات'), '', `${R}-reports`),
       ], 5)}
-      <div class="grid g-main">
+      <div class="grid g-main" style="align-items:start">
         ${ui.card({ title: L('Monthly financial summary', 'الملخص المالي الشهري'), sub: L('November 2026 vs October · portfolio ledgers (sample)', 'تشرين الثاني 2026 مقابل تشرين الأول · دفاتر المحفظة (نموذج)'), link: { label: L('Financial reports', 'التقارير المالية'), go: `${R}-reports` },
-          body: `<table class="mg-fin"><thead><tr><th>${L('Line', 'البند')}</th><th>${L('Nov (MTD)', 'ت٢ (حتى تاريخه)')}</th><th>${L('Oct', 'ت١')}</th><th>${L('Δ', 'التغير')}</th><th>${L('YTD (Jan–Nov)', 'منذ بداية العام')}</th></tr></thead><tbody>
+          body: `<table class="mg-fin"><thead><tr><th>${L('Line', 'البند')}</th><th>${L('Nov (MTD)', 'ت٢ (حتى تاريخه)')}</th><th class="h-m">${L('Oct', 'ت١')}</th><th class="h-m">${L('Δ', 'التغير')}</th><th>${L('YTD (Jan–Nov)', 'منذ بداية العام')}</th></tr></thead><tbody>
             ${finRow(L('Rent billed', 'الإيجار المفوتر'), nov.rentBilled, oct.rentBilled, ytd('rentBilled'))}
             ${finRow(L('Rent collected', 'الإيجار المحصّل'), nov.rentCol, oct.rentCol, ytd('rentCol'))}
             ${finRow(L('Collection rate', 'نسبة التحصيل'), (nov.rentCol / nov.rentBilled) * 100, (oct.rentCol / oct.rentBilled) * 100, null, { fmt: pct1, cls: 'sub', noDelta: true })}
@@ -838,7 +840,7 @@
         { key: 'district', label: L('District', 'الحي'), sort: (x) => tx(D.district(x.b.district).name), m: 'meta', wide: true, render: (x) => esc(tx(D.district(x.b.district).name)) },
         { key: 'type', label: L('Type', 'النوع'), wide: true, sort: (x) => x.b.type, m: 'hide', render: (x) => esc(D.typeLabel(x.b.type)) },
         { key: 'units', label: L('Units', 'الوحدات'), num: true, sort: (x) => x.b.units, m: 'meta', render: (x) => x.b.units },
-        { key: 'occ', label: L('Occupancy', 'الإشغال'), sort: (x) => (x.s ? x.s.occ : -1), w: '130px', m: 'sub', render: (x) => (x.s ? occCell(x.s) : `<span class="faint small">${L('Survey pending', 'بانتظار المسح')}</span>`) },
+        { key: 'occ', label: L('Occupancy', 'الإشغال'), sort: (x) => (x.s ? x.s.occ : -1), w: '118px', m: 'sub', render: (x) => (x.s ? occCell(x.s) : `<span class="faint small">${L('Survey pending', 'بانتظار المسح')}</span>`) },
         { key: 'vac', label: L('Vacant', 'شاغرة'), num: true, wide: true, sort: (x) => (x.s ? x.s.vacant : -1), m: 'hide', render: (x) => (x.s ? x.s.vacant : '—') },
         { key: 'roll', label: L('Rent roll', 'الإيجار'), num: true, sort: (x) => (x.s ? x.s.roll : 0), m: 'meta', render: (x) => (x.s ? numc(x.s.roll) : '—') },
         { key: 'out', label: L('Arrears', 'المتأخرات'), num: true, mid: true, sort: (x) => (x.s ? x.s.out : 0), m: 'hide', render: (x) => (x.s ? `<span class="num" style="${x.s.out ? 'color:var(--bad);font-weight:600' : ''}">${money(x.s.out)}</span>` : '—') },
@@ -999,7 +1001,7 @@
   const reqCols = (o = {}) => [
     { key: 'title', label: L('Request', 'الطلب'), m: 'title', sort: (q) => tx(q.title), render: (q) => `<div class="cell-main"><span class="li-icon" style="width:32px;height:32px;border-radius:9px">${icon(catIcon(q.cat))}</span>${sub2(esc(tx(q.title)), `${ui.idMono(q.id)} · ${esc(tx(D.cat(q.cat).name))}`)}</div>`, mRender: (q) => esc(tx(q.title)) },
     o.noBuilding ? null : { key: 'building', label: L('Building', 'المبنى'), sort: (q) => sName(q.building), m: 'sub', render: (q) => esc(sName(q.building)) },
-    { key: 'where', label: L('Location', 'الموقع'), m: o.noBuilding ? 'sub' : 'hide', render: (q) => (q.unit ? esc(unitName(D.unit(q.unit))) : L('Common area', 'منطقة مشتركة')) },
+    { key: 'where', label: L('Location', 'الموقع'), mid: !o.noBuilding, m: o.noBuilding ? 'sub' : 'hide', render: (q) => (q.unit ? esc(unitName(D.unit(q.unit))) : L('Common area', 'منطقة مشتركة')) },
     { key: 'priority', label: L('Priority', 'الأولوية'), sort: (q) => ['critical', 'high', 'medium', 'low'].indexOf(q.priority), m: 'meta', render: (q) => ui.status(q.priority) },
     { key: 'provider', label: L('Provider', 'المزوّد'), wide: true, m: 'hide', render: (q) => (q.provider ? esc(tx(D.provider(q.provider).name)) : `<span class="faint">${L('Unassigned', 'غير مُسند')}</span>`) },
     { key: 'created', label: L('Opened', 'الفتح'), sort: true, m: 'meta', render: (q) => `<span class="nowrap">${B.dateShort(q.created)}</span>` },
@@ -1155,11 +1157,11 @@
         cols: [
           { key: 'p', label: L('Owner', 'المالك'), m: 'title', sort: (x) => D.pname(x.p), render: (x) => `<div class="cell-main">${ui.avatar(D.pname(x.p), 'sm')}${sub2(esc(D.pname(x.p)), x.bset.map(sName).join(' · '))}</div>`, mRender: (x) => esc(D.pname(x.p)) },
           { key: 'n', label: L('Units', 'الوحدات'), num: true, sort: (x) => x.units.length, m: 'meta', render: (x) => x.units.length },
-          { key: 'occ', label: L('Occupied', 'مشغولة'), num: true, sort: (x) => x.occ, m: 'hide', render: (x) => B.pct(x.occ) },
+          { key: 'occ', label: L('Occupied', 'مشغولة'), num: true, mid: true, sort: (x) => x.occ, m: 'hide', render: (x) => B.pct(x.occ) },
           { key: 'roll', label: L('Rent roll', 'الإيجار'), num: true, mid: true, sort: (x) => x.roll, m: 'meta', render: (x) => (x.roll ? numc(x.roll) : '<span class="faint">—</span>'), total: (rs) => numc(B.sum(rs, (x) => x.roll)) },
           { key: 'fee', label: L('Fee', 'الأتعاب'), num: true, wide: true, sort: (x) => x.fee, m: 'hide', render: (x) => numc(x.fee), total: (rs) => numc(B.sum(rs, (x) => x.fee)) },
           { key: 'net', label: L('Net · Nov', 'الصافي · ت٢'), num: true, sort: (x) => x.net, m: 'end', render: (x) => `<b class="num">${money(x.net)}</b>`, total: (rs) => numc(B.sum(rs, (x) => x.net)) },
-          { key: 'sc', label: L('Svc-charge bal.', 'رصيد الرسوم'), num: true, sort: (x) => x.sc, m: 'hide', render: (x) => (x.sc ? `<span class="num" style="color:var(--bad);font-weight:600">${money(x.sc)}</span>` : '<span class="faint">—</span>') },
+          { key: 'sc', label: L('Svc-charge bal.', 'رصيد الرسوم'), num: true, wide: true, sort: (x) => x.sc, m: 'hide', render: (x) => (x.sc ? `<span class="num" style="color:var(--bad);font-weight:600">${money(x.sc)}</span>` : '<span class="faint">—</span>') },
         ] })}${pn}</div>`;
   };
 

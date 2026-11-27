@@ -510,7 +510,7 @@
   /* ---------------- Facilities ---------------- */
   function sites() {
     fcrumbs({ label: L('Facilities', 'المرافق') });
-    return `${ui.pageHead({ eyebrow: L('Portfolio', 'المحفظة'), title: L('Facilities', 'المرافق'), sub: L('Buildings operated by Sanad under facility-management contracts.', 'المباني التي تشغّلها سند بموجب عقود إدارة المرافق.'), actions: ui.btn(L('Export portfolio', 'تصدير المحفظة'), { icon: 'download', act: 'previewDoc', arg: L('Sanad portfolio report — Nov 2026.pdf', 'تقرير محفظة سند — ت٢ 2026.pdf') }) })}
+    return `${fhead({ eyebrow: L('Portfolio', 'المحفظة'), title: L('Facilities', 'المرافق'), sub: L('Buildings operated by Sanad under facility-management contracts.', 'المباني التي تشغّلها سند بموجب عقود إدارة المرافق.'), actions: ui.btn(L('Export portfolio', 'تصدير المحفظة'), { icon: 'download', act: 'previewDoc', arg: L('Sanad portfolio report — Nov 2026.pdf', 'تقرير محفظة سند — ت٢ 2026.pdf') }) })}
     <div class="stack">${SITE_IDS.map((bid) => {
       const b = D.building(bid), s = site(bid), as = assetsOf(bid);
       const ow = WOS.filter((w) => isOpen(w) && asset(w.asset).b === bid);
@@ -746,13 +746,8 @@
     });
     const sf = fscope();
     const rows = PM.filter((p) => sf === 'all' || p.sites.includes(sf.slice(-3)));
-    return `${ui.pageHead({ eyebrow: L('Operations', 'العمليات'), title: L('Preventive maintenance', 'الصيانة الوقائية'), sub: L('Planned maintenance plans, schedule and statutory compliance.', 'خطط الصيانة المخططة والجدول والامتثال للمتطلبات القانونية.'), actions: ui.btn(L('Compliance report', 'تقرير الامتثال'), { icon: 'download', act: 'previewDoc', arg: L('PM compliance — November 2026.pdf', 'امتثال الصيانة الوقائية — ت٢ 2026.pdf') }) + ui.btn(L('New PM plan', 'خطة جديدة'), { icon: 'plus', kind: 'primary', act: 'fmNewPM' }) })}
-    <div class="grid g4" style="margin-bottom:16px">
-      ${ui.kpi({ label: L('Active plans', 'خطط نشطة'), value: PM.length, icon: 'calendarCheck' })}
-      ${ui.kpi({ label: L('Completion (Nov)', 'الإنجاز (ت٢)'), value: pmCompletion() + '%', icon: 'checkCircle', tone: 'mint', spark: [86, 88, 87, 90, 89, 92, 91, pmCompletion()] })}
-      ${ui.kpi({ label: L('Due in 7 days', 'مستحقة خلال 7 أيام'), value: PM.filter((p) => p.next >= TODAY && p.next <= '2026-12-02').length, icon: 'clock', tone: 'warn' })}
-      ${ui.kpi({ label: L('Overdue', 'متأخرة'), value: PM.filter((p) => p.next < TODAY).length, icon: 'alertCircle', tone: 'bad' })}
-    </div>
+    return `${fhead({ eyebrow: L('Operations', 'العمليات'), title: L('Preventive maintenance', 'الصيانة الوقائية'), sub: L('Planned maintenance plans, schedule and statutory compliance.', 'خطط الصيانة المخططة والجدول والامتثال للمتطلبات القانونية.'), actions: ui.btn(L('Compliance report', 'تقرير الامتثال'), { icon: 'download', act: 'previewDoc', arg: L('PM compliance — November 2026.pdf', 'امتثال الصيانة الوقائية — ت٢ 2026.pdf') }) + ui.btn(L('New PM plan', 'خطة جديدة'), { icon: 'plus', kind: 'primary', act: 'fmNewPM' }) })}
+    ${opsStrip([[PM.length, L('Active PM plans', 'خطط وقائية نشطة')], [pmCompletion(), L('Completion · Nov', 'الإنجاز · ت٢'), '', '', '%'], [PM.filter((p) => p.next >= TODAY && p.next <= '2026-12-02').length, L('Due in 7 days', 'مستحقة خلال 7 أيام'), '', 'warn'], [PM.filter((p) => p.next < TODAY).length, L('Overdue', 'متأخرة'), '', 'bad'], [PM.filter((p) => p.by !== 'in').length, L('Contractor-delivered', 'ينفّذها مقاولون'), `${R}-contractors`]])}
     <div class="grid g-main">
       <section class="card fm-pmcal"><div class="card-head" style="flex-wrap:wrap"><div class="grow"><h3>${L('PM calendar', 'تقويم الصيانة الوقائية')}</h3><div class="sub">${L('All facilities', 'جميع المرافق')}</div></div>
         <div class="row-sm">${ui.btn('', { icon: 'chevL', iconCls: 'flip', size: 'sm', act: 'set', arg: `fm:pmM=${mo - 1}`, title: L('Previous month', 'الشهر السابق') })}<b style="min-width:130px;text-align:center">${B.monLong(month)} ${year}</b>${ui.btn('', { icon: 'chevR', iconCls: 'flip', size: 'sm', act: 'set', arg: `fm:pmM=${mo + 1}`, title: L('Next month', 'الشهر التالي') })}</div></div>
@@ -777,13 +772,8 @@
   /* ---------------- Contractors ---------------- */
   function contractors() {
     fcrumbs({ label: L('Contractors', 'المقاولون') });
-    return `${ui.pageHead({ eyebrow: L('Portfolio', 'المحفظة'), title: L('Contractors', 'المقاولون'), sub: L('Specialist contractors under Sanad service agreements, with SLA performance.', 'المقاولون المتخصصون بموجب اتفاقيات خدمة سند، مع أداء مستوى الخدمة.'), actions: ui.btn(L('Find contractors', 'ابحث عن مقاولين'), { icon: 'search', go: `${R}-services` }) + ui.btn(L('Add contractor', 'إضافة مقاول'), { icon: 'plus', kind: 'primary', act: 'fmAddContractor' }) })}
-    <div class="grid g4" style="margin-bottom:16px">
-      ${ui.kpi({ label: L('Active contracts', 'عقود نشطة'), value: CONTRACTORS.length, icon: 'handshake' })}
-      ${ui.kpi({ label: L('Average SLA met', 'متوسط الالتزام بالـ SLA'), value: Math.round(B.sum(CONTRACTORS, (c) => c.sla) / CONTRACTORS.length) + '%', icon: 'target', tone: 'mint' })}
-      ${ui.kpi({ label: L('Annual contract value', 'القيمة السنوية للعقود'), value: B.money(B.sum(CONTRACTORS, (c) => c.value)), icon: 'banknote' })}
-      ${ui.kpi({ label: L('Renewals ≤ 60 days', 'تجديدات ≤ 60 يوماً'), value: CONTRACTORS.filter((c) => B.daysFromToday(c.end) <= 60).length, icon: 'calendar', tone: 'warn' })}
-    </div>
+    return `${fhead({ eyebrow: L('Portfolio', 'المحفظة'), title: L('Contractors', 'المقاولون'), sub: L('Specialist contractors under Sanad service agreements, with SLA performance.', 'المقاولون المتخصصون بموجب اتفاقيات خدمة سند، مع أداء مستوى الخدمة.'), actions: ui.btn(L('Find contractors', 'ابحث عن مقاولين'), { icon: 'search', go: `${R}-services` }) + ui.btn(L('Add contractor', 'إضافة مقاول'), { icon: 'plus', kind: 'primary', act: 'fmAddContractor' }) })}
+    ${opsStrip([[CONTRACTORS.length, L('Active contracts', 'عقود نشطة')], [Math.round(B.sum(CONTRACTORS, (c) => c.sla) / CONTRACTORS.length), L('Average SLA met', 'متوسط الالتزام بـ SLA'), '', '', '%'], [B.compact(B.sum(CONTRACTORS, (c) => c.value)), L('Annual contract value · ₪', 'القيمة السنوية للعقود · ₪')], [CONTRACTORS.filter((c) => B.daysFromToday(c.end) <= 60).length, L('Renewals ≤ 60 days', 'تجديدات ≤ 60 يوماً'), '', 'warn'], [WOS.filter((w) => isOpen(w) && w.contractor).length, L('Open contractor WOs', 'أوامر مفتوحة للمقاولين'), `${R}-workorders`]])}
     <div class="grid g-main">
       ${ui.table({ id: 'fm-ct', rows: CONTRACTORS, rowAct: (c) => ({ act: 'fmContractor', arg: c.p }), cols: [
         { key: 'p', label: L('Contractor', 'المقاول'), render: (c) => { const p = D.provider(c.p); return `<div class="fm-cell"><span class="li-icon mint">${icon(D.cat(p.cats[0]).icon)}</span><div style="min-width:0"><b>${tx(p.name)}</b><small>${tx(c.scope)}</small></div></div>`; }, mRender: (c) => tx(D.provider(c.p).name), m: 'title' },
@@ -824,7 +814,7 @@
       { sev: 'bad', t: L('Chiller 2 high discharge pressure', 'ضغط تصريف مرتفع في المبرّد 2'), s: L('Auto-staged to chiller 1 · WO suggested', 'تحويل تلقائي للمبرّد 1 · اقتراح أمر عمل'), w: '08:47' },
       { sev: 'ok', t: L('Generator weekly self-test passed', 'نجح الاختبار الذاتي الأسبوعي للمولد'), s: L('Start 7.8 s · 400 V · 50.0 Hz', 'تشغيل 7.8 ث · 400 فولت · 50.0 هرتز'), w: '07:00' },
     ];
-    return `${ui.pageHead({ eyebrow: L('Smart building · preview', 'المبنى الذكي · معاينة'), title: L('Connected building', 'المبنى المتصل'), sub: L('A preview of how BENA could bring building systems into one operational view. Not connected to any real equipment.', 'معاينة لكيفية جمع بينا لأنظمة المبنى في عرض تشغيلي واحد. غير متصل بأي معدات حقيقية.'), actions: ui.btn(L('Request integration pilot', 'طلب تجربة تكامل'), { icon: 'send', kind: 'primary', act: 'fmPilot' }) })}
+    return `${fhead({ eyebrow: L('Smart building · preview', 'المبنى الذكي · معاينة'), title: L('Connected building', 'المبنى المتصل'), sub: L('A preview of how BENA could bring building systems into one operational view. Not connected to any real equipment.', 'معاينة لكيفية جمع بينا لأنظمة المبنى في عرض تشغيلي واحد. غير متصل بأي معدات حقيقية.'), actions: ui.btn(L('Request integration pilot', 'طلب تجربة تكامل'), { icon: 'send', kind: 'primary', act: 'fmPilot' }) })}
     ${ui.simRibbon()}
     <div class="row between wrap" style="margin:16px 0">${ui.seg('fm:cnSite', SITE_IDS.map((x) => ({ id: x, label: sshort(x) })), bid)}<span class="xs faint row-sm"><span class="pulse"></span>${L('Sample readings refreshed 10:00', 'قراءات نموذجية حُدّثت 10:00')}</span></div>
     <div class="fm-dev-grid">

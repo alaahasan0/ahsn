@@ -347,7 +347,7 @@
   P.reports = () => {
     fcrumbs({ label: L('Facility reports', 'تقارير المرافق') });
     const ids = fIds();
-    const rows = ids.map((b) => { const as = assetsOf(b); const ws = WOS.filter((w) => asset(w.asset).b === b); return { id: b, ...SCORE[b], open: ws.filter(isOpen).length, late: ws.filter(isLate).length, health: healthScore(as), insp: as.filter((a) => a.ms === 'fmOverdue').length, kwh: Math.round((SITE[b].energy * 12) / D.building(b).area) }; });
+    const rows = ids.map((b) => { const as = assetsOf(b); const ws = WOS.filter((w) => asset(w.asset).b === b); return { id: b, ...SCORE[b], open: ws.filter(isOpen).length, late: ws.filter(isLate).length, health: healthScore(as), insp: as.filter((a) => a.ms === 'fmOverdue').length, kwh: Math.round(B.sum(series(b, 'el')) / D.building(b).area) }; });
     const cat = [
       ['chart', L('Monthly client report', 'التقرير الشهري للعميل'), L('KPIs, work completed, issues and next month\'s plan per site', 'المؤشرات والأعمال المنجزة والمشاكل وخطة الشهر القادم لكل موقع')],
       ['calendarCheck', L('PM compliance', 'امتثال الصيانة الوقائية'), L('Planned vs completed by plan, system and site', 'المخطط مقابل المنجز حسب الخطة والنظام والموقع')],

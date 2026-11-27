@@ -199,11 +199,11 @@
       const byB = sIds().map((bid) => { const idx = MX.months.indexOf(r.ym); const f = idx >= 0 ? finM(bid, idx) : null; return { id: bid, rent: f ? f.rentBilled : B.sum(D.leases.filter((l) => l.building === bid && l.end >= `${r.ym}-01`), (l) => l.rent), ch: f ? f.ch : chargesOf(bid) }; });
       body = `<div class="mg-split">${xtable({ id: 'mgRuns', rows: runs.slice().reverse(), active: r.id, rowAct: (x) => ({ act: 'set', arg: `mg:run=${x.id}` }), caption: `<span>${L('Billing runs issue rent invoices to tenants and service-charge invoices to owners on the 1st of each month.', 'تُصدر دورات الفوترة فواتير الإيجار للمستأجرين ورسوم الخدمات للمالكين في الأول من كل شهر.')}</span>`, cols: [
           { key: 'id', label: L('Run', 'الدورة'), m: 'title', render: (x) => sub2(ymLabel(x.ym), ui.idMono(x.id)) },
-          { key: 'date', label: L('Run date', 'تاريخ الدورة'), m: 'meta', render: (x) => `<span class="nowrap">${B.date(x.date)}</span>` },
+          { key: 'date', label: L('Run date', 'تاريخ الدورة'), mid: true, m: 'meta', render: (x) => `<span class="nowrap">${B.date(x.date)}</span>` },
           { key: 'n', label: L('Invoices', 'الفواتير'), num: true, m: 'meta', render: (x) => x.n },
           { key: 'rent', label: L('Rent', 'الإيجار'), num: true, m: 'hide', render: (x) => numc(x.rent) },
-          { key: 'ch', label: L('Service charges', 'رسوم الخدمات'), num: true, m: 'hide', render: (x) => numc(x.ch) },
-          { key: 'col', label: L('Collected', 'المحصّل'), num: true, m: 'hide', render: (x) => (x.col ? pct1(x.col * 100) : '<span class="faint">—</span>') },
+          { key: 'ch', label: L('Service charges', 'رسوم الخدمات'), num: true, mid: true, m: 'hide', render: (x) => numc(x.ch) },
+          { key: 'col', label: L('Collected', 'المحصّل'), num: true, wide: true, m: 'hide', render: (x) => (x.col ? pct1(x.col * 100) : '<span class="faint">—</span>') },
           { key: 'status', label: L('Status', 'الحالة'), m: 'end', render: (x) => ui.status(x.status) },
         ] })}
         ${panel({ eyebrow: ui.idMono(r.id), title: L(`Billing run — ${ymLabel(r.ym)}`, `دورة الفوترة — ${ymLabel(r.ym)}`), sub: `${ui.statusLabel(r.status)} · ${B.date(r.date)}`, body: `${pstats([[r.n, L('invoices', 'فاتورة')], [moneyC(r.rent), L('rent', 'إيجار')], [moneyC(r.ch), L('service charges', 'رسوم خدمات')]])}
@@ -418,7 +418,7 @@
       if (cur.amount > 5000) chain.push({ who: D.committeeOf(cur.b) ? tx(D.committeeOf(cur.b).name) : L('Owners\' representative', 'ممثل المالكين'), r: L('Committee (> ₪5,000)', 'اللجنة (> 5,000 ₪)'), st: cur.status === 'pending' ? 'todo' : 'done' });
       pn = panel({ eyebrow: `${ui.idMono(cur.id)} · ${ui.idMono(cur.inv)}`, title: esc(vendorName(cur.vendor)), sub: `${esc(catN(cur.cat))} · ${esc(sName(cur.b))}`, close: 'mg:exsel', body: `
           <div class="row-sm wrap">${ui.status(cur.status === 'pending' ? 'pendingApproval' : cur.status)}${ui.prov('submitted')}</div>
-          ${pstats([[money(cur.amount), L('amount', 'المبلغ')], [B.dateShort(cur.date), L('invoice date', 'تاريخ الفاتورة')], [ymLabel(cur.ym).split(' ')[0], L('period', 'الفترة')]])}
+          ${pstats([[money(cur.amount), L('amount', 'المبلغ')], [B.dateShort(cur.date), L('invoice date', 'تاريخ الفاتورة')], [B.mon(+cur.ym.slice(5) - 1), L('period', 'الفترة')]])}
           <div class="mg-docv"><div class="row between"><b class="small">${esc(vendorName(cur.vendor))}</b><span class="mg-tag">${L('Invoice (sample)', 'فاتورة (نموذج)')}</span></div>${[94, 70, 86, 52].map((w) => `<i style="width:${w}%"></i>`).join('')}<div class="row between" style="margin-top:14px;font-size:13px"><span class="faint">${esc(cur.inv)}</span><b class="num">${money(cur.amount)}</b></div></div>
           ${psec(L('Approval chain', 'مسار الموافقة'), `<div class="mg-steps">${chain.map((c, i) => `<div class="${c.st === 'done' ? 'done' : c.st === 'cur' ? 'cur' : 'todo'}"><i>${c.st === 'done' ? icon('check') : c.st === 'rej' ? icon('x') : i + 1}</i><span>${esc(c.who)} <span class="faint">· ${c.r}</span></span></div>`).join('')}</div>`)}
           ${cur.note ? `<p class="small muted">${esc(tx(cur.note))}</p>` : ''}`,
@@ -435,7 +435,7 @@
           { key: 'vendor', label: L('Vendor', 'المورد'), m: 'title', sort: (e) => vendorName(e.vendor), render: (e) => sub2(esc(vendorName(e.vendor)), `${ui.idMono(e.inv)}`), mRender: (e) => esc(vendorName(e.vendor)) },
           { key: 'cat', label: L('Category', 'الفئة'), sort: (e) => catN(e.cat), m: 'sub', render: (e) => esc(catN(e.cat)) },
           { key: 'b', label: L('Building', 'المبنى'), mid: true, sort: (e) => sName(e.b), m: 'meta', render: (e) => esc(sName(e.b)) },
-          { key: 'date', label: L('Date', 'التاريخ'), sort: true, m: 'hide', render: (e) => `<span class="nowrap">${B.dateShort(e.date)}</span>` },
+          { key: 'date', label: L('Date', 'التاريخ'), sort: true, mid: true, m: 'hide', render: (e) => `<span class="nowrap">${B.dateShort(e.date)}</span>` },
           { key: 'status', label: L('Status', 'الحالة'), sort: true, m: 'meta', render: (e) => ui.status(e.status === 'pending' ? 'pendingApproval' : e.status) },
           { key: 'amount', label: L('Amount', 'المبلغ'), num: true, sort: true, m: 'end', render: (e) => `<b class="num">${money(e.amount)}</b>`, total: (rs) => numc(B.sum(rs, (e) => e.amount)) },
         ] })}${pn}</div>
