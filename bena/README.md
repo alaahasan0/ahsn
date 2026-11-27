@@ -1,12 +1,25 @@
 # BENA — UI/UX prototype
 
 Interactive frontend prototype of **BENA**, a national building identity and
-property-services ecosystem. Frontend only: all data is fictional demo data
-in memory and resets on reload. No backend, no auth, no external services.
+connected building-services ecosystem. Frontend only: all data is fictional
+sample data in memory and resets on reload. No backend, no auth, no external
+services.
 
 Open `bena/index.html` in a browser (works straight from the file system, or
 served by any static server). `node tools/build.cjs` bundles everything into
 a single self-contained HTML file in `dist/`.
+
+## Three experiences, one product
+
+| Route | Experience |
+|---|---|
+| `#hub` (default) | **Demo hub** — choose an experience, a demo role and the language |
+| `#site`, `#site-vision`, `#site-solutions`, `#site-identity`, `#site-ecosystem`, `#site-contact`, `#site-login` | **Public website** — editorial, brand-led storytelling |
+| `#municipality-home`, `#muniadmin-home`, `#manager-home`, `#facility-home`, `#committee-home`, `#provider-home`, `#owner-home`, `#resident-home`, `#admin-home` | **Enterprise web application** — desktop-first workspaces |
+| `#m`, `#m-resident-home`, `#m-owner-home`, `#m-committee-home`, `#m-tech-home`, `#m-provider-home` | **Mobile application** — phone frame on desktop, full-screen on phones |
+
+Language: the EN / عربي switch in every experience (full RTL). Architecture,
+file ownership and honesty rules: `docs/MULTI-EXPERIENCE.md`.
 
 ## Architecture (classic scripts, no build step)
 

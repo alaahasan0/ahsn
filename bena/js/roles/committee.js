@@ -1073,8 +1073,12 @@
   /* ======================================================================
      Register role
      ====================================================================== */
+  /* Internals shared with committee2.js (enterprise workspace screens). */
+  B._cm = { C, BID, bld, units, totalArea, share, shareStr, unitLbl, contrib, cStatus, cOut, S, CATS, cat, BUDGET, LEDGER, actualOf, MONTHS, monthCats, expOf, incOf, INCOME, LEVY, PROJECT, closing, openingOf, fin, MEETINGS, meeting, kindStatus, upcoming, DELEG, DOCS, RESP, GOV, CAPS, govCard, voteBar, VOTE_C, VOTE_L, dateTile, P, prov, reqOpen, needsApproval,
+    pages: { home, finance, statement, meetings, meetingDetail, maintenance, profile, members, announcements, services, building } };
+
   B.role({
-    id: R, icon: 'users', nav: 'tabs',
+    id: R, icon: 'users', nav: 'drawer',
     name: T('Building Committee', 'لجنة المبنى'),
     short: T('Committee', 'اللجنة'),
     org: T('Al-Masyoun Tower Owners\' Association', 'جمعية مالكي برج الماصيون'),

@@ -18,6 +18,106 @@
   M.hash = hash;
   const R = () => B.route.role;
 
+  /* ======================================================================
+     B.ek — enterprise workspace kit shared by committee / provider / admin
+     web workspaces (split views, detail panels, KPI strips, matrices).
+     Owned by this file because it loads before the role files.
+     ====================================================================== */
+  const ek = (B.ek = B.ek || {});
+  B.css(`
+  .ek-page { max-width: 1480px; }
+  .ek-head { display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+  .ek-head .grow { min-width: 0; }
+  .ek-head h1 { font-size: 24px; letter-spacing: -.02em; line-height: 1.2; }
+  html[dir="rtl"] .ek-head h1 { letter-spacing: 0; }
+  .ek-head p { color: var(--text-2); font-size: 14px; margin-top: 4px; max-width: 78ch; }
+  .ek-head .eyebrow { margin-bottom: 6px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .ek-head .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .ek-strip { display: grid; grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); background: #fff; border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; margin-bottom: 16px; }
+  .ek-strip > div { padding: 14px 18px; min-width: 0; border-inline-start: 1px solid var(--line-2); }
+  .ek-strip > div:first-child { border-inline-start: 0; }
+  .ek-strip .l { font-size: 12px; color: var(--text-3); font-weight: 600; display: flex; align-items: center; gap: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ek-strip .l svg { width: 14px; height: 14px; flex: none; }
+  .ek-strip .v { font-family: var(--font-display); font-size: 22px; font-weight: 700; letter-spacing: -.01em; margin-top: 4px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .ek-strip .v small { font-size: 13px; font-weight: 500; color: var(--text-3); margin-inline-start: 4px; }
+  .ek-strip .s { font-size: 12px; color: var(--text-2); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ek-strip .s.ok { color: var(--ok); } .ek-strip .s.warn { color: var(--warn); } .ek-strip .s.bad { color: var(--bad); }
+  @media (max-width: 1100px) { .ek-strip { grid-template-columns: repeat(min(var(--n, 4), 3), minmax(0, 1fr)); } .ek-strip > div:nth-child(n+4) { border-top: 1px solid var(--line-2); } }
+  @media (max-width: 640px) { .ek-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ek-strip > div { padding: 12px 14px; border-top: 1px solid var(--line-2); } .ek-strip > div:nth-child(-n+2) { border-top: 0; } .ek-strip > div:nth-child(odd) { border-inline-start: 0; } .ek-strip .v { font-size: 19px; } }
+  .ek-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(340px, 400px); gap: 16px; align-items: start; }
+  .ek-split.wide { grid-template-columns: minmax(0, 1fr) minmax(380px, 480px); }
+  .ek-split.left { grid-template-columns: minmax(280px, 340px) minmax(0, 1fr); }
+  .ek-split > * { min-width: 0; }
+  .ek-panel { background: #fff; border: 1px solid var(--line); border-radius: var(--r); position: sticky; top: 84px; max-height: calc(100vh - 100px); overflow: auto; }
+  .ek-panel .ph { padding: 18px 20px 14px; border-bottom: 1px solid var(--line-2); display: flex; gap: 12px; align-items: flex-start; }
+  .ek-panel .ph h3 { font-size: 16px; line-height: 1.35; }
+  .ek-panel .ph .sub { font-size: 12.5px; color: var(--text-3); margin-top: 3px; }
+  .ek-panel .pb { padding: 16px 20px; display: flex; flex-direction: column; gap: 16px; }
+  .ek-panel .pf { padding: 12px 20px; border-top: 1px solid var(--line-2); display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; background: var(--surface-2); position: sticky; bottom: 0; }
+  .ek-panel .sec-l { font-size: 11.5px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+  html[dir="rtl"] .ek-panel .sec-l, html[dir="rtl"] .ek-th { letter-spacing: 0; }
+  .ek-panel .kv-list .kv { padding: 7px 0; font-size: 13.5px; }
+  .ek-close { margin-inline-start: auto; flex: none; }
+  @media (max-width: 1180px) { .ek-split, .ek-split.wide, .ek-split.left { grid-template-columns: minmax(0, 1fr); } .ek-panel { position: static; max-height: none; } .ek-split.has-sel > .ek-panel { order: -1; } }
+  .ek-sel-row { background: var(--mint-50) !important; box-shadow: inset 3px 0 0 var(--mint); }
+  html[dir="rtl"] .ek-sel-row { box-shadow: inset -3px 0 0 var(--mint); }
+  .ek-bar { display: flex; flex-direction: column; gap: 6px; }
+  .ek-cell { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .ek-cell .t { font-weight: 600; font-size: 14px; display: block; line-height: 1.3; }
+  .ek-cell .d { font-size: 12px; color: var(--text-3); display: block; margin-top: 1px; }
+  .ek-cell .li-icon { width: 34px; height: 34px; border-radius: 10px; flex: none; }
+  .ek-cell .li-icon svg { width: 17px; height: 17px; }
+  .ek-num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .ek-mini { height: 6px; border-radius: 99px; background: var(--line-2); overflow: hidden; min-width: 60px; }
+  .ek-mini i { display: block; height: 100%; background: var(--navy); border-radius: 99px; }
+  .ek-mini i.mint { background: var(--mint); } .ek-mini i.warn { background: #E9A23B; } .ek-mini i.bad { background: var(--bad); }
+  .ek-matrix { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13.5px; }
+  .ek-matrix th, .ek-matrix td { padding: 10px 12px; border-bottom: 1px solid var(--line-2); text-align: center; }
+  .ek-matrix th { font-size: 12px; font-weight: 600; color: var(--text-3); background: var(--surface-2); position: sticky; top: 0; z-index: 1; white-space: nowrap; }
+  .ek-matrix th:first-child, .ek-matrix td:first-child { text-align: start; position: sticky; inset-inline-start: 0; background: #fff; z-index: 2; min-width: 220px; }
+  .ek-matrix th:first-child { background: var(--surface-2); z-index: 3; }
+  .ek-matrix tr.grp td { background: var(--surface-2); font-size: 11.5px; font-weight: 700; color: var(--text-2); text-transform: uppercase; letter-spacing: .05em; text-align: start; }
+  html[dir="rtl"] .ek-matrix tr.grp td { letter-spacing: 0; }
+  .ek-matrix svg { width: 17px; height: 17px; vertical-align: middle; }
+  .ek-matrix .y { color: var(--ok); } .ek-matrix .n { color: #C3CCD3; } .ek-matrix .p { color: var(--warn); }
+  .ek-matrix td.on { background: rgba(54,214,160,.06); }
+  .ek-scroll { overflow: auto; border: 1px solid var(--line); border-radius: var(--r); background: #fff; }
+  .ek-tb { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+  .ek-tb .input-icon { flex: 1 1 240px; min-width: 0; max-width: 380px; }
+  .ek-tb .select { width: auto; min-width: 150px; }
+  .ek-tb .sp { flex: 1; }
+  .ek-tb .cnt { font-size: 13px; color: var(--text-3); white-space: nowrap; }
+  @media (max-width: 640px) { .ek-tb .input-icon { flex-basis: 100%; max-width: none; } .ek-tb .select { flex: 1 1 calc(50% - 5px); min-width: 0; } .ek-tb .sp { display: none; } }
+  .ek-doc { border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); padding: 18px; }
+  .ek-doc i { display: block; height: 8px; border-radius: 4px; background: #DDE5E2; margin-top: 8px; }
+  .ek-flag { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; }
+  .ek-flag svg { width: 15px; height: 15px; }
+  .ek-flag.y { color: var(--ok); } .ek-flag.n { color: var(--bad); } .ek-flag.p { color: var(--warn); } .ek-flag.x { color: var(--text-3); }
+  .ek-card-t { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+  .ek-card-t h3 { font-size: 15px; }
+  .ek-card-t .sub { font-size: 12.5px; color: var(--text-3); }
+  .ek-sec { font-size: 15px; font-weight: 700; margin: 22px 0 10px; display: flex; align-items: center; gap: 10px; }
+  .ek-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex: none; }
+  `);
+  /** Page header: ek.head({ eyebrow, title, sub, actions }) */
+  ek.head = (o) => `<div class="ek-head"><div class="grow">${o.eyebrow ? `<div class="eyebrow">${o.eyebrow}</div>` : ''}<h1>${tx(o.title)}</h1>${o.sub ? `<p>${tx(o.sub)}</p>` : ''}</div>${o.actions ? `<div class="actions">${o.actions}</div>` : ''}</div>`;
+  /** KPI strip: ek.strip([{ l, v, unit, s, tone, icon }]) */
+  ek.strip = (items) => `<div class="ek-strip" style="--n:${items.length}">${items.map((k) => `<div><div class="l">${k.icon ? icon(k.icon) : ''}${tx(k.l)}</div><div class="v">${k.v}${k.unit ? `<small>${tx(k.unit)}</small>` : ''}</div>${k.s ? `<div class="s ${k.tone || ''}">${k.s}</div>` : ''}</div>`).join('')}</div>`;
+  /** Detail panel: ek.panel({ title, sub, lead, badges, body, foot, close: 'stateKey' }) */
+  ek.panel = (o) => `<aside class="ek-panel" aria-label="${esc(String(o.title || '').replace(/<[^>]+>/g, ''))}"><div class="ph">${o.lead || ''}<div class="grow" style="min-width:0">${o.badges ? `<div class="row-sm wrap" style="margin-bottom:8px">${o.badges}</div>` : ''}<h3>${o.title}</h3>${o.sub ? `<div class="sub">${o.sub}</div>` : ''}</div>${o.close ? `<button class="icon-btn ek-close" data-act="set" data-arg="${o.close}=" aria-label="${esc(L('Close', 'إغلاق'))}">${icon('x')}</button>` : ''}</div><div class="pb">${o.body}</div>${o.foot ? `<div class="pf">${o.foot}</div>` : ''}</aside>`;
+  /** Panel section */
+  ek.ps = (label, body) => `<div><div class="sec-l">${tx(label)}</div>${body}</div>`;
+  /** Split layout: list + panel */
+  ek.split = (main, panel, cls = '') => `<div class="ek-split ${cls} ${panel ? 'has-sel' : ''}">${main}${panel || ''}</div>`;
+  /** Highlight the selected row of a B.ui.table rendered with rowAct. */
+  ek.selStyle = (scope, arg) => (arg ? `<style>.${scope} tr[data-arg="${String(arg).replace(/"/g, '')}"]{background:var(--mint-50)}.${scope} tr[data-arg="${String(arg).replace(/"/g, '')}"] td:first-child{box-shadow:inset ${B.isAr() ? '-' : ''}3px 0 0 var(--mint)}.${scope} .m-row[data-arg="${String(arg).replace(/"/g, '')}"]{background:var(--mint-50)}</style>` : '');
+  ek.cell = (ic, t, d, tone = '') => `<span class="ek-cell">${ic ? `<span class="li-icon ${tone}">${icon(ic)}</span>` : ''}<span style="min-width:0"><span class="t">${t}</span>${d ? `<span class="d">${d}</span>` : ''}</span></span>`;
+  ek.mini = (pct, tone = '') => `<div class="ek-mini"><i class="${tone}" style="width:${Math.max(0, Math.min(100, pct))}%"></i></div>`;
+  ek.flag = (k, label) => `<span class="ek-flag ${k}">${icon({ y: 'checkCircle', n: 'xCircle', p: 'clock', x: 'minus' }[k] || 'minus')}${label}</span>`;
+  ek.mark = (k) => `<span class="${k}">${icon({ y: 'checkCircle', n: 'minus', p: 'clock' }[k] || 'minus')}</span>`;
+  ek.tb = (inner) => `<div class="ek-tb">${inner}</div>`;
+  ek.docPrev = (title) => `<div class="ek-doc"><div class="row between" style="margin-bottom:10px"><div class="brand dark">${B.logo(20)}<span style="font-size:13px">BENA</span></div><span class="badge">${L('Sample', 'نموذج')}</span></div><b style="font-size:13px">${title}</b>${[92, 100, 74, 88, 60, 96, 38].map((w) => `<i style="width:${w}%"></i>`).join('')}</div>`;
+
   /* ---------------- statuses used by the marketplaces ---------------- */
   Object.assign(B.statuses, {
     enroute: { en: 'En route', ar: 'في الطريق', tone: 'info', icon: 'truck' },
