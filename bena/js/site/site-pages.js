@@ -1086,7 +1086,7 @@
   .ws-unit-k { font-size: 12.5px; color: var(--text-2); }
   .ws-unit-s { display: inline-flex; align-items: center; gap: 6px; margin-top: auto; font-size: 12.5px; font-weight: 600; }
   .ws-unit-s i, .ws-legend i { width: 8px; height: 8px; border-radius: 50%; background: var(--text-3); }
-  .st-rented i { background: var(--mint-ink) !important; } .st-ownerOccupied i { background: var(--navy) !important; } .st-vacant i { background: #C9D6DF !important; border: 1px solid #9FB2BF; } .st-maintenance i { background: #E9A23B !important; }
+  .ws-explorer .st-rented i { background: var(--mint-ink); } .ws-explorer .st-ownerOccupied i { background: var(--navy); } .ws-explorer .st-vacant i { background: #C9D6DF; box-shadow: inset 0 0 0 1px #9FB2BF; } .ws-explorer .st-maintenance i { background: #E9A23B; }
   .ws-legend { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 14px; font-size: 12.5px; color: var(--text-2); }
   .ws-legend span { display: inline-flex; align-items: center; gap: 6px; }
   .ws-unitp-h { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }

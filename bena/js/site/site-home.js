@@ -35,7 +35,7 @@
           <svg x="${ar ? VW - TWp - TX : TX}" y="${TOP}" width="${TWp}" height="${th.toFixed(1)}" viewBox="${b.x} ${b.y} ${b.w} ${b.h}" overflow="visible">${S.tower({ theme: 'night', idp: 'hero', lit: ['8-3'], marks: [{ f: 8, k: 3 }], scan: true, trace: true }).replace(/^<svg[^>]*>/, '').replace(/<\/svg>$/, '')}</svg>
           <polyline class="ws-hv-lead" points="${line([roof, [roof[0] + 22, roof[1] - 40], [300, roof[1] - 40]])}" fill="none" stroke="#36D6A0" stroke-width="1.2" stroke-dasharray="3 4"/>
           <circle cx="${mx(roof[0])}" cy="${roof[1]}" r="3.2" fill="#36D6A0"/>
-          <polyline class="ws-hv-lead" points="${line([u, [u[0] + 36, u[1]], [u[0] + 92, u[1] + 56], [340, u[1] + 56]])}" fill="none" stroke="#36D6A0" stroke-width="1.2"/>
+          <polyline class="ws-hv-lead" points="${line([u, [u[0] + 36, u[1]], [u[0] + 104, u[1] + 68], [340, u[1] + 68]])}" fill="none" stroke="#36D6A0" stroke-width="1.2"/>
           <polyline class="ws-hv-lead" points="${line([g, [g[0] + 36, g[1] + 36], [300, g[1] + 36]])}" fill="none" stroke="#36D6A0" stroke-opacity=".6" stroke-width="1" stroke-dasharray="2 3"/>
         </svg>
         <div class="ws-hv-phone" aria-hidden="true">${S.tower({ theme: 'night', idp: 'herom', lit: ['8-3'], marks: [{ f: 8, k: 3 }], trace: true })}</div>
@@ -45,12 +45,12 @@
           <div class="ws-idc-name">${L('Al-Masyoun Residence Tower', 'برج الماصيون السكني')}</div>
           <div class="ws-idc-addr">${L('14 Al-Masyoun St. · Ramallah (sample)', '14 شارع الماصيون · رام الله (نموذج)')}</div>
           <dl class="ws-idc-rows">
-            <div><dt>${L('Municipal reference', 'المرجع البلدي')}</dt><dd>${S.id('RM-GIS-48217')}<span class="ws-idc-note">${L('sample · designed to connect', 'نموذج · مصمَّم للربط')}</span></dd></div>
+            <div><dt>${L('Municipal ref.', 'المرجع البلدي')}</dt><dd>${S.id('RM-GIS-48217')}<span class="ws-idc-note">${L('sample · designed to connect', 'نموذج · مصمَّم للربط')}</span></dd></div>
             <div><dt>${L('Parcel', 'القطعة')}</dt><dd>${L('Basin 12 · Parcel 87', 'حوض 12 · قطعة 87')}</dd></div>
           </dl>
           <div class="ws-idc-foot"><span class="ws-idc-qr">${B.art.qr(142)}</span><span>${L('A digital reference identity — not proof of ownership.', 'هوية مرجعية رقمية — وليست إثباتاً للملكية.')}</span></div>
         </div>
-        <div class="ws-chip ws-chip-unit" style="top:${((u[1] + 56 - 22) / VH * 100).toFixed(2)}%">
+        <div class="ws-chip ws-chip-unit" style="top:${((u[1] + 68 - 22) / VH * 100).toFixed(2)}%">
           <span class="ws-chip-dot"></span><b>${L('Unit 803', 'الوحدة 803')}</b><span>${B.ui.statusLabel(unit ? unit.status : 'rented')} · ${unit ? unit.area : 146} ${L('m²', 'م²')}</span>
         </div>
         <div class="ws-chip ws-chip-req" style="top:${((g[1] + 36 - 22) / VH * 100).toFixed(2)}%">
@@ -343,7 +343,7 @@
   .ws-idc-rows > div { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line-2); font-size: 12.5px; }
   .ws-idc-rows dt { color: var(--text-2); }
   .ws-idc-rows dd { margin: 0; text-align: end; font-weight: 600; color: var(--ink); display: flex; flex-direction: column; align-items: flex-end; }
-  .ws-idc-note { font-size: 11px; font-weight: 500; color: var(--mint-ink); }
+  .ws-idc-note { font-size: 11px; font-weight: 500; color: var(--mint-ink); white-space: nowrap; }
   .ws-idc-foot { display: flex; align-items: center; gap: 12px; margin-top: 12px; font-size: 12px; line-height: 1.4; color: var(--text-2); }
   .ws-idc-qr { width: 46px; height: 46px; flex: none; padding: 4px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
   .ws-chip { position: absolute; inset-inline-end: 0; display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px; border-radius: 99px; background: rgba(15,36,51,.82); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border: 1px solid rgba(54,214,160,.35); color: #fff; font-size: 13px; white-space: nowrap; animation: wsFloat 8s ease-in-out infinite; }
