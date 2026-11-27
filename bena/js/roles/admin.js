@@ -429,7 +429,7 @@
     </tbody></table></div></div>`;
     const mob = `<div class="ad-mx-m stack"><div class="field"><label for="f-pmrole">${L('Role', 'الدور')}</label>${ui.select('pm:role', rk.map((r) => ({ v: r, l: ROLES[r].l })), { def: 'manager' })}</div>
       ${PERM_GROUPS.map((g) => ui.card({ title: g.g, body: g.items.map(([pid, pl]) => `<div class="ad-prow"><span>${tx(pl)}</span>${sw(`perm:${cur}:${pid}`, permOn(cur, pid), cur === 'admin' ? 'disabled' : '')}</div>`).join('') })).join('')}</div>`;
-    return `${head({ title: L('Roles & permissions', 'الأدوار والصلاحيات'), sub: L('What each role can see and do. Platform admin permissions are locked.', 'ما يمكن لكل دور رؤيته وفعله. صلاحيات مدير المنصة مقفلة.'),
+    return `${head({ title: L('Permissions', 'الصلاحيات'), sub: L('Permission matrix: what each role can see and do. Platform admin permissions are locked.', 'مصفوفة الصلاحيات: ما يمكن لكل دور رؤيته وفعله. صلاحيات مدير المنصة مقفلة.'),
       actions: ui.btn(L('Reset to defaults', 'استعادة الافتراضي'), { icon: 'refresh', act: 'adPermReset' }) + ui.btn(L('Save changes', 'حفظ التغييرات'), { kind: 'primary', icon: 'check', act: 'adPermSave' }) })}
       <div class="stack">${ui.callout(L('Changes apply to every organization using these roles. Organization admins can restrict — but not extend — these defaults.', 'تنطبق التغييرات على كل مؤسسة تستخدم هذه الأدوار. يمكن لمسؤولي المؤسسات تقييد هذه الإعدادات دون توسيعها.'), '', 'info')}${desk}${mob}</div>`;
   }
@@ -683,6 +683,8 @@
      Role registration
      ================================================================= */
   const pages = { home, orgs, users, roles, munis, sources, bcats: catPage('bcats'), ucats: catPage('ucats'), scats: catPage('scats'), verification, audit, config };
+  /* Internals shared with admin2.js (additional platform screens). */
+  B._ad = { MUNIS, ORGS, OT, ROLES, roleBadge, USERS, orgName, TOTAL_USERS, TOTAL_ORGS, platformBuildings, platformUnits, PERM_GROUPS, DEF, permOn, SOURCES, SK, CATS, CATMETA, AUDIT, AC, HEALTH, head, sw, pages };
   B.role({
     id: R, icon: 'shield', nav: 'drawer',
     name: { en: 'Platform admin', ar: 'إدارة المنصة' }, short: { en: 'Admin', ar: 'الإدارة' },

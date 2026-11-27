@@ -1104,7 +1104,7 @@
     notifications: () => [
       { icon: 'elevator', tone: 'bad', title: L('Elevator B — LiftLine technician on site today', 'المصعد ب — فني لفت لاين في الموقع اليوم'), sub: 'MR-24477', when: L('Today', 'اليوم'), go: `${R}-maintenance` },
       { icon: 'clipboard', tone: 'warn', title: L('Stairwell deep clean awaiting your approval', 'تنظيف الدرج العميق بانتظار موافقتك'), sub: L(`Requested by ${P('p_hiba')}`, `طلبته ${P('p_hiba')}`), when: L('2 days', 'يومان'), go: `${R}-maintenance` },
-      { icon: 'userCheck', tone: 'info', title: L('6 proxies registered for the general assembly', 'تسجيل 6 وكالات للهيئة العامة'), sub: L('4 December · 52.3% of shares confirmed', '4 كانون الأول · 52.3% من الحصص مؤكدة'), when: L('Yesterday', 'أمس'), go: `${R}-meeting-MT-2612` },
+      { icon: 'userCheck', tone: 'info', title: L(`${meeting('MT-2612').proxies} proxies registered for the general assembly`, `تسجيل ${meeting('MT-2612').proxies} وكالات للهيئة العامة`), sub: L(`4 December · ${B.num1(meeting('MT-2612').rsvpShare)}% of shares confirmed`, `4 كانون الأول · ${B.num1(meeting('MT-2612').rsvpShare)}% من الحصص مؤكدة`), when: L('Yesterday', 'أمس'), go: `${R}-voting` },
       { icon: 'coins', tone: 'warn', title: L('3 units have 2+ months of arrears', '3 وحدات متأخرة شهرين فأكثر'), sub: L('Units 902, 1303 and G02', 'الوحدات 902 و1303 وG02'), when: L('3 days', '3 أيام'), go: `${R}-finance` },
       { icon: 'doc', tone: 'mint', title: L('October statement approved by the treasurer', 'اعتمدت أمينة الصندوق كشف تشرين الأول'), sub: L('Ready to share with owners', 'جاهز للمشاركة مع المالكين'), when: L('1 wk', 'أسبوع'), go: `${R}-statement-2026-10` },
     ],

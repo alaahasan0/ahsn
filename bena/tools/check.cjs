@@ -44,7 +44,8 @@ const file = 'file://' + path.resolve(__dirname, '..', 'index.html');
     routes = routes.concat(ids.map((i) => `${role}-${i}`));
   }
   if (mrole) {
-    const ids = await page.evaluate((r) => { const R = window.B.mroles[r]; return [...(R.tabs || []), ...(R.more || [])].map((m) => m.id); }, mrole);
+    const ids = await page.evaluate((r) => { const R = window.B.mroles[r]; return R ? [...(R.tabs || []), ...(R.more || [])].map((m) => m.id) : null; }, mrole);
+    if (!ids) { console.log(`✗ mobile role "${mrole}" is not registered`); await browser.close(); process.exit(1); }
     routes = routes.concat(ids.map((i) => `m-${mrole}-${i}`));
   }
   if (site) {

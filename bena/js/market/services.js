@@ -48,6 +48,7 @@
   .ek-split.wide { grid-template-columns: minmax(0, 1fr) minmax(380px, 480px); }
   .ek-split.left { grid-template-columns: minmax(280px, 340px) minmax(0, 1fr); }
   .ek-split > * { min-width: 0; }
+  .ek-split.solo { grid-template-columns: minmax(0, 1fr); }
   .ek-panel { background: #fff; border: 1px solid var(--line); border-radius: var(--r); position: sticky; top: 84px; max-height: calc(100vh - 100px); overflow: auto; }
   .ek-panel .ph { padding: 18px 20px 14px; border-bottom: 1px solid var(--line-2); display: flex; gap: 12px; align-items: flex-start; }
   .ek-panel .ph h3 { font-size: 16px; line-height: 1.35; }
@@ -108,7 +109,7 @@
   /** Panel section */
   ek.ps = (label, body) => `<div><div class="sec-l">${tx(label)}</div>${body}</div>`;
   /** Split layout: list + panel */
-  ek.split = (main, panel, cls = '') => `<div class="ek-split ${cls} ${panel ? 'has-sel' : ''}">${main}${panel || ''}</div>`;
+  ek.split = (main, panel, cls = '') => `<div class="ek-split ${cls} ${panel ? 'has-sel' : 'solo'}">${main}${panel || ''}</div>`;
   /** Highlight the selected row of a B.ui.table rendered with rowAct. */
   ek.selStyle = (scope, arg) => (arg ? `<style>.${scope} tr[data-arg="${String(arg).replace(/"/g, '')}"]{background:var(--mint-50)}.${scope} tr[data-arg="${String(arg).replace(/"/g, '')}"] td:first-child{box-shadow:inset ${B.isAr() ? '-' : ''}3px 0 0 var(--mint)}.${scope} .m-row[data-arg="${String(arg).replace(/"/g, '')}"]{background:var(--mint-50)}</style>` : '');
   ek.cell = (ic, t, d, tone = '') => `<span class="ek-cell">${ic ? `<span class="li-icon ${tone}">${icon(ic)}</span>` : ''}<span style="min-width:0"><span class="t">${t}</span>${d ? `<span class="d">${d}</span>` : ''}</span></span>`;
@@ -215,9 +216,12 @@
     const p = M.provider(pid);
     if (!p) return [];
     const out = [];
-    p.cats.forEach((c) => (CATALOG[c] || []).forEach((s) => out.push({ ...s, i: out.length, cat: c, pid, price: Math.max(10, Math.round((s.price * factor(p)) / 5) * 5) })));
+    p.cats.forEach((c) => (CATALOG[c] || []).forEach((s) => { const k = `${pid}|${c}|${s.name.en}`; out.push({ ...s, i: out.length, cat: c, pid, key: k, price: M.priceOv[k] != null ? M.priceOv[k] : Math.max(10, Math.round((s.price * factor(p)) / 5) * 5) }); }));
     return out;
   };
+  /** Catalogue for a category (provider portal: categories it does not offer yet). */
+  M.catalog = (cat) => CATALOG[cat] || [];
+  M.priceOv = M.priceOv || {};
   M.fromPrice = (pid) => Math.min(...M.services(pid).filter((s) => s.unit !== 'm2').map((s) => s.price));
   M.unitLabel = (u) => tx(UNITS[u] || '');
 
@@ -688,6 +692,80 @@
   const districtOpts = () => [{ v: '', l: L('All areas of Ramallah', 'كل مناطق رام الله') }].concat(D.districts.map((d) => ({ v: d.id, l: d.name })));
 
   /* ---------------- page: services (marketplace home / category) ---------------- */
+  /* Desktop marketplace layout shared with property.js: filters sidebar + results + optional map. */
+  B.css(`
+  .mk2 { max-width: 1480px; }
+  .mk2-top { display: flex; align-items: flex-end; gap: 16px 24px; flex-wrap: wrap; margin-bottom: 16px; }
+  .mk2-top .grow { min-width: 0; flex: 1 1 380px; }
+  .mk2-top h1 { font-size: 26px; letter-spacing: -.02em; line-height: 1.2; }
+  html[dir="rtl"] .mk2-top h1 { letter-spacing: 0; }
+  .mk2-top p { color: var(--text-2); font-size: 14px; margin-top: 4px; max-width: 70ch; }
+  .mk2-top .mk-for { margin-top: 10px; }
+  .mk2-search { display: flex; gap: 6px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 5px; flex: 1 1 520px; max-width: 720px; box-shadow: var(--shadow-1, 0 1px 2px rgba(20,43,59,.04)); }
+  .mk2-search .input-icon { flex: 1 1 auto; min-width: 0; }
+  .mk2-search .input { border: 0; box-shadow: none !important; height: 42px; }
+  .mk2-search .btn { height: 42px; border-radius: 10px; }
+  .mk2-layout { display: grid; grid-template-columns: 252px minmax(0, 1fr); gap: 20px; align-items: start; }
+  .mk2-aside { background: #fff; border: 1px solid var(--line); border-radius: var(--r); position: sticky; top: 84px; max-height: calc(100vh - 100px); overflow: auto; }
+  .mk2-fs { padding: 14px 16px; border-bottom: 1px solid var(--line-2); }
+  .mk2-fs:last-child { border-bottom: 0; }
+  .mk2-fs h4 { font-size: 11.5px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+  html[dir="rtl"] .mk2-fs h4 { letter-spacing: 0; }
+  .mk2-fs h4 button { font-size: 12px; text-transform: none; letter-spacing: 0; color: var(--mint-ink); font-weight: 600; }
+  .mk2-opt { display: flex; align-items: center; gap: 9px; width: 100%; text-align: start; padding: 7px 8px; border-radius: 9px; font-size: 13.5px; color: var(--text-2); }
+  .mk2-opt:hover { background: var(--hover); color: var(--ink); }
+  .mk2-opt svg { width: 16px; height: 16px; flex: none; color: var(--text-3); }
+  .mk2-opt .c { margin-inline-start: auto; font-size: 12px; color: var(--text-3); font-variant-numeric: tabular-nums; }
+  .mk2-opt.on { background: var(--mint-50); color: var(--ink); font-weight: 600; }
+  .mk2-opt.on svg { color: var(--mint-ink); }
+  .mk2-fs .select { width: 100%; height: 38px; font-size: 13.5px; }
+  .mk2-fs .seg { width: 100%; display: flex; } .mk2-fs .seg button { flex: 1; }
+  .mk2-fs .mk-check { white-space: normal; }
+  .mk2-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+  .mk2-bar .count { font-size: 13.5px; color: var(--text-2); margin-inline-end: auto; }
+  .mk2-bar .count b { color: var(--ink); font-size: 15px; }
+  .mk2-bar .select { width: auto; height: 38px; font-size: 13.5px; }
+  .mk2-fbtn { display: none !important; }
+  .mk2-active { display: flex; gap: 6px; flex-wrap: wrap; margin: -4px 0 12px; }
+  .mk2-active button { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; padding: 4px 8px 4px 10px; border-radius: 99px; background: var(--surface-2); border: 1px solid var(--line); }
+  html[dir="rtl"] .mk2-active button { padding: 4px 10px 4px 8px; }
+  .mk2-active svg { width: 13px; height: 13px; }
+  .mk2-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .92fr); gap: 16px; align-items: start; }
+  .mk2-split .mk2-mapcol { position: sticky; top: 84px; }
+  .mk2-split .map-shell { height: calc(100vh - 210px) !important; min-height: 460px; }
+  .mk2-rows { display: flex; flex-direction: column; gap: 10px; }
+  .mk2-row { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: 14px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; text-align: start; width: 100%; transition: border-color .2s; }
+  .mk2-row:hover, .mk2-row.on { border-color: var(--mint); }
+  .mk2-row.on { box-shadow: 0 0 0 3px rgba(54,214,160,.15); }
+  .mk2-row .t { font-weight: 600; font-size: 14.5px; display: block; line-height: 1.3; }
+  .mk2-row .s { font-size: 12.5px; color: var(--text-3); display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; align-items: center; }
+  .mk2-row .s > .row-sm { gap: 4px; white-space: nowrap; }
+  .mk2-row .s > .row-sm svg { width: 14px; height: 14px; color: var(--text-3); flex: none; }
+  .mk2-row .p { text-align: end; white-space: nowrap; }
+  .mk2-row .p b { font-family: var(--font-display); font-size: 16px; display: block; font-variant-numeric: tabular-nums; }
+  .mk2-row .p small { font-size: 12px; color: var(--text-3); }
+  .mk2-row .mk-logo { width: 56px; height: 56px; border-radius: 14px; font-size: 17px; }
+  .mk2-row .thumb { width: 96px; height: 72px; border-radius: 10px; overflow: hidden; display: block; }
+  .mk2-row .thumb svg { width: 100%; height: 100%; display: block; }
+  .mk2-row.prop { grid-template-columns: 96px minmax(0, 1fr) auto; }
+  .mk2-pop { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 18px; }
+  .mk2-pop .mk-svc { padding: 12px 14px; }
+  .mk2-sec { font-size: 15px; font-weight: 700; margin: 4px 0 10px; display: flex; align-items: baseline; gap: 10px; }
+  .mk2-sec small { font-size: 12.5px; color: var(--text-3); font-weight: 500; }
+  @media (max-width: 1300px) { .mk2-pop { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 1100px) { .mk2-split { grid-template-columns: minmax(0, 1fr); } .mk2-split .mk2-mapcol { position: static; } .mk2-split .map-shell { height: 420px !important; } }
+  @media (max-width: 900px) {
+    .mk2-layout { grid-template-columns: minmax(0, 1fr); }
+    .mk2-aside { position: static; max-height: none; display: none; }
+    .mk2-aside.open { display: block; }
+    .mk2-fbtn { display: inline-flex !important; }
+    .mk2-pop { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 640px) { .mk2-top h1 { font-size: 22px; } .mk2-search { flex-basis: 100%; } .mk2-row { grid-template-columns: 44px minmax(0, 1fr); } .mk2-row .p { grid-column: 2; text-align: start; } .mk2-row .mk-logo { width: 44px; height: 44px; } .mk2-row.prop { grid-template-columns: 76px minmax(0, 1fr); } .mk2-row .thumb { width: 76px; height: 60px; } }
+  `);
+  M.opt = (on, ic, label, attrs, count) => `<button class="mk2-opt ${on ? 'on' : ''}" ${attrs}>${icon(ic)}<span class="truncate">${label}</span>${count != null ? `<span class="c">${count}</span>` : ''}</button>`;
+  /** One representative building per district (for provider-coverage pins). */
+  const distAnchor = (d) => { const k = D.keyBuildings.find((b) => b.district === d.id); if (k) return k.id; let best = null, bd = 1e9; D.buildings.forEach((b) => { const x = Math.hypot(b.c[0] - d.seed[0], b.c[1] - d.seed[1]); if (x < bd) { bd = x; best = b; } }); return best.id; };
   B.shared.services = (catId) => {
     const cat = catId && D.serviceCats.find((c) => c.id === catId) ? catId : null;
     const q = B.get('mk:q', '');
@@ -696,8 +774,14 @@
     const dist = B.get('mk:dist', '');
     const sort = B.get('mk:sort', 'rec');
     const verOnly = B.get('mk:ver', false);
-    let list = M.providers().filter((p) => (!cat || p.cats.includes(cat)) && (!dist || p.areas.includes(dist)) && (!verOnly || p.verified)
+    const minR = +B.get('mk:rmin', 0);
+    const fast = B.get('mk:fast', false);
+    const view = B.get('mk:view', 'list');
+    const fOpen = B.get('mk:fo', false);
+    const isFast = (p) => /same|24|hr|ساعة|ساعات|نفس/i.test(tx(p.response) + p.response.en);
+    const base = M.providers().filter((p) => (!dist || p.areas.includes(dist)) && (!verOnly || p.verified) && p.rating >= minR && (!fast || isFast(p))
       && B.match(q, p.name, p.tagline, ...p.cats.map((c) => D.cat(c).name), ...M.services(p.id).map((s) => s.name)));
+    const list = base.filter((p) => !cat || p.cats.includes(cat));
     const near = homeB ? homeB.district : null;
     const sorters = {
       rec: (a, b) => (b.verified - a.verified) || ((b.areas.includes(near) ? 1 : 0) - (a.areas.includes(near) ? 1 : 0)) || b.rating * Math.log(b.reviews) - a.rating * Math.log(a.reviews),
@@ -706,49 +790,51 @@
     list.sort(sorters[sort] || sorters.rec);
     if (cat) B.title(tx(D.cat(cat).name));
     B.navActive('services');
+    if (cat) B.crumbs([{ label: L('Services marketplace', 'سوق الخدمات'), go: `${R()}-services` }, { label: tx(D.cat(cat).name) }]);
     const c = cat && D.cat(cat);
     const mine = ctx.customer ? M.myRequests().filter((r) => !['completed', 'cancelled', 'resolved'].includes(r.status)) : [];
     const popular = [];
-    if (!cat && !q) {
-      [['sp_jaber', 0], ['sp_sparkle', 1], ['sp_lift', 0], ['sp_pure', 0], ['sp_cool', 0], ['sp_volt', 2]].forEach(([pid, i]) => { const s = M.services(pid)[i]; if (s) popular.push(s); });
-    }
-    const svcs = cat ? list.flatMap((p) => M.services(p.id).filter((s) => s.cat === cat).slice(0, 1)) : popular;
-    return `<div class="mk-wrap">
-      <div class="mk-hero">
-        ${cat ? `<button class="btn btn-text" style="padding:0;margin-bottom:10px" data-go="${R()}-services">${icon('arrowLeft', 'flip')}<span>${L('All services', 'كل الخدمات')}</span></button>` : ''}
-        <h1>${cat ? tx(c.name) : L('Trusted services for your building', 'خدمات موثوقة لمبناك')}</h1>
-        <p>${cat ? tx(CAT_DESC[cat]) : L('Verified providers, transparent prices and quotes you can compare — all linked to your building’s BENA identity.', 'مزوّدون موثّقون وأسعار واضحة وعروض يمكنك مقارنتها — وكلها مرتبطة بهوية مبناك في بينا.')}</p>
-        ${forPill()}
-        <div class="mk-searchbar">
-          ${ui.search('mk:q', L('Search a service or provider — e.g. leak, AC, elevator', 'ابحث عن خدمة أو مزوّد — مثل تسريب، مكيف، مصعد'))}
-          ${ui.select('mk:dist', districtOpts(), { label: L('Area', 'المنطقة'), def: '' })}
-          <button class="btn btn-primary" data-act="mkRequest" data-arg="${cat ? 'cat:' + cat : ''}">${icon('plus')}<span>${L('Request service', 'اطلب خدمة')}</span></button>
-        </div>
-        ${catTiles(cat)}
-      </div>
-      ${mine.length && !cat ? `<div style="margin-top:22px" class="mk-mine"><span class="mi">${icon('activity')}</span><div class="grow"><b>${L(`${mine.length} active request${mine.length > 1 ? 's' : ''}`, mine.length === 1 ? 'طلب نشط واحد' : mine.length === 2 ? 'طلبان نشطان' : `${mine.length} طلبات نشطة`)}</b><div class="xs" style="margin-top:2px">${esc(tx(mine[0].title))} · ${ui.statusLabel(mine[0].status === 'open' ? 'collecting' : mine[0].status)}</div></div>
-        ${mine.some((r) => ['open', 'quoted'].includes(r.status)) ? ui.btn(L('Compare quotes', 'قارن العروض'), { kind: 'primary', size: 'sm', go: `${R()}-quotes-${mine.find((r) => ['open', 'quoted'].includes(r.status)).id}` }) : ''}
-        ${ui.btn(L('Service history', 'سجل الخدمات'), { size: 'sm', go: `${R()}-servicehistory` })}</div>` : ''}
-      ${svcs.length ? `<div class="mk-sec"><div><h2>${cat ? L('Popular in this category', 'الأكثر طلباً في هذه الفئة') : L('Popular right now', 'الأكثر طلباً الآن')}</h2><p>${L('Fixed starting prices from verified providers', 'أسعار بدء ثابتة من مزوّدين موثّقين')}</p></div></div>
-        <div class="mk-svc-grid">${svcs.slice(0, 6).map((s) => { const p = M.provider(s.pid); return `<button class="mk-svc" data-go="${R()}-servicedetail-${s.pid}~${s.i}"><span class="si">${icon(D.cat(s.cat).icon)}</span><span class="grow"><b>${tx(s.name)}</b><span class="sp" style="display:block">${tx(p.name)} · ${M.rating(p.rating)}</span><span class="pr" style="display:block">${L('From', 'ابتداءً من')} <b>${B.money(s.price)}</b> ${M.unitLabel(s.unit)}</span></span></button>`; }).join('')}</div>` : ''}
-      <div class="mk-sec"><div><h2>${cat ? L(`${tx(c.name)} providers`, `مزوّدو ${tx(c.name)}`) : L('Providers near you', 'مزوّدون بالقرب منك')}</h2><p>${dist ? L(`Covering ${tx(D.district(dist).name)}`, `يغطون ${tx(D.district(dist).name)}`) : near ? L(`Recommended for ${tx(D.district(near).name)}`, `موصى بهم لمنطقة ${tx(D.district(near).name)}`) : ''}</p></div></div>
-      <div class="mk-toolbar">
-        <span class="count"><b>${list.length}</b> ${L('providers', 'مزوّد')}</span>
-        <div class="row-sm wrap" style="gap:12px">
-          <label class="mk-check"><input type="checkbox" id="mk-ver" data-model="mk:ver" ${verOnly ? 'checked' : ''}>${L('Verified only', 'الموثّقون فقط')}</label>
-          ${ui.select('mk:sort', [{ v: 'rec', l: L('Recommended', 'موصى به') }, { v: 'rating', l: L('Highest rated', 'الأعلى تقييماً') }, { v: 'reviews', l: L('Most reviewed', 'الأكثر مراجعات') }, { v: 'price', l: L('Lowest price', 'الأقل سعراً') }], { label: L('Sort', 'الترتيب') })}
-        </div>
-      </div>
-      ${list.length ? `<div class="mk-pgrid">${list.map((p) => M.providerCard(p, { cat, district: dist || near })).join('')}</div>` : `<div class="card">${ui.empty({ icon: 'search', title: L('No providers match', 'لا يوجد مزوّدون مطابقون'), text: L('Try another area or clear the search. You can still post a request and let providers come to you.', 'جرّب منطقة أخرى أو امسح البحث. يمكنك نشر طلب وترك المزوّدين يتواصلون معك.'), action: ui.btn(L('Post a request', 'انشر طلباً'), { kind: 'primary', act: 'mkRequest', arg: cat ? 'cat:' + cat : '' }) })}</div>`}
-      ${!cat ? `<div class="mk-sec"><div><h2>${L('How it works', 'كيف تعمل الخدمة')}</h2></div></div>
-      <div class="mk-how">
-        <div><span class="n">${icon('send')}</span><div><b>${L('Describe the job', 'صِف المهمة')}</b><p>${L('Your building and unit are filled in from your BENA identity.', 'يتم تعبئة المبنى والوحدة تلقائياً من هويتك في بينا.')}</p></div></div>
-        <div><span class="n">${icon('sliders')}</span><div><b>${L('Compare up to 3 quotes', 'قارن حتى 3 عروض')}</b><p>${L('Price, arrival time, warranty and rating side by side.', 'السعر وموعد الوصول والضمان والتقييم جنباً إلى جنب.')}</p></div></div>
-        <div><span class="n">${icon('checkCircle')}</span><div><b>${L('Track, pay and rate', 'تابع وادفع وقيّم')}</b><p>${L('Receipts and reports are saved to your service history.', 'تُحفظ الإيصالات والتقارير في سجل خدماتك.')}</p></div></div>
-      </div>` : ''}
-      <div style="margin-top:24px">${ui.demoNote(L('Providers, prices and reviews are fictional demonstration data. BENA does not process real bookings or payments.', 'المزوّدون والأسعار والمراجعات بيانات تجريبية وهمية. لا تعالج بينا حجوزات أو مدفوعات حقيقية.'))}</div>
+    if (!q) (cat ? list.flatMap((p) => M.services(p.id).filter((s) => s.cat === cat).slice(0, 1)) : [['sp_jaber', 0], ['sp_sparkle', 1], ['sp_lift', 0], ['sp_pure', 0], ['sp_cool', 0], ['sp_volt', 2]].map(([pid, i]) => M.services(pid)[i]).filter(Boolean)).slice(0, 3).forEach((s) => popular.push(s));
+    const nActive = [dist, verOnly, minR, fast, q].filter(Boolean).length;
+    const chips = [dist && [tx(D.district(dist).name), 'mk:dist='], verOnly && [L('Verified only', 'الموثّقون فقط'), 'mk:ver=false'], minR && [`★ ${minR}+`, 'mk:rmin=0'], fast && [L('Same-day response', 'رد في نفس اليوم'), 'mk:fast=false'], q && [`“${esc(q)}”`, 'mk:q=']].filter(Boolean);
+    const aside = `<aside class="mk2-aside ${fOpen ? 'open' : ''}" aria-label="${esc(L('Filters', 'عوامل التصفية'))}">
+      <div class="mk2-fs"><h4>${L('Category', 'الفئة')}</h4>
+        ${M.opt(!cat, 'grid', L('All services', 'كل الخدمات'), `data-go="${R()}-services"`, base.length)}
+        ${D.serviceCats.map((x) => M.opt(cat === x.id, x.icon, tx(x.name), `data-go="${R()}-services-${x.id}"`, base.filter((p) => p.cats.includes(x.id)).length)).join('')}</div>
+      <div class="mk2-fs"><h4>${L('Area', 'المنطقة')}</h4>${ui.select('mk:dist', districtOpts(), { label: L('Area', 'المنطقة'), def: '' })}${near ? `<button class="mk2-opt" style="margin-top:6px" data-act="set" data-arg="mk:dist=${near}">${icon('locate')}<span class="truncate">${L(`Near ${tx(homeB.name)}`, `قرب ${tx(homeB.name)}`)}</span></button>` : ''}</div>
+      <div class="mk2-fs"><h4>${L('Minimum rating', 'أدنى تقييم')}</h4>${ui.seg('mk:rmin', [{ id: 0, label: L('Any', 'الكل') }, { id: 4.5, label: '4.5+' }, { id: 4.7, label: '4.7+' }], minR)}</div>
+      <div class="mk2-fs"><h4>${L('Provider', 'المزوّد')}</h4><div class="stack-sm">
+        <label class="mk-check"><input type="checkbox" id="mk-ver" data-model="mk:ver" ${verOnly ? 'checked' : ''}>${L('BENA-verified only', 'الموثّقون في بينا فقط')}</label>
+        <label class="mk-check"><input type="checkbox" id="mk-fast" data-model="mk:fast" ${fast ? 'checked' : ''}>${L('Same-day or faster response', 'رد في نفس اليوم أو أسرع')}</label></div></div>
+      <div class="mk2-fs">${ui.btn(L('Request a service', 'اطلب خدمة'), { icon: 'plus', kind: 'primary', block: true, act: 'mkRequest', arg: cat ? 'cat:' + cat : '' })}<div class="xs faint" style="margin-top:8px;text-align:center">${L('Get up to 3 quotes — free to request', 'احصل على حتى 3 عروض — الطلب مجاني')}</div></div>
+    </aside>`;
+    const row = (p) => `<button class="mk2-row" data-go="${R()}-provider-${p.id}">${M.logo(p)}<span style="min-width:0"><span class="t">${tx(p.name)}</span><span class="s">${M.rating(p.rating, p.reviews)}${M.verified(p)}<span class="row-sm">${icon('clock')}${tx(p.response)}</span><span class="row-sm" style="min-width:0;max-width:100%">${icon('pin')}<span class="truncate">${(dist || near) && p.areas.includes(dist || near) ? L('Serves your area', 'يخدم منطقتك') : esc(M.areasText(p, 2))}</span></span></span><span class="s">${p.cats.map((x) => `<span class="mk-tag">${icon(D.cat(x).icon)}${tx(D.cat(x).name)}</span>`).join('')}</span></span><span class="p"><small>${L('From', 'ابتداءً من')}</small><b>${B.money(M.fromPrice(p.id))}</b><small>${L('starting price', 'سعر البدء')}</small></span></button>`;
+    const distRows = D.districts.map((d) => ({ d, n: list.filter((p) => p.areas.includes(d.id)).length }));
+    const mapHtml = () => B.map.render({ id: 'mk-svcmap', visible: new Set(D.buildings.filter((b) => list.some((p) => p.areas.includes(b.district))).map((b) => b.id)), markers: distRows.filter((x) => x.n).map((x) => ({ id: distAnchor(x.d), label: String(x.n), tone: x.d.id === (dist || near) ? 'mint' : 'navy' })), legend: false, onSelect: 'mkSvcMap', badge: L('Provider coverage · simulated map', 'تغطية المزوّدين · خريطة محاكاة') });
+    const empty = `<div class="card">${ui.empty({ icon: 'search', title: L('No providers match', 'لا يوجد مزوّدون مطابقون'), text: L('Try another area or clear the filters. You can still post a request and let providers come to you.', 'جرّب منطقة أخرى أو امسح عوامل التصفية. يمكنك نشر طلب وترك المزوّدين يتواصلون معك.'), action: ui.btn(L('Post a request', 'انشر طلباً'), { kind: 'primary', act: 'mkRequest', arg: cat ? 'cat:' + cat : '' }) })}</div>`;
+    const results = !list.length ? empty : view === 'grid' ? `<div class="mk-pgrid">${list.map((p) => M.providerCard(p, { cat, district: dist || near })).join('')}</div>`
+      : view === 'map' ? `<div class="mk2-split"><div class="mk2-rows">${list.map(row).join('')}</div><div class="mk2-mapcol">${mapHtml()}</div></div>`
+      : `<div class="mk2-rows">${list.map(row).join('')}</div>`;
+    return `<div class="mk2">
+      <div class="mk2-top"><div class="grow"><h1>${cat ? tx(c.name) : L('Services marketplace', 'سوق الخدمات')}</h1><p>${cat ? tx(CAT_DESC[cat]) : L('Verified providers, transparent starting prices and quotes you can compare — linked to your building’s BENA identity.', 'مزوّدون موثّقون وأسعار بدء واضحة وعروض يمكنك مقارنتها — مرتبطة بهوية مبناك في بينا.')}</p>${forPill()}</div>
+        <div class="mk2-search">${ui.search('mk:q', L('Search a service or provider — e.g. leak, AC, elevator', 'ابحث عن خدمة أو مزوّد — مثل تسريب، مكيف، مصعد'))}${ui.btn(L('Request service', 'اطلب خدمة'), { icon: 'plus', kind: 'primary', act: 'mkRequest', arg: cat ? 'cat:' + cat : '' })}</div></div>
+      ${mine.length ? `<div class="mk-mine" style="margin-bottom:16px"><span class="mi">${icon('activity')}</span><div class="grow"><b>${L(`${mine.length} active request${mine.length > 1 ? 's' : ''}`, mine.length === 1 ? 'طلب نشط واحد' : mine.length === 2 ? 'طلبان نشطان' : `${mine.length} طلبات نشطة`)}</b><div class="xs" style="margin-top:2px">${esc(tx(mine[0].title))} · ${ui.statusLabel(mine[0].status === 'open' ? 'collecting' : mine[0].status)}</div></div>
+        ${mine.some((r) => ['open', 'quoted'].includes(r.status)) ? ui.btn(L('Compare quotes', 'قارن العروض'), { kind: 'primary', size: 'sm', go: `${R()}-quotes-${mine.find((r) => ['open', 'quoted'].includes(r.status)).id}` }) : ''}${ui.btn(L('Request history', 'سجل الطلبات'), { size: 'sm', go: `${R()}-servicehistory` })}</div>` : ''}
+      <div class="mk2-layout">${aside}
+        <div style="min-width:0">
+          ${popular.length ? `<div class="mk2-sec">${cat ? L('Popular in this category', 'الأكثر طلباً في هذه الفئة') : L('Popular right now', 'الأكثر طلباً الآن')}<small>${L('Fixed starting prices', 'أسعار بدء ثابتة')}</small></div><div class="mk2-pop">${popular.map((s) => { const p = M.provider(s.pid); return `<button class="mk-svc" data-go="${R()}-servicedetail-${s.pid}~${s.i}"><span class="si">${icon(D.cat(s.cat).icon)}</span><span class="grow" style="min-width:0"><b>${tx(s.name)}</b><span class="sp" style="display:block">${tx(p.name)} · ${M.rating(p.rating)}</span><span class="pr" style="display:block">${L('From', 'ابتداءً من')} <b>${B.money(s.price)}</b> ${M.unitLabel(s.unit)}</span></span></button>`; }).join('')}</div>` : ''}
+          <div class="mk2-bar"><span class="count"><b>${list.length}</b> ${L('providers', 'مزوّد')}${near && !dist ? ` · ${L(`recommended for ${tx(D.district(near).name)}`, `موصى بهم لـ ${tx(D.district(near).name)}`)}` : ''}</span>
+            <button class="btn btn-ghost btn-sm mk2-fbtn" data-act="toggle" data-arg="mk:fo">${icon('filter')}<span>${L('Filters', 'التصفية')}${nActive ? ` (${nActive})` : ''}</span></button>
+            ${ui.select('mk:sort', [{ v: 'rec', l: L('Recommended', 'موصى به') }, { v: 'rating', l: L('Highest rated', 'الأعلى تقييماً') }, { v: 'reviews', l: L('Most reviewed', 'الأكثر مراجعات') }, { v: 'price', l: L('Lowest price', 'الأقل سعراً') }], { label: L('Sort', 'الترتيب') })}
+            ${ui.seg('mk:view', [{ id: 'list', icon: 'list', label: L('List', 'قائمة') }, { id: 'grid', icon: 'grid', label: L('Grid', 'شبكة') }, { id: 'map', icon: 'map', label: L('Map', 'خريطة') }], view)}</div>
+          ${chips.length ? `<div class="mk2-active">${chips.map(([l, a]) => `<button data-act="set" data-arg="${a}">${l}${icon('x')}</button>`).join('')}<button data-act="mkSReset">${L('Clear all', 'مسح الكل')}</button></div>` : ''}
+          ${results}
+        </div></div>
+      <div style="margin-top:22px">${ui.demoNote(L('Providers, prices and reviews are fictional demonstration data. BENA does not process real bookings or payments.', 'المزوّدون والأسعار والمراجعات بيانات تجريبية وهمية. لا تعالج بينا حجوزات أو مدفوعات حقيقية.'))}</div>
     </div>`;
   };
+  B.act.mkSReset = () => { ['mk:dist', 'mk:ver', 'mk:rmin', 'mk:fast', 'mk:q'].forEach((k) => delete B.vs[k]); B.refresh(); };
+  B.act.mkSvcMap = (bid) => { const b = D.building(bid); if (b) { B.vs['mk:dist'] = b.district; B.refresh(); B.toast(L(`Showing providers covering ${tx(D.district(b.district).name)}`, `عرض المزوّدين الذين يغطون ${tx(D.district(b.district).name)}`), 'pin'); } };
 
   /* ---------------- page: provider profile ---------------- */
   const CERTS = {

@@ -252,9 +252,8 @@
   };
   B.shared.properties = (id) => {
     if (id === 'rent' || id === 'sale') { if (B.vs['mk:pm:set'] !== id) { B.vs['mk:pm'] = id; B.vs['mk:pm:set'] = id; } }
-    const role = R();
     B.navActive('properties');
-    B.title(L('Properties', 'العقارات'));
+    B.title(L('Property marketplace', 'سوق العقارات'));
     const mode = B.get('mk:pm', 'rent');
     const type = B.get('mk:pt', 'all');
     const dist = B.get('mk:pd', '');
@@ -263,60 +262,79 @@
     const sort = B.get('mk:ps', 'new');
     const q = B.get('mk:pq', '');
     const favOnly = B.get('mk:pf', false);
-    const view = B.get('mk:pv', 'list');
+    const verOnly = B.get('mk:pver', false);
+    const furn = B.get('mk:pfu', '');
+    const view = B.get('mk:pv', 'split');
+    const fOpen = B.get('mk:fo', false);
     const [lo, hi] = band ? band.split('-').map((x) => (x === '' ? null : +x)) : [null, null];
     const all = M.listings();
-    let list = all.filter((l) => {
+    const pass = (l, skipType) => {
       const b = D.building(l.bid);
       const f = M.facts(l);
-      return l.mode === mode && (type === 'all' || l.type === type) && (!dist || b.district === dist) && (lo == null || l.price >= lo) && (hi == null || l.price < hi)
-        && (!beds || f.beds >= beds) && (!favOnly || M.favs[l.id]) && B.match(q, l.title, b.name, b.address, b.id, D.district(b.district).name);
-    });
+      return l.mode === mode && (skipType || type === 'all' || l.type === type) && (!dist || b.district === dist) && (lo == null || l.price >= lo) && (hi == null || l.price < hi)
+        && (!beds || f.beds >= beds) && (!favOnly || M.favs[l.id]) && (!verOnly || b.verification === 'verified') && (!furn || mode !== 'rent' || l.furnished === furn)
+        && B.match(q, l.title, b.name, b.address, b.id, D.district(b.district).name);
+    };
+    const list = all.filter((l) => pass(l));
     const sorts = { new: (a, b) => (a.listed < b.listed ? 1 : -1), low: (a, b) => a.price - b.price, high: (a, b) => b.price - a.price, area: (a, b) => M.facts(b).area - M.facts(a).area };
     list.sort(sorts[sort] || sorts.new);
-    const nFav = all.filter((l) => M.favs[l.id]).length;
-    const typeChips = [{ id: 'all', label: L('All types', 'كل الأنواع'), icon: 'grid' }].concat(Object.entries(TYPES).map(([k, t]) => ({ id: k, label: t.pl, icon: t.icon, count: all.filter((l) => l.mode === mode && l.type === k).length })));
     const pick = B.get('mk:ppick', null);
-    const picked = pick ? list.filter((l) => l.bid === pick) : [];
-    const results = list.length ? (view === 'map'
-      ? `<div class="mk-mapgrid"><div>${pricePins(B.map.render({ id: 'mk-props', mode: 'type', visible: new Set(list.map((l) => l.bid)), selected: picked.length ? pick : null, onSelect: 'mkMapPick', legend: false, badge: L('Listings on the BENA map · sample area', 'العروض على خريطة بينا · منطقة نموذجية') }), list, pick)}</div>
-          <div class="mk-mapside">${picked.length ? `<div class="row between"><span class="eyebrow">${L('Selected building', 'المبنى المحدد')}</span><button class="btn btn-text btn-sm" data-act="set" data-arg="mk:ppick=">${icon('x')}${L('Clear', 'مسح')}</button></div>${picked.map(M.listingCard).join('')}<div class="divider" style="margin:6px 0"></div>` : `<div class="callout small mint">${icon('pin')}<div>${L('Tap a highlighted building to see its listings.', 'اضغط على مبنى مُميّز لعرض عروضه.')}</div></div>`}
-            ${list.filter((l) => !picked.includes(l)).map((l) => { const b = D.building(l.bid); return `<button class="mk-mrow" data-act="mkMapPick" data-arg="${l.bid}"><span class="media">${M.listingArt(l)}</span><span class="grow" style="min-width:0"><b>${price(l)}</b><span class="t" style="display:block">${esc(tx(l.title))}</span><span class="s" style="display:block">${esc(tx(D.district(b.district).name))} · ${M.facts(l).area} ${L('m²', 'م²')}</span></span></button>`; }).join('')}</div></div>`
-      : `<div class="mk-lgrid">${list.map(M.listingCard).join('')}</div>`)
-      : `<div class="card">${ui.empty({ icon: 'search', title: favOnly ? L('No saved listings yet', 'لا توجد عروض محفوظة بعد') : L('No listings match these filters', 'لا توجد عروض تطابق هذه الفلاتر'), text: L('Try widening the price range or choosing another area.', 'جرّب توسيع نطاق السعر أو اختيار منطقة أخرى.'), action: ui.btn(L('Reset filters', 'إعادة ضبط الفلاتر'), { kind: 'primary', act: 'mkPReset' }) })}</div>`;
-    return `<div class="mk-wrap">
-      <div class="mk-hero">
-        <h1>${L('Find a place with a verified identity', 'اعثر على عقار بهوية موثّقة')}</h1>
-        <p>${L('Homes, offices and shops for rent or sale — every listing is linked to its BENA building record.', 'منازل ومكاتب ومحلات للإيجار أو البيع — كل عرض مرتبط بسجل المبنى في بينا.')}</p>
-        <div class="mk-searchbar">
-          ${ui.search('mk:pq', L('Search by area, building, street or BENA ID', 'ابحث حسب المنطقة أو المبنى أو الشارع أو رقم بينا'))}
-          ${ui.select('mk:pd', [{ v: '', l: L('All areas', 'كل المناطق') }].concat(D.districts.map((d) => ({ v: d.id, l: d.name }))), { label: L('Area', 'المنطقة'), def: '' })}
-          <button class="btn btn-primary" data-act="set" data-arg="mk:pv=map">${icon('map')}<span>${L('Map', 'الخريطة')}</span></button>
-        </div>
-        <div class="mk-filters">
-          ${ui.seg('mk:pm', [{ id: 'rent', label: L('Rent', 'إيجار') }, { id: 'sale', label: L('Buy', 'شراء') }], mode)}
-          ${ui.select('mk:pp', BANDS[mode].map((x) => ({ v: x.v, l: x.l })), { label: L('Price', 'السعر'), def: '' })}
-          ${ui.select('mk:pb', [{ v: 0, l: L('Any bedrooms', 'أي عدد غرف') }, { v: 1, l: L('1+ bedrooms', 'غرفة نوم +1') }, { v: 2, l: L('2+ bedrooms', 'غرفتا نوم +2') }, { v: 3, l: L('3+ bedrooms', '3 غرف نوم +') }], { label: L('Bedrooms', 'غرف النوم'), def: 0 })}
-          ${ui.select('mk:ps', [{ v: 'new', l: L('Newest', 'الأحدث') }, { v: 'low', l: L('Price: low to high', 'السعر: من الأقل') }, { v: 'high', l: L('Price: high to low', 'السعر: من الأعلى') }, { v: 'area', l: L('Largest', 'الأكبر مساحة') }], { label: L('Sort', 'الترتيب') })}
-        </div>
-        <div style="margin-top:12px">${ui.chips('mk:pt', typeChips, type)}</div>
-      </div>
-      <div class="mk-toolbar" style="margin-top:22px">
-        <span class="count"><b>${list.length}</b> ${mode === 'rent' ? L('places for rent', 'عقار للإيجار') : L('places for sale', 'عقار للبيع')}</span>
-        <div class="row-sm wrap" style="gap:10px">
-          <button class="chip ${favOnly ? 'active' : ''}" data-act="toggle" data-arg="mk:pf">${icon('heart')}${L('Saved', 'المحفوظة')}<span class="c">${nFav}</span></button>
-          ${ui.seg('mk:pv', [{ id: 'list', label: L('List', 'قائمة'), icon: 'grid' }, { id: 'map', label: L('Map', 'خريطة'), icon: 'map' }], view)}
-        </div>
-      </div>
-      ${results}
-      <div style="margin-top:22px" class="stack-sm">
-        ${ui.callout(L('<b>Only owner-published units appear here.</b> A unit shown as vacant in BENA is never listed automatically — the owner (or their authorised manager) decides whether to publish it.', '<b>تظهر هنا فقط الوحدات التي نشرها مالكوها.</b> لا تُعرض الوحدة الشاغرة في بينا تلقائياً — يقرر المالك (أو مديره المفوّض) نشرها.'), '', 'info')}
-        ${ui.demoNote(L('Listings, prices and contacts are fictional demonstration data.', 'العروض والأسعار وجهات الاتصال بيانات تجريبية وهمية.'))}
-      </div>
+    if (pick) list.sort((a, b) => (b.bid === pick) - (a.bid === pick));
+    const nFav = all.filter((l) => M.favs[l.id]).length;
+    const nActive = [dist, band, beds, favOnly, verOnly, furn && mode === 'rent', q].filter(Boolean).length;
+    const chips = [dist && [tx(D.district(dist).name), 'mk:pd='], band && [tx(BANDS[mode].find((x) => x.v === band)?.l || band), 'mk:pp='], beds && [L(`${beds}+ bedrooms`, `${beds}+ غرف`), 'mk:pb=0'], verOnly && [L('Verified buildings', 'مبانٍ موثّقة'), 'mk:pver=false'], favOnly && [L('Saved', 'المحفوظة'), 'mk:pf=false'], furn && mode === 'rent' && [{ yes: L('Furnished', 'مفروش'), semi: L('Semi-furnished', 'نصف مفروش'), no: L('Unfurnished', 'غير مفروش') }[furn], 'mk:pfu='], q && [`“${esc(q)}”`, 'mk:pq=']].filter(Boolean);
+    const aside = `<aside class="mk2-aside ${fOpen ? 'open' : ''}" aria-label="${esc(L('Filters', 'عوامل التصفية'))}">
+      <div class="mk2-fs"><h4>${L('Purpose', 'الغرض')}</h4>${ui.seg('mk:pm', [{ id: 'rent', label: L('For rent', 'للإيجار') }, { id: 'sale', label: L('For sale', 'للبيع') }], mode)}</div>
+      <div class="mk2-fs"><h4>${L('Property type', 'نوع العقار')}</h4>
+        ${M.opt(type === 'all', 'grid', L('All types', 'كل الأنواع'), 'data-act="set" data-arg="mk:pt=all"', all.filter((l) => pass(l, true)).length)}
+        ${Object.entries(TYPES).map(([k, t]) => M.opt(type === k, t.icon, tx(t.pl), `data-act="set" data-arg="mk:pt=${k}"`, all.filter((l) => pass(l, true) && l.type === k).length)).join('')}</div>
+      <div class="mk2-fs"><h4>${L('Area', 'المنطقة')}</h4>${ui.select('mk:pd', [{ v: '', l: L('All areas', 'كل المناطق') }].concat(D.districts.map((d) => ({ v: d.id, l: d.name }))), { label: L('Area', 'المنطقة'), def: '' })}</div>
+      <div class="mk2-fs"><h4>${L('Price', 'السعر')}</h4>${BANDS[mode].map((x) => M.opt(band === x.v, band === x.v ? 'checkCircle' : 'minus', tx(x.l), `data-act="set" data-arg="mk:pp=${x.v}"`)).join('')}</div>
+      <div class="mk2-fs"><h4>${L('Bedrooms', 'غرف النوم')}</h4>${ui.seg('mk:pb', [{ id: 0, label: L('Any', 'الكل') }, { id: 1, label: '1+' }, { id: 2, label: '2+' }, { id: 3, label: '3+' }], beds)}</div>
+      ${mode === 'rent' ? `<div class="mk2-fs"><h4>${L('Furnishing', 'التأثيث')}</h4>${ui.select('mk:pfu', [{ v: '', l: L('Any', 'الكل') }, { v: 'yes', l: L('Furnished', 'مفروش') }, { v: 'semi', l: L('Semi-furnished', 'نصف مفروش') }, { v: 'no', l: L('Unfurnished', 'غير مفروش') }], { label: L('Furnishing', 'التأثيث'), def: '' })}</div>` : ''}
+      <div class="mk2-fs"><h4>${L('Trust', 'الموثوقية')}</h4><div class="stack-sm"><label class="mk-check"><input type="checkbox" id="mk-pver" data-model="mk:pver" ${verOnly ? 'checked' : ''}>${L('Verified buildings only', 'المباني الموثّقة فقط')}</label><label class="mk-check"><input type="checkbox" id="mk-pf" data-model="mk:pf" ${favOnly ? 'checked' : ''}>${L(`Saved listings (${nFav})`, `العروض المحفوظة (${nFav})`)}</label></div></div>
+      <div class="mk2-fs"><div class="xs muted" style="line-height:1.5;margin-bottom:10px">${icon('lock', 'faint')} ${L('Vacant units are never listed automatically. Publishing requires the owner’s authorisation.', 'لا تُعرض الوحدات الشاغرة تلقائياً. يتطلب النشر تفويض المالك.')}</div>${ui.btn(L('List a property', 'اعرض عقاراً'), { icon: 'plus', block: true, act: 'mkListOwn' })}</div>
+    </aside>`;
+    const facts = (l) => { const f = M.facts(l); return `<span class="row-sm">${icon('ruler')}${f.area} ${L('m²', 'م²')}</span>${f.beds ? `<span class="row-sm">${icon('bed')}${f.beds}</span>` : `<span class="row-sm">${icon(TYPES[l.type].icon)}${tx(TYPES[l.type].l)}</span>`}<span class="row-sm">${icon('stairs')}${f.floor === 0 ? L('G', 'أرضي') : f.floor}</span>`; };
+    const row = (l) => { const b = D.building(l.bid); return `<div class="mk2-row prop ${l.bid === pick ? 'on' : ''}" data-go="${R()}-listing-${l.id}" role="link" tabindex="0"><span class="thumb">${M.listingArt(l)}</span><span style="min-width:0"><span class="t">${esc(tx(l.title))}</span><span class="s"><span class="row-sm" style="min-width:0;max-width:100%">${icon('pin')}<span class="truncate">${esc(tx(D.district(b.district).name))} · ${esc(tx(b.name))}</span></span></span><span class="s">${facts(l)}${verifBadge(b, true)}<span class="id-mono" style="font-size:11.5px">${esc(b.id)}</span></span></span><span class="p"><b>${price(l, false)}</b><small>${l.mode === 'rent' ? L('per month', 'شهرياً') : L('asking price', 'السعر المطلوب')}</small><button class="icon-btn" data-stop data-act="mkFav" data-arg="${l.id}" aria-label="${esc(L('Save', 'حفظ'))}" style="margin-top:4px;margin-inline-start:auto;${M.favs[l.id] ? 'color:var(--bad)' : ''}">${icon('heart')}</button></span></div>`; };
+    const map = () => pricePins(B.map.render({ id: 'mk-props', mode: 'type', visible: new Set(list.map((l) => l.bid)), selected: pick && list.some((l) => l.bid === pick) ? pick : null, onSelect: 'mkMapPick', legend: false, badge: L('Listings on the BENA map · sample area', 'العروض على خريطة بينا · منطقة نموذجية') }), list, pick);
+    const empty = `<div class="card">${ui.empty({ icon: 'search', title: favOnly ? L('No saved listings yet', 'لا توجد عروض محفوظة بعد') : L('No listings match these filters', 'لا توجد عروض تطابق هذه الفلاتر'), text: L('Try widening the price range or choosing another area.', 'جرّب توسيع نطاق السعر أو اختيار منطقة أخرى.'), action: ui.btn(L('Reset filters', 'إعادة ضبط الفلاتر'), { kind: 'primary', act: 'mkPReset' }) })}</div>`;
+    const results = !list.length ? empty : view === 'grid' ? `<div class="mk-lgrid">${list.map(M.listingCard).join('')}</div>`
+      : view === 'list' ? `<div class="mk2-rows">${list.map(row).join('')}</div>`
+      : `<div class="mk2-split"><div class="mk2-rows">${pick ? `<div class="row between"><span class="xs faint">${L('Selected on map', 'محدد على الخريطة')}: <b>${esc(tx(D.building(pick).name))}</b></span><button class="btn btn-text btn-sm" data-act="set" data-arg="mk:ppick=">${icon('x')}${L('Clear', 'مسح')}</button></div>` : ''}${list.map(row).join('')}</div><div class="mk2-mapcol">${map()}</div></div>`;
+    return `<div class="mk2">
+      <div class="mk2-top"><div class="grow"><h1>${L('Property marketplace', 'سوق العقارات')}</h1><p>${L('Homes, offices and shops for rent or sale — every listing is linked to its BENA building record and published by the owner.', 'منازل ومكاتب ومحلات للإيجار أو البيع — كل عرض مرتبط بسجل المبنى في بينا ومنشور من قبل المالك.')}</p></div>
+        <div class="mk2-search">${ui.search('mk:pq', L('Search by area, building, street or BENA ID', 'ابحث حسب المنطقة أو المبنى أو الشارع أو رقم بينا'))}${ui.seg('mk:pm', [{ id: 'rent', label: L('Rent', 'إيجار') }, { id: 'sale', label: L('Buy', 'شراء') }], mode)}</div></div>
+      <div class="mk2-layout">${aside}
+        <div style="min-width:0">
+          <div class="mk2-bar"><span class="count"><b>${list.length}</b> ${mode === 'rent' ? L('places for rent', 'عقار للإيجار') : L('places for sale', 'عقار للبيع')}</span>
+            <button class="btn btn-ghost btn-sm mk2-fbtn" data-act="toggle" data-arg="mk:fo">${icon('filter')}<span>${L('Filters', 'التصفية')}${nActive ? ` (${nActive})` : ''}</span></button>
+            ${ui.select('mk:ps', [{ v: 'new', l: L('Newest', 'الأحدث') }, { v: 'low', l: L('Price: low to high', 'السعر: من الأقل') }, { v: 'high', l: L('Price: high to low', 'السعر: من الأعلى') }, { v: 'area', l: L('Largest', 'الأكبر مساحة') }], { label: L('Sort', 'الترتيب') })}
+            ${ui.seg('mk:pv', [{ id: 'split', label: L('Map', 'خريطة'), icon: 'map' }, { id: 'list', label: L('List', 'قائمة'), icon: 'list' }, { id: 'grid', label: L('Grid', 'شبكة'), icon: 'grid' }], view)}</div>
+          ${chips.length ? `<div class="mk2-active">${chips.map(([l, a]) => `<button data-act="set" data-arg="${a}">${l}${icon('x')}</button>`).join('')}<button data-act="mkPReset">${L('Clear all', 'مسح الكل')}</button></div>` : ''}
+          ${results}
+          <div style="margin-top:18px" class="stack-sm">
+            ${ui.callout(L('<b>Only owner-published units appear here.</b> A unit shown as vacant in BENA is never listed automatically — the owner (or their authorised manager) decides whether to publish it.', '<b>تظهر هنا فقط الوحدات التي نشرها مالكوها.</b> لا تُعرض الوحدة الشاغرة في بينا تلقائياً — يقرر المالك (أو مديره المفوّض) نشرها.'), '', 'info')}
+            ${ui.demoNote(L('Listings, prices and contacts are fictional demonstration data. The BENA Building ID is a digital reference, not proof of ownership.', 'العروض والأسعار وجهات الاتصال بيانات تجريبية وهمية. رقم بينا للمبنى مرجع رقمي وليس إثباتاً للملكية.'))}
+          </div>
+        </div></div>
     </div>`;
   };
-  B.act.mkMapPick = (bid) => { B.vs['mk:ppick'] = bid; B.vs['mk:pv'] = 'map'; B.refresh(); };
-  B.act.mkPReset = () => { ['mk:pt', 'mk:pd', 'mk:pp', 'mk:pb', 'mk:pq', 'mk:pf', 'mk:ppick'].forEach((k) => delete B.vs[k]); B.refresh(); };
+  B.act.mkMapPick = (bid) => { B.vs['mk:ppick'] = bid; if (B.get('mk:pv', 'split') !== 'split') B.vs['mk:pv'] = 'split'; B.refresh(); };
+  B.act.mkPReset = () => { ['mk:pt', 'mk:pd', 'mk:pp', 'mk:pb', 'mk:pq', 'mk:pf', 'mk:ppick', 'mk:pver', 'mk:pfu'].forEach((k) => delete B.vs[k]); B.refresh(); };
+  B.act.mkListOwn = () => {
+    const role = R();
+    const me = D.me[role];
+    const mine = D.units.filter((u) => (u.owner === me || (u.coOwners || []).includes(me)) && u.status === 'vacant');
+    const can = role === 'owner' || role === 'manager';
+    B.modal({ title: L('List a property', 'اعرض عقاراً'), sub: L('Publishing requires the owner’s authorisation', 'يتطلب النشر تفويض المالك'), size: 'md', form: can && mine.length ? 'mkListOwn' : null,
+      body: can && mine.length ? `<div class="stack">${ui.field({ name: 'unit', label: L('Your vacant unit', 'وحدتك الشاغرة'), type: 'radio', options: mine.map((u) => ({ v: u.id, l: `${tx(D.building(u.building).name)} · ${D.unitLabel(u)}`, d: `${u.area} ${L('m²', 'م²')} · ${ui.statusLabel(u.status)}`, icon: 'home' })) })}
+          <label class="check"><input type="checkbox" name="auth" required>${L('I am the owner (or hold a written authorisation) and I authorise BENA to publish this unit.', 'أنا المالك (أو أحمل تفويضاً مكتوباً) وأفوّض بينا بنشر هذه الوحدة.')}</label>
+          ${ui.callout(L('The listing is created as a draft. Nothing is published until you review and confirm it.', 'يُنشأ العرض كمسودة. لا يُنشر شيء حتى تراجعه وتؤكده.'), '', 'info')}</div>`
+        : `${ui.callout(L('Only a unit’s owner — or a property manager holding the owner’s written authorisation — can publish a listing. BENA never lists vacant units automatically.', 'يمكن فقط لمالك الوحدة — أو لمدير عقار يحمل تفويضاً مكتوباً من المالك — نشر عرض. لا تعرض بينا الوحدات الشاغرة تلقائياً.'), '', 'lock')}<p class="small muted" style="margin-top:12px">${L('Switch to the owner role to try the listing flow with a sample vacant unit.', 'انتقل إلى دور المالك لتجربة مسار العرض بوحدة شاغرة نموذجية.')}</p>`,
+      foot: can && mine.length ? `<button type="button" class="btn btn-ghost" data-act="closeModal">${L('Cancel', 'إلغاء')}</button><button type="submit" class="btn btn-primary">${L('Create draft listing', 'إنشاء مسودة عرض')}</button>` : `<button type="button" class="btn btn-ghost" data-act="closeModal">${L('Close', 'إغلاق')}</button>${ui.btn(L('Open owner role', 'فتح دور المالك'), { kind: 'primary', go: 'owner-properties' })}` });
+  };
+  B.submit.mkListOwn = (d) => B.success({ title: L('Draft listing created', 'تم إنشاء مسودة العرض'), text: L('Add photos and a price, then publish when ready. It stays private until you confirm.', 'أضف الصور والسعر ثم انشر عندما تكون جاهزاً. يبقى خاصاً حتى تؤكد.'), ref: 'LS-DRAFT-' + String(d.unit || '').slice(-4) });
 
   /* ---------------- page: listing details ---------------- */
   const NEARBY = {

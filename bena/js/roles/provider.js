@@ -620,9 +620,12 @@
     foot: `${ui.btn(L('Cancel', 'إلغاء'), { act: 'closeModal' })}${ui.btn(L('Submit for review', 'إرسال للمراجعة'), { kind: 'primary', type: 'submit' })}` });
   B.submit.pvCert = () => B.success({ title: L('Submitted for verification', 'أُرسلت للتحقق'), text: L('BENA reviews new certificates within 2 working days.', 'تراجع بينا الشهادات الجديدة خلال يومي عمل.'), ref: `CRT-26-${String(Math.floor(Math.random() * 900) + 100)}` });
 
+  /* Internals shared with provider2.js (enterprise portal screens). */
+  B._pv = { PID, P, TEAM, tech, REQS, reqs, req, QUOTES, quoteOf, JOBS, job, CHECK, STAGES, where, STAT, newCount, slotL, custRole, earnings, pages: { home, requests, request, quotations, jobs, jobPage, completed, feedback, profile } };
+
   /* ---------------- role ---------------- */
   B.role({
-    id: 'provider', icon: 'wrench', nav: 'tabs', home: 'home',
+    id: 'provider', icon: 'wrench', nav: 'drawer', home: 'home',
     name: T('Service Provider', 'مزوّد الخدمة'), short: T('Provider', 'مزوّد'),
     org: T('Jaber Technical Services', 'جابر للخدمات الفنية'), tag: T('Business', 'أعمال'),
     desc: T('Receive requests from verified buildings, send quotes, run jobs and build your reputation.', 'استقبل الطلبات من مبانٍ موثّقة، وأرسل العروض، وأدر المهام، وابنِ سمعتك.'),
