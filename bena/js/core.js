@@ -101,36 +101,68 @@
   B.role = (def) => { if (!B.roles[def.id]) B.roleOrder.push(def.id); B.roles[def.id] = def; return def; };
   /** Shared pages reachable from any role: B.shared.building(id) etc. */
   B.shared = B.shared || {};
-  B.route = { role: null, page: null, id: null };
+  /** Mobile app roles (see js/mobile/shell.js): B.mrole(def). */
+  B.mroles = B.mroles || {};
+  B.mroleOrder = B.mroleOrder || [];
+  B.mrole = (def) => { if (!B.mroles[def.id]) B.mroleOrder.push(def.id); B.mroles[def.id] = def; return def; };
+  /** Experience renderers: B.exp.hub / B.exp.site / B.exp.mobile / B.exp.app (route) → html */
+  B.exp = B.exp || {};
 
+  /*
+   * Routes (plain hash names so links survive any host):
+   *   #hub                         demo launcher (default; legacy #welcome maps here)
+   *   #site[-page[-id]]            public website
+   *   #m-<role>[-screen[-id]]      mobile application
+   *   #<role>[-page[-id]]          enterprise web application (existing routes)
+   */
+  const HOME = { exp: 'hub', role: null, page: null, id: null };
+  B.route = { ...HOME };
   B.parse = (hash) => {
     const h = String(hash || '').replace(/^#/, '');
-    if (!h || h === 'welcome') return { role: null, page: null, id: null };
+    if (!h || h === 'welcome' || h === 'hub') return { ...HOME };
     const p = h.split('-');
-    const role = p[0];
-    if (!B.roles[role]) return { role: null, page: null, id: null };
-    return { role, page: p[1] || B.roles[role].home || 'home', id: p.length > 2 ? p.slice(2).join('-') : null };
-  };
-  B.hashOf = (r) => (r.role ? [r.role, r.page, r.id].filter(Boolean).join('-') : 'welcome');
-  /** Navigate. Accepts 'role-page-id' or 'page-id' (relative to current role) or '' for welcome. */
-  B.go = (target) => {
-    let r;
-    if (!target || target === 'welcome') r = { role: null, page: null, id: null };
-    else {
-      const first = String(target).split('-')[0];
-      r = B.roles[first] ? B.parse(target) : B.parse(`${B.route.role}-${target}`);
+    if (p[0] === 'site') return { exp: 'site', role: null, page: p[1] || 'home', id: p.length > 2 ? p.slice(2).join('-') : null };
+    if (p[0] === 'm') {
+      const mr = B.mroles[p[1]];
+      if (!mr) return { exp: 'mobile', role: null, page: null, id: null };
+      return { exp: 'mobile', role: p[1], page: p[2] || mr.home || 'home', id: p.length > 3 ? p.slice(3).join('-') : null };
     }
+    const role = p[0];
+    if (!B.roles[role]) return { ...HOME };
+    return { exp: 'app', role, page: p[1] || B.roles[role].home || 'home', id: p.length > 2 ? p.slice(2).join('-') : null };
+  };
+  B.hashOf = (r) => {
+    if (r.exp === 'site') return ['site', r.page !== 'home' ? r.page : null, r.id].filter(Boolean).join('-');
+    if (r.exp === 'mobile') return ['m', r.role, r.page, r.id].filter(Boolean).join('-');
+    if (r.exp === 'app') return [r.role, r.page, r.id].filter(Boolean).join('-');
+    return 'hub';
+  };
+  /** Absolute target if it starts with hub/welcome/site/m/<role>; otherwise relative to the current experience. */
+  B.resolve = (target) => {
+    const t = String(target || '');
+    if (!t || t === 'welcome' || t === 'hub') return { ...HOME };
+    const first = t.split('-')[0];
+    if (first === 'site' || first === 'm' || B.roles[first]) return B.parse(t);
+    const r = B.route;
+    if (r.exp === 'site') return B.parse(`site-${t}`);
+    if (r.exp === 'mobile') return B.parse(`m-${r.role}-${t}`);
+    if (r.exp === 'app') return B.parse(`${r.role}-${t}`);
+    return B.parse(t);
+  };
+  /** Navigate. Accepts absolute routes ('site-vision', 'm-resident-home', 'owner-leases') or relative ('leases'). */
+  B.go = (target) => {
+    const r = B.resolve(target);
     const h = B.hashOf(r);
     B._navigating = true;
     try {
       if (location.hash.replace(/^#/, '') !== h) location.hash = h; else B._navigating = false;
     } catch (e) { B._navigating = false; }
     B.route = r;
-    if (r.role) B.store.set('role', r.role);
+    if (r.exp === 'app' && r.role) B.store.set('role', r.role);
     B.closeModal(true);
     B.render({ keepScroll: false, animate: true });
   };
-  B.back = () => { try { history.back(); } catch (e) { B.go(B.route.role + '-' + (B.roles[B.route.role]?.home || 'home')); } };
+  B.back = () => { try { history.back(); } catch (e) { B.go('hub'); } };
   window.addEventListener('hashchange', () => {
     if (B._navigating) { B._navigating = false; return; }
     const r = B.parse(location.hash);
@@ -154,10 +186,15 @@
     after.length = 0;
     let markup;
     try {
-      markup = B.route.role ? B.shell.render(B.route) : B.welcome();
+      const r = B.route;
+      document.documentElement.dataset.exp = r.exp;
+      if (r.exp === 'app') markup = B.shell.render(r);
+      else if (r.exp === 'site' && B.exp.site) markup = B.exp.site(r);
+      else if (r.exp === 'mobile' && B.exp.mobile) markup = B.exp.mobile(r);
+      else markup = (B.exp.hub || B.welcome)(r);
     } catch (err) {
       console.error(err);
-      markup = `<div style="padding:40px;font-family:system-ui"><h2>Something went wrong rendering this screen.</h2><p>${B.esc(err.message)}</p><p><a href="#welcome" style="color:#0B8A60">Back to start</a></p></div>`;
+      markup = `<div style="padding:40px;font-family:system-ui"><h2>Something went wrong rendering this screen.</h2><p>${B.esc(err.message)}</p><p><a href="#hub" style="color:#0B8A60">Back to start</a></p></div>`;
     }
     root.innerHTML = markup;
     document.body.classList.toggle('has-tabbar', !!root.querySelector('.tabbar'));

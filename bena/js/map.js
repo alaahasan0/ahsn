@@ -11,6 +11,8 @@
  *   onSelect  action name called with building id when a footprint is tapped
  *   static    true = no interaction (mini map)
  *   focus     building id to centre on initially
+ *   layers    { footprints, parcels, streets, labels, parks, terrain } booleans (defaults: parcels off, rest on)
+ *   markers   [{ id: buildingId, label, tone: 'mint'|'navy'|'warn' }] location pins drawn above footprints
  */
 (function () {
   const B = (window.B = window.B || {});
@@ -57,6 +59,19 @@
     return terrain;
   };
 
+  /* Parcel boundaries: a lot around each footprint (demo geometry, not cadastral data). */
+  let parcelCache = null;
+  M.parcels = () => {
+    if (parcelCache) return parcelCache;
+    parcelCache = B.data.buildings.map((b) => {
+      const c = b.poly.reduce((a, p) => [a[0] + p[0] / b.poly.length, a[1] + p[1] / b.poly.length], [0, 0]);
+      const q = b.poly.length === 4 ? b.poly : [b.poly[0], b.poly[1], b.poly[2], b.poly[b.poly.length - 1]];
+      const k = b.key ? 1.5 : 1.42;
+      return { id: b.id, pts: q.map((p) => [c[0] + (p[0] - c[0]) * k, c[1] + (p[1] - c[1]) * k]) };
+    });
+    return parcelCache;
+  };
+
   const pathOf = (pts) => pts.map((p, i) => (i ? 'L' : 'M') + p[0] + ' ' + p[1]).join(' ');
   const centroid = (poly) => { let x = 0, y = 0; poly.forEach((p) => { x += p[0]; y += p[1]; }); return [x / poly.length, y / poly.length]; };
 
@@ -77,6 +92,7 @@
     if (o.focus && !M.view(id)) M.focus(id, o.focus, o.focusW || 360);
     const v = M.view(id) || { x: 0, y: 0, w: W, h: H };
     const mode = o.mode || 'type';
+    const Ly = Object.assign({ footprints: true, parcels: false, streets: true, labels: true, parks: true, terrain: true }, o.layers || {});
     const roads = D.roads.map((rd) => {
       const d = pathOf(rd.pts);
       return `<path d="${d}" fill="none" stroke="#D3DCD8" stroke-width="${rd.w + 3}" stroke-linecap="round" stroke-linejoin="round"/>`;
@@ -95,6 +111,15 @@
     // key buildings get a subtle extrusion shadow to stand out
     const keyShadows = D.keyBuildings.map((b) => `<polygon points="${b.poly.map((q) => (q[0] + 1.6).toFixed(1) + ',' + (q[1] + 2.2).toFixed(1)).join(' ')}" fill="rgba(20,43,59,.16)"/>`).join('');
     const districtLabels = D.districts.map((d) => `<text class="map-label" x="${d.seed[0]}" y="${d.seed[1]}" text-anchor="middle" font-size="${o.static ? 12 : 14}">${tx(d.name)}</text>`).join('');
+    const parcels = Ly.parcels ? `<g>${M.parcels().map((pc) => `<polygon points="${pc.pts.map((q) => q[0].toFixed(1) + ',' + q[1].toFixed(1)).join(' ')}" fill="${pc.id === o.selected ? 'rgba(54,214,160,.10)' : 'none'}" stroke="${pc.id === o.selected ? '#0B8A60' : '#A9B9B2'}" stroke-width="${pc.id === o.selected ? 1.4 : 0.55}" stroke-dasharray="${pc.id === o.selected ? '' : '2.2 1.6'}" pointer-events="none"/>`).join('')}</g>` : '';
+    const ms = Math.max(0.45, Math.min(1.4, v.w / 700));
+    const markers = (o.markers || []).map((mk) => {
+      const b = D.building(mk.id);
+      if (!b) return '';
+      const c = centroid(b.poly);
+      const col = mk.tone === 'warn' ? '#E9A23B' : mk.tone === 'navy' ? '#142B3B' : '#36D6A0';
+      return `<g class="map-pin" transform="translate(${c[0]} ${c[1]}) scale(${ms})"><circle r="9" fill="${col}" stroke="#fff" stroke-width="3"/>${mk.label ? `<g transform="translate(0 -18)"><rect x="${-(String(mk.label).length * 3.6 + 10)}" y="-13" width="${String(mk.label).length * 7.2 + 20}" height="20" rx="10" fill="#142B3B"/><text text-anchor="middle" y="1.5" font-size="10.5" font-weight="600" fill="#fff" font-family="Inter, sans-serif">${B.esc(mk.label)}</text></g>` : ''}</g>`;
+    }).join('');
     let pin = '';
     if (o.selected) {
       const b = D.building(o.selected);
@@ -118,7 +143,7 @@
     return `<div class="map-shell" data-map="${id}" style="${o.height ? `--map-h:${o.height}` : ''}">
       <svg class="map-svg" viewBox="${v.x} ${v.y} ${v.w} ${v.h}" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${L('Map of buildings', 'خريطة المباني')}">
         <rect x="-400" y="-400" width="1800" height="1500" fill="#EDF2EF"/>
-        <g>${contours()}</g>${parks}${roads}${keyShadows}${blds}${streetLabels}${districtLabels}${pin}
+        ${Ly.terrain ? `<g>${contours()}</g>` : ''}${Ly.parks ? parks : ''}${Ly.streets ? roads : ''}${parcels}${Ly.footprints ? keyShadows + blds : ''}${Ly.streets && Ly.labels ? streetLabels : ''}${Ly.labels ? districtLabels : ''}${markers}${pin}
       </svg>${badge}${ctrls}${legend}
       ${o.static ? '' : `<div class="map-scale"><i></i><span>${scaleM} m</span></div>`}
     </div>`;

@@ -8,7 +8,9 @@
  *
  * Usage:
  *   node tools/check.cjs --routes resident-home,resident-unit [--w 390 --h 844] [--shots DIR] [--click] [--ar]
- *   node tools/check.cjs --role resident            # every menu page of a role
+ *   node tools/check.cjs --role resident            # every menu page of a role (enterprise app)
+ *   node tools/check.cjs --site                     # every public-website page (B.site.pages)
+ *   node tools/check.cjs --mrole tech               # every screen of a mobile role (tabs + more)
  */
 const path = require('path');
 const { chromium } = require('playwright');
@@ -33,13 +35,23 @@ const file = 'file://' + path.resolve(__dirname, '..', 'index.html');
 
   let routes = String(opt('routes', '') || '').split(',').filter(Boolean);
   const role = opt('role', null);
-  await page.goto(file + '#welcome');
+  const mrole = opt('mrole', null);
+  const site = !!opt('site', false);
+  await page.goto(file + '#hub');
   if (ar) { await page.evaluate(() => window.B.setLang('ar')); }
   if (role) {
     const ids = await page.evaluate((r) => window.B.roles[r].menu.filter((m) => m.id).map((m) => m.id), role);
     routes = routes.concat(ids.map((i) => `${role}-${i}`));
   }
-  if (!routes.length) routes = ['welcome'];
+  if (mrole) {
+    const ids = await page.evaluate((r) => { const R = window.B.mroles[r]; return [...(R.tabs || []), ...(R.more || [])].map((m) => m.id); }, mrole);
+    routes = routes.concat(ids.map((i) => `m-${mrole}-${i}`));
+  }
+  if (site) {
+    const ids = await page.evaluate(() => (window.B.site && window.B.site.pages) || ['home']);
+    routes = routes.concat(ids.map((i) => (i === 'home' ? 'site' : `site-${i}`)));
+  }
+  if (!routes.length) routes = ['hub'];
   let total = 0;
   for (const r of routes) {
     issues = [];
@@ -50,11 +62,11 @@ const file = 'file://' + path.resolve(__dirname, '..', 'index.html');
       const over = de.scrollWidth > window.innerWidth + 1;
       let culprit = '';
       if (over) {
-        const all = [...document.querySelectorAll('.view *')];
+        const all = [...document.querySelectorAll('.view *, [data-exp-root] *')];
         const bad = all.find((el) => { const b = el.getBoundingClientRect(); return b.right > window.innerWidth + 1 && getComputedStyle(el).position !== 'fixed' && !el.closest('.table-wrap,.chips,.tabs,.seg,.map-shell'); });
         if (bad) culprit = bad.tagName + '.' + [...bad.classList].join('.') + ' "' + (bad.textContent || '').trim().slice(0, 40) + '"';
       }
-      const err = document.querySelector('.view, .welcome') ? '' : 'NO VIEW';
+      const err = document.querySelector('.view, .welcome, [data-exp-root]') ? '' : 'NO VIEW';
       const nf = document.querySelector('.empty h3')?.textContent?.includes('not part of the demo') ? 'NOT FOUND PAGE' : '';
       return { over, sw: de.scrollWidth, culprit, err, nf, title: document.querySelector('.mbar .mt b, .topbar .crumbs b')?.textContent || '' };
     });
@@ -63,12 +75,12 @@ const file = 'file://' + path.resolve(__dirname, '..', 'index.html');
     if (info.nf) issues.push('[route] ' + info.nf);
     if (shots) await page.screenshot({ path: path.join(shots, `${r}${ar ? '-ar' : ''}-${W}.png`), fullPage: !!opt('full', false) });
     if (doClick) {
-      const n = await page.evaluate(() => document.querySelectorAll('.view [data-act], .view [data-go]').length);
+      const n = await page.evaluate(() => document.querySelectorAll('.view [data-act], .view [data-go], [data-exp-root] [data-act], [data-exp-root] [data-go]').length);
       for (let i = 0; i < Math.min(n, +opt('max', 80)); i++) {
-        await page.evaluate((h) => { location.hash = 'welcome'; location.hash = h; }, r);
+        await page.evaluate((h) => { location.hash = 'hub'; location.hash = h; }, r);
         await page.waitForTimeout(60);
         const desc = await page.evaluate((i) => {
-          const el = document.querySelectorAll('.view [data-act], .view [data-go]')[i];
+          const el = document.querySelectorAll('.view [data-act], .view [data-go], [data-exp-root] [data-act], [data-exp-root] [data-go]')[i];
           if (!el) return null;
           const d = (el.dataset.act ? 'act:' + el.dataset.act + '(' + (el.dataset.arg || '') + ')' : 'go:' + el.dataset.go);
           el.dispatchEvent(new MouseEvent('click', { bubbles: true }));

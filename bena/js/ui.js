@@ -90,6 +90,16 @@
     ? `<span class="badge navy">${icon('landmark')}${L('GIS-linked', 'مرتبط بالبلدية')}</span>`
     : `<span class="badge outline">${icon('userCheck')}${L('Independent', 'مستقل')}</span>`;
 
+  /** Data provenance marker: official (source-linked) · submitted (user) · pending (verification) · demo (simulated). */
+  ui.PROV = {
+    official: { en: 'Official source', ar: 'مصدر رسمي', icon: 'landmark', hint: { en: 'Linked to an authorised external record (sample)', ar: 'مرتبط بسجل خارجي معتمد (نموذج)' } },
+    submitted: { en: 'User-submitted', ar: 'مُقدَّم من مستخدم', icon: 'userCheck', hint: { en: 'Provided by an owner, resident or manager', ar: 'قدّمه مالك أو ساكن أو مدير' } },
+    pending: { en: 'Pending verification', ar: 'بانتظار التحقق', icon: 'clock', hint: { en: 'Awaiting review by the data steward', ar: 'بانتظار مراجعة مسؤول البيانات' } },
+    demo: { en: 'Sample data', ar: 'بيانات نموذجية', icon: 'info', hint: { en: 'Simulated demonstration data', ar: 'بيانات عرض محاكاة' } },
+  };
+  ui.prov = (kind, withHint = false) => { const p = ui.PROV[kind] || ui.PROV.demo; return `<span class="prov prov-${kind}" title="${esc(tx(p.hint))}">${icon(p.icon)}${tx(p)}</span>${withHint ? `<span class="prov-hint">${tx(p.hint)}</span>` : ''}`; };
+  ui.provLegend = () => `<div class="prov-legend">${Object.keys(ui.PROV).map((k) => ui.prov(k)).join('')}</div>`;
+
   /* ---------------- layout pieces ---------------- */
   ui.pageHead = ({ title, sub = '', actions = '', eyebrow = '' }) => `
     <div class="page-head"><div class="grow">${eyebrow ? `<div class="eyebrow" style="margin-bottom:6px">${tx(eyebrow)}</div>` : ''}<h1>${tx(title)}</h1>${sub ? `<p>${tx(sub)}</p>` : ''}</div>
