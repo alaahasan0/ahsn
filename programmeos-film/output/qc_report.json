@@ -1,0 +1,94 @@
+{
+  "film_4k": {
+    "file": "ProgrammeOS_Film_150s_4K_UHD_H264.mp4",
+    "sizeMB": 269.9,
+    "container_duration_s": 150.0,
+    "video_duration_s": 150.0,
+    "audio_duration_s": 150.0,
+    "frames": 3600,
+    "resolution": "3840x2160",
+    "fps": "24/1",
+    "video_codec": "h264 High",
+    "pix_fmt": "yuv420p",
+    "color": "bt709/bt709/bt709/tv",
+    "audio_codec": "aac 48000 Hz 2 ch",
+    "subtitle_tracks": [
+      "eng"
+    ],
+    "loudness_LUFS": -14.0,
+    "true_peak_dBFS": -0.9,
+    "checks": {
+      "frames == duration × 24": true,
+      "video exactly 150 s": true,
+      "audio within 1 frame of 150 s": true,
+      "resolution": true,
+      "24 fps": true,
+      "loudness −14 ±1 LUFS": true,
+      "true peak ≤ −0.9 dBFS": true,
+      "English subtitle track": true
+    }
+  },
+  "film_1080p": {
+    "file": "ProgrammeOS_Film_150s_1080p_H264.mp4",
+    "sizeMB": 59.3,
+    "container_duration_s": 150.0,
+    "video_duration_s": 150.0,
+    "audio_duration_s": 150.0,
+    "frames": 3600,
+    "resolution": "1920x1080",
+    "fps": "24/1",
+    "video_codec": "h264 High",
+    "pix_fmt": "yuv420p",
+    "color": "bt709/bt709/bt709/tv",
+    "audio_codec": "aac 48000 Hz 2 ch",
+    "subtitle_tracks": [
+      "eng"
+    ],
+    "loudness_LUFS": -14.0,
+    "true_peak_dBFS": -0.9,
+    "checks": {
+      "frames == duration × 24": true,
+      "video exactly 150 s": true,
+      "audio within 1 frame of 150 s": true,
+      "resolution": true,
+      "24 fps": true,
+      "loudness −14 ±1 LUFS": true,
+      "true peak ≤ −0.9 dBFS": true,
+      "English subtitle track": true
+    }
+  },
+  "vertical": {
+    "file": "ProgrammeOS_Social_30s_Vertical_1080x1920_H264.mp4",
+    "sizeMB": 21.3,
+    "container_duration_s": 30.0,
+    "video_duration_s": 30.0,
+    "audio_duration_s": 30.0,
+    "frames": 720,
+    "resolution": "1080x1920",
+    "fps": "24/1",
+    "video_codec": "h264 High",
+    "pix_fmt": "yuv420p",
+    "color": "bt709/bt709/bt709/tv",
+    "audio_codec": "aac 48000 Hz 2 ch",
+    "subtitle_tracks": [],
+    "loudness_LUFS": -14.0,
+    "true_peak_dBFS": -1.0,
+    "checks": {
+      "frames == duration × 24": true,
+      "video exactly 30 s": true,
+      "audio within 1 frame of 30 s": true,
+      "resolution": true,
+      "24 fps": true,
+      "loudness −14 ±1 LUFS": true,
+      "true peak ≤ −0.9 dBFS": true
+    }
+  },
+  "subtitles": {
+    "cues": 28,
+    "first": 2.56,
+    "last_end": 142.89,
+    "inside_film": true,
+    "no_overlaps": true
+  },
+  "all_passed": true
+}

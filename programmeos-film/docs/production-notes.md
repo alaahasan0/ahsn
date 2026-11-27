@@ -101,3 +101,49 @@ The film is a deterministic composition, not a timeline in a desktop editor:
 `composition/render.cjs` renders frames, and `composition/encode.sh` produces the deliverables. To
 change a title, a timing or a shot, edit `film.js` (each scene is one block) and re-render. See the
 README in this folder for the full sequence of commands.
+
+## 7. Quality control (measured on the delivery files)
+
+`composition/qc.py output` writes `output/qc_report.json`. Results for this delivery:
+
+| Check | 4K master | 1080p | Vertical |
+| --- | --- | --- | --- |
+| Frames · duration | 3,600 · 150.000 s | 3,600 · 150.000 s | 720 · 30.000 s |
+| Audio duration | 150.000 s | 150.000 s | 30.000 s |
+| Resolution · rate | 3840×2160 · 24 fps | 1920×1080 · 24 fps | 1080×1920 · 24 fps |
+| Video | H.264 High, 4:2:0, Rec.709 | H.264 High, 4:2:0, Rec.709 | H.264 High, 4:2:0, Rec.709 |
+| Audio | AAC 48 kHz stereo, 320 kb/s | AAC 48 kHz stereo, 256 kb/s | AAC 48 kHz stereo, 256 kb/s |
+| Loudness · true peak | −14.0 LUFS · −0.9 dBTP | −14.0 LUFS · −0.9 dBTP | −14.0 LUFS · −1.0 dBTP |
+| Subtitles | English track (mov_text) | English track (mov_text) | none (no narration until the closing line, which is on screen) |
+| Size | 270 MB | 59 MB | 21 MB |
+
+- Subtitles: 28 cues, first at 00:02.560, last ends at 02:22.890, all inside the film, no overlaps.
+- Picture fidelity: frames decoded from the 4K master match the rendered frames at 40–48 dB PSNR
+  with under 1.5 levels of average colour difference (checked at 00:06, 00:31.4, 01:30.5, 01:49.5,
+  02:05 and 02:25).
+- Every scene was reviewed frame by frame at its transitions; overlaps between titles and incoming
+  screens and two cross-fade double exposures were fixed before the final render.
+- Brief checklist: duration exactly 150 s ✓ · storyboard followed (10 scenes, brief timings) ✓ ·
+  real application shown accurately ✓ · no fabricated features presented as live ✓ (see §3) · no
+  fake integrations ✓ · interface text readable at 4K (close-ups for key figures) ✓ · captions
+  synchronised to word timings ✓ · narration 9.5–12.6 dB above the score ✓ · consistent ProgrammeOS
+  branding ✓ · no Emeritus logos or brand assets ✓ · pronunciation and overall feel: needs a human
+  listen (§5).
+
+## 8. Final creative test
+
+*Would an Emeritus executive with no prior knowledge understand that this is a serious platform
+bringing order, visibility and operational control to complex programmes?*
+
+- **Understands the complexity.** Scene 01 opens on the real mess of a programme: rooming-list
+  versions, missing flights, a moved faculty briefing, an unsigned venue contract, an unowned
+  deposit reminder.
+- **Brings disconnected workflows together.** From Scene 03 every shot stays on one programme,
+  ELP. The same faculty, sessions, hotel, venue and budget figures recur across modules, and the
+  readiness tap shows one record update flowing into the overall status.
+- **Worth exploring strategically.** Scene 09 widens from one programme to the portfolio, and the
+  close carries the positioning: "Beyond Training Management. One Platform. Every Programme.
+  Complete Control."
+
+The film is honest about what is a prototype (§3), which matters with a leadership audience that
+may later evaluate the product in detail.

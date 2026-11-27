@@ -8,11 +8,12 @@ built entirely from real footage of the ProgrammeOS prototype in `../programmeos
 | Film, 150 s, 3840×2160, 24 fps, H.264 + AAC, English subtitle track | `output/ProgrammeOS_Film_150s_4K_UHD_H264.mp4` (not in git, see below) |
 | Same film at 1920×1080 for sharing | `output/ProgrammeOS_Film_150s_1080p_H264.mp4` |
 | Vertical social cut, 30 s, 1080×1920 | `output/ProgrammeOS_Social_30s_Vertical_1080x1920_H264.mp4` |
-| English voiceover on the film timeline, 150 s | `output/ProgrammeOS_Voiceover_150s.mp3` (24-bit WAV rebuilt by `audio/mix.py`) |
+| English voiceover on the film timeline, 150 s | `output/ProgrammeOS_Voiceover_150s.mp3` (the 24-bit WAV is delivered separately and rebuilt by `audio/mix.py` + `encode.sh`) |
 | English subtitles | `subtitles/programmeos_film_en.srt` (copy in `output/`) |
 | Storyboard and shot list | `docs/storyboard-and-shot-list.md` |
 | Actual ProgrammeOS screens used | `docs/screens-used.md` |
 | Production notes: simulated capabilities, overlays, audio, checks | `docs/production-notes.md` |
+| Quality-control report | `output/qc_report.json` (summary in the production notes) |
 | Source footage | `footage/stills/` (PNG), `footage/clips/` (scroll takes as MP4), `footage/manifest.json` |
 | Generated assets | `audio/vo/`, `audio/music/`, `audio/sfx/`, `composition/assets/` |
 | Editable project | `composition/` (timeline, scenes, renderer, encoder) and `audio/mix.py` |
