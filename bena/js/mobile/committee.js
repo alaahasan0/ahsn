@@ -475,7 +475,7 @@
   B.act.mcDoc = (id) => {
     const d = DOCS.find((x) => x.id === id); if (!d) return;
     M.sheet({ title: tx(d.name), sub: `${tx(DOC_CATS[d.cat])} · ${B.date(d.date)} · ${d.size}`,
-      body: `<div class="mc-doc"><div class="dh">${B.logo(22)}<span class="mc-tag">${tx(DOC_CATS[d.cat])}</span></div><i style="width:70%;height:10px;background:#D5DEDA"></i><i style="width:92%"></i><i style="width:86%"></i><i style="width:90%"></i><i style="width:60%"></i><i style="width:88%;margin-top:8px"></i><i style="width:80%"></i><i style="width:45%"></i>${d.cat === 'legal' ? `<span class="seal">${icon('badgeCheck')}</span>` : ''}</div>${note(L('Preview of a sample document', 'معاينة مستند نموذجي'))}`,
+      body: `<div class="mc-doc"><div class="dh">${B.logo(22)}<span class="mc-tag">${tx(DOC_CATS[d.cat])}</span></div><b style="font-size:13px;line-height:1.35;color:var(--ink)">${tx(d.name)}</b><small style="font-size:11px;color:var(--text-3)">${tx(C.name)}</small><i style="width:92%"></i><i style="width:86%"></i><i style="width:90%"></i><i style="width:60%"></i><i style="width:88%;margin-top:8px"></i><i style="width:80%"></i><i style="width:45%"></i>${d.cat === 'legal' ? `<span class="seal">${icon('badgeCheck')}</span>` : ''}</div>${note(L('Preview of a sample document', 'معاينة مستند نموذجي'))}`,
       foot: M.btn(L('Share', 'مشاركة'), { act: 'mxSoon', arg: L('Sharing', 'المشاركة'), icon: 'share' }) + M.btn(L('Download', 'تنزيل'), { kind: 'primary', act: 'mxSoon', arg: L('Download', 'التنزيل'), icon: 'download' }) });
   };
 

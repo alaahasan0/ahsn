@@ -1007,7 +1007,7 @@
   ].filter(Boolean);
   const docCols = (o = {}) => [
     { key: 'n', label: L('Document', 'المستند'), m: 'title', sort: (d) => tx(d.n), render: (d) => `<div class="cell-main"><span class="li-icon" style="width:32px;height:32px;border-radius:9px">${icon(MX.folders.find((f) => f.id === d.f).icon)}</span>${sub2(`<bdi>${esc(tx(d.n))}</bdi>`, `${ui.idMono(d.id)} · PDF · ${d.size}`)}</div>`, mRender: (d) => `<bdi>${esc(tx(d.n))}</bdi>` },
-    { key: 'f', label: L('Folder', 'المجلد'), sort: (d) => d.f, m: 'meta', render: (d) => esc(tx(MX.folders.find((f) => f.id === d.f).n)) },
+    { key: 'f', label: L('Folder', 'المجلد'), mid: true, sort: (d) => d.f, m: 'meta', render: (d) => esc(tx(MX.folders.find((f) => f.id === d.f).n)) },
     o.noBuilding ? null : { key: 'b', label: L('Building', 'المبنى'), sort: (d) => sName(d.b), m: 'sub', render: (d) => esc(sName(d.b)) },
     { key: 'by', label: L('Uploaded by', 'رفعه'), wide: true, m: 'hide', render: (d) => esc(staffName(d.by)) },
     { key: 'prov', label: L('Source', 'المصدر'), wide: true, m: 'hide', render: (d) => ui.prov(d.prov) },

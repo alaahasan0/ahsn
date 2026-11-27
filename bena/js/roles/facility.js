@@ -18,9 +18,9 @@
      ====================================================================== */
   B.css(`
   .fm-mono { font-family: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace; letter-spacing: -.01em; }
-  .fm-tag { font-family: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace; font-size: 11.5px; font-weight: 600; color: var(--navy); background: #EEF3F6; border: 1px solid #DCE5EB; border-radius: 6px; padding: 2px 6px; white-space: nowrap; direction: ltr; unicode-bidi: isolate; display: inline-block; line-height: 1.4; }
+  .fm-tag { font-family: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace; font-size: 12px; font-weight: 600; color: var(--navy); background: #EEF3F6; border: 1px solid #DCE5EB; border-radius: 6px; padding: 2px 6px; white-space: nowrap; direction: ltr; unicode-bidi: isolate; display: inline-block; line-height: 1.4; }
   .fm-tag.dark { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.14); color: #fff; }
-  .fm-k { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 10.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-3); }
+  .fm-k { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-3); }
   html[dir="rtl"] .fm-k { letter-spacing: 0; font-family: var(--font-ar); }
 
   .fm-ops { background: var(--navy); color: var(--navy-ink); border-radius: var(--r-lg); padding: 18px 22px; display: flex; flex-direction: column; gap: 16px; position: relative; overflow: hidden; }
@@ -35,7 +35,7 @@
   .fm-stats > :first-child { border-inline-start: 0; padding-inline-start: 0; }
   .fm-stats b { display: block; font-family: var(--font-display); color: #fff; font-size: 26px; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }
   .fm-stats b small { font-size: 14px; color: var(--navy-ink); font-weight: 600; margin-inline-start: 2px; }
-  .fm-stats span { font-size: 11.5px; line-height: 1.3; display: block; margin-top: 3px; }
+  .fm-stats span { font-size: 12px; line-height: 1.3; display: block; margin-top: 3px; }
   .fm-stats .warn b { color: #F6C77E; } .fm-stats .bad b { color: #F39C93; }
   .fm-stats > button:hover b { color: var(--mint); }
   @media (max-width: 1100px) { .fm-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 14px; } .fm-stats > :nth-child(4) { border-inline-start: 0; padding-inline-start: 0; } }
@@ -52,7 +52,7 @@
   .fm-scale { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; color: var(--text-2); }
 
   .fm-matrix { display: grid; gap: 4px; font-size: 12px; }
-  .fm-matrix .h { font-size: 10.5px; color: var(--text-3); font-weight: 600; text-align: center; display: flex; align-items: flex-end; justify-content: center; line-height: 1.2; padding-bottom: 4px; }
+  .fm-matrix .h { font-size: 12px; color: var(--text-3); font-weight: 600; text-align: center; display: flex; align-items: flex-end; justify-content: center; line-height: 1.2; padding-bottom: 4px; }
   .fm-matrix .rl { display: flex; flex-direction: column; justify-content: center; min-width: 0; padding-inline-end: 8px; }
   .fm-matrix .rl b { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .fm-matrix .cell { height: 44px; border-radius: 8px; display: grid; place-items: center; color: #fff; font-weight: 700; font-family: ui-monospace, Menlo, monospace; font-size: 12px; transition: transform .15s; }
@@ -60,7 +60,7 @@
   .fm-matrix .cell { direction: ltr; }
   .fm-matrix .cell.c-good, .fm-matrix .cell.c-fair { color: var(--navy); }
   .fm-matrix .cell.none { background: var(--line-2); color: var(--text-3); }
-  @media (max-width: 640px) { .fm-matrix .cell { height: 34px; font-size: 11px; border-radius: 6px; } .fm-matrix .h { font-size: 9.5px; } .fm-matrix .h span { display: none; } .fm-matrix .rl b { font-size: 12px; } }
+  @media (max-width: 640px) { .fm-matrix .cell { height: 34px; font-size: 12px; border-radius: 6px; } .fm-matrix .h { font-size: 12px; } .fm-matrix .h span { display: none; } .fm-matrix .rl b { font-size: 12px; } }
 
   .fm-alert { display: grid; grid-template-columns: 4px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line-2); text-align: start; width: 100%; }
   .fm-alert:last-child { border-bottom: 0; padding-bottom: 0; } .fm-alert:first-child { padding-top: 0; }
@@ -139,11 +139,11 @@
   .device.wide { grid-column: span 2; }
   @media (max-width: 640px) { .device.wide { grid-column: auto; } }
   .fm-shafts { display: grid; grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); gap: 10px; }
-  .fm-shaft { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 11px; color: var(--text-3); }
+  .fm-shaft { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 12px; color: var(--text-3); }
   .fm-shaft .s { width: 100%; max-width: 46px; height: 92px; border-radius: 8px; background: var(--surface-2); border: 1px solid var(--line); position: relative; }
   .fm-shaft .car { position: absolute; inset-inline: 4px; height: 16px; border-radius: 4px; background: var(--navy); color: var(--mint); font-size: 9.5px; font-weight: 700; display: grid; place-items: center; font-family: ui-monospace, Menlo, monospace; transition: bottom 1s var(--ease); }
   .fm-shaft.off .car { background: var(--bad-bg); color: var(--bad); }
-  .fm-floors-heat { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 4px 8px; align-items: center; font-size: 11px; color: var(--text-3); }
+  .fm-floors-heat { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 4px 8px; align-items: center; font-size: 12px; color: var(--text-3); }
   .fm-floors-heat .row-h { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 3px; }
   .fm-floors-heat .row-h i { height: 14px; border-radius: 3px; }
   .fm-roadmap { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
@@ -152,7 +152,7 @@
   .fm-roadmap b { display: block; margin: 6px 0 4px; font-size: 14px; }
   .fm-roadmap p { font-size: 12.5px; color: var(--text-2); }
   @media (max-width: 767px) { .fm-roadmap { grid-template-columns: minmax(0, 1fr); } }
-  .fm-sim-tag { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #8A4108; background: #FDF1DC; border-radius: 5px; padding: 2px 6px; }
+  .fm-sim-tag { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #8A4108; background: #FDF1DC; border-radius: 5px; padding: 2px 6px; }
   html[dir="rtl"] .fm-sim-tag { letter-spacing: 0; }
   .fm-cell { display: flex; align-items: center; gap: 10px; min-width: 0; }
   .fm-cell b { display: block; font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 280px; }
@@ -167,6 +167,29 @@
   .fm-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--text-2); margin-top: 12px; }
   .fm-legend span { display: inline-flex; align-items: center; gap: 6px; }
   .fm-legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+  .fm-meta { display: flex; align-items: center; gap: 6px 12px; flex-wrap: wrap; font-size: 12.5px; color: var(--text-3); margin: -10px 0 16px; }
+  .fm-scopek { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; color: var(--text-2); font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 12px; }
+  html[dir="rtl"] .fm-scopek { font-family: var(--font-ar); }
+  .fm-scopek svg { width: 14px; height: 14px; color: var(--mint-ink); }
+  .fm-dot { width: 3px; height: 3px; border-radius: 50%; background: #B9C6CF; }
+  .fm-ops-sm { padding: 14px 18px; margin-bottom: 16px; gap: 0; }
+  .fm-ops-sm .fm-stats { border-top: 0; padding-top: 0; }
+  .fm-ops-sm .fm-stats b { font-size: 22px; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; letter-spacing: -.02em; }
+  .fm-regs { display: grid; grid-template-columns: repeat(auto-fill, minmax(178px, 1fr)); gap: 8px; }
+  .fm-reg { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; text-align: start; min-width: 0; }
+  .fm-reg:hover { border-color: #B9C6CF; }
+  .fm-reg.on { border-color: var(--navy); box-shadow: 0 0 0 1px var(--navy) inset; }
+  .fm-reg-h { display: flex; justify-content: space-between; align-items: center; gap: 6px; font-size: 13px; }
+  .fm-reg-h svg { width: 16px; height: 16px; color: var(--navy); flex: none; }
+  .fm-reg-h b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fm-reg-h .fm-mono { font-weight: 700; font-size: 14px; }
+  .fm-reg .bar { display: flex; gap: 2px; } .fm-reg .bar i { flex: 1; height: 6px; border-radius: 2px; }
+  .fm-reg-f { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-3); }
+  .fm-att, .fm-okk { display: inline-flex; align-items: center; gap: 3px; font-weight: 700; font-size: 12px; }
+  .fm-att { color: var(--bad); } .fm-okk { color: var(--ok); } .fm-att svg, .fm-okk svg { width: 13px; height: 13px; }
+  .fm-crit { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 6px; font-family: ui-monospace, Menlo, monospace; font-size: 12px; font-weight: 700; background: var(--line-2); color: var(--text-2); }
+  @media (max-width: 1520px) { .xt-t .fm-hide-md { display: none; } }
+  .fm-crit.cA { background: var(--navy); color: var(--mint); } .fm-crit.cB { background: #DCE6EE; color: var(--navy); }
   `);
 
   /* ======================================================================
@@ -197,6 +220,14 @@
   const site = (bid) => SITE[bid];
   const bname = (bid) => tx(D.building(bid).name);
   const sshort = (bid) => tx(SITE[bid].short);
+  /* Workspace scope — shared with the top-bar workspace selector (B.vs['ws:facility']) */
+  const fscope = () => { const v = B.get(`ws:${R}`, 'all'); return SITE_IDS.includes(v) ? v : 'all'; };
+  const fIds = () => (fscope() === 'all' ? SITE_IDS : [fscope()]);
+  const inFs = (bid) => fIds().includes(bid);
+  const siteSel = () => ui.select(`ws:${R}`, [{ v: 'all', l: L('All facilities', 'كل المرافق') }].concat(SITE_IDS.map((b) => ({ v: b, l: sshort(b) }))), { label: L('Facility', 'المرفق'), def: 'all' });
+  const fcrumbs = (...items) => B.crumbs([{ label: L('Sanad Facility Services', 'سند لخدمات إدارة المرافق'), go: `${R}-home` }].concat(items));
+  /* Assigned team per asset category: [in-house technician, specialist contractor] */
+  const TEAM = { elevator: ['t_yazan', 'sp_lift'], hvac: ['t_mahmoud', 'sp_cool'], pump: ['t_ahmad'], water: ['t_ahmad', 'sp_pure'], medgas: ['t_ahmad'], generator: ['t_rami', 'sp_volt'], electrical: ['t_rami', 'sp_volt'], fire: ['t_saed'], access: ['t_nour'], cctv: ['t_nour', 'sp_guard'], bms: ['t_nour'] };
 
   const CATS = {
     elevator: { n: T('Elevators', 'المصاعد'), icon: 'elevator', sys: 'vt' },
@@ -380,6 +411,10 @@
      Helpers
      ====================================================================== */
   const sec = (title, extra = '') => `<div class="section-title"><h2>${title}</h2>${extra}</div>`;
+  /** Page header with provenance + scope meta line (technical variant). */
+  const fhead = (o) => `${ui.pageHead(o)}<div class="fm-meta"><span class="fm-scopek">${icon('layers')}${fscope() === 'all' ? L(`All facilities (${SITE_IDS.length})`, `كل المرافق (${SITE_IDS.length})`) : sshort(fscope())}</span><span class="fm-dot"></span><span>${L('Shift data as of 25 Nov 2026 · 10:00', 'بيانات الوردية حتى 25 ت٢ 2026 · 10:00')}</span><span class="fm-dot"></span>${ui.prov('demo')}${o.metaExtra || ''}</div>`;
+  /** Compact navy operations strip: items [value, label, go, tone, unit] */
+  const opsStrip = (items) => `<section class="fm-ops fm-ops-sm"><div class="fm-stats" style="grid-template-columns:repeat(${items.length},minmax(0,1fr))">${items.map(([v, l, go, tone, u]) => `<${go ? `button data-go="${go}"` : 'div'} class="${tone || ''}"><b>${v}${u ? `<small>${u}</small>` : ''}</b><span>${l}</span></${go ? 'button' : 'div'}>`).join('')}</div></section>`;
   const tag = (t, cls = '') => `<span class="fm-tag ${cls}">${esc(t)}</span>`;
   const cond = (c) => `<span class="fm-cond c-${c}"><i></i>${ui.statusLabel(c)}</span>`;
   const PRIO_I = { critical: 'zap', high: 'arrowUp', medium: 'minus', low: 'arrowDown' };
@@ -427,16 +462,17 @@
      Pages
      ====================================================================== */
   function home() {
-    const open = openWOs();
+    fcrumbs({ label: L('Facility overview', 'نظرة عامة على المرافق') });
+    const open = openWOs().filter((w) => inFs(asset(w.asset).b));
     const late = open.filter(isLate);
     const al = ALERTS();
     const crit = open.filter((w) => w.priority === 'critical' || w.priority === 'high');
     const stats = [
-      { v: SITE_IDS.length, l: L('Facilities under management', 'مرافق تحت الإدارة'), go: `${R}-sites` },
-      { v: ASSETS.length, l: L('Registered assets', 'أصول مسجلة'), go: `${R}-assets` },
+      { v: fIds().length, l: L('Facilities under management', 'مرافق تحت الإدارة'), go: `${R}-sites` },
+      { v: ASSETS.filter((a) => inFs(a.b)).length, l: L('Registered assets', 'أصول مسجلة'), go: `${R}-assets` },
       { v: open.length, l: L(`Open work orders · ${late.length} late`, `أوامر عمل مفتوحة · ${late.length} متأخرة`), go: `${R}-workorders`, cls: late.length ? 'warn' : '' },
       { v: pmCompletion(), u: '%', l: L('PM completion (Nov)', 'إنجاز الصيانة الوقائية (ت٢)'), go: `${R}-pm` },
-      { v: overdueInsp().length, l: L('Overdue inspections', 'فحوصات متأخرة'), go: `${R}-assets`, cls: 'bad' },
+      { v: overdueInsp().filter((a) => inFs(a.b)).length, l: L('Overdue inspections', 'فحوصات متأخرة'), go: `${R}-inspections`, cls: 'bad' },
       { v: CONTRACTORS.length, l: L('Active contractors', 'مقاولون نشطون'), go: `${R}-contractors` },
     ];
     const techLoad = Object.keys(TECHS).map((k) => ({ label: tname(k), sub: tx(TECHS[k].r), value: open.filter((w) => w.tech === k).length })).filter((x) => x.value).sort((a, b) => b.value - a.value);
@@ -468,11 +504,12 @@
   function matrix() {
     const cols = SYSTEMS;
     return `<div class="fm-matrix" style="grid-template-columns: minmax(96px, 1.4fr) repeat(${cols.length}, minmax(0, 1fr))"><div></div>${cols.map((s) => `<div class="h" title="${esc(tx(s.n))}">${tx(s.short || s.n)}</div>`).join('')}
-      ${SITE_IDS.map((bid) => `<div class="rl"><b>${sshort(bid)}</b><span class="fm-mono xs faint">${bid.slice(-5)}</span></div>${cols.map((s) => { const list = assetsOf(bid).filter((a) => CATS[a.cat].sys === s.id); if (!list.length) return '<div class="cell none">–</div>'; const w = worst(list); const flag = list.some((a) => a.ms === 'fmFault' || a.ms === 'fmOverdue'); return `<button class="cell c-${w}" data-act="fmMatrix" data-arg="${bid}|${s.id}" title="${esc(tx(s.n))} · ${esc(ui.statusLabel(w))}">${list.length}${flag ? '!' : ''}</button>`; }).join('')}`).join('')}</div>`;
+      ${fIds().map((bid) => `<div class="rl"><b>${sshort(bid)}</b><span class="fm-mono xs faint">${bid.slice(-5)}</span></div>${cols.map((s) => { const list = assetsOf(bid).filter((a) => CATS[a.cat].sys === s.id); if (!list.length) return '<div class="cell none">–</div>'; const w = worst(list); const flag = list.some((a) => a.ms === 'fmFault' || a.ms === 'fmOverdue'); return `<button class="cell c-${w}" data-act="fmMatrix" data-arg="${bid}|${s.id}" title="${esc(tx(s.n))} · ${esc(ui.statusLabel(w))}">${list.length}${flag ? '!' : ''}</button>`; }).join('')}`).join('')}</div>`;
   }
 
   /* ---------------- Facilities ---------------- */
   function sites() {
+    fcrumbs({ label: L('Facilities', 'المرافق') });
     return `${ui.pageHead({ eyebrow: L('Portfolio', 'المحفظة'), title: L('Facilities', 'المرافق'), sub: L('Buildings operated by Sanad under facility-management contracts.', 'المباني التي تشغّلها سند بموجب عقود إدارة المرافق.'), actions: ui.btn(L('Export portfolio', 'تصدير المحفظة'), { icon: 'download', act: 'previewDoc', arg: L('Sanad portfolio report — Nov 2026.pdf', 'تقرير محفظة سند — ت٢ 2026.pdf') }) })}
     <div class="stack">${SITE_IDS.map((bid) => {
       const b = D.building(bid), s = site(bid), as = assetsOf(bid);
@@ -494,7 +531,8 @@
   function siteDetail(bid) {
     const b = D.building(bid), s = site(bid);
     if (!b || !s) return ui.empty({ icon: 'building', title: L('Facility not found', 'المرفق غير موجود'), action: ui.btn(L('All facilities', 'كل المرافق'), { kind: 'primary', go: `${R}-sites` }) });
-    B.title(tx(b.name));
+    B.title(tx(b.name)); B.navActive('sites');
+    fcrumbs({ label: L('Facilities', 'المرافق'), go: `${R}-sites` }, { label: sshort(bid) });
     const tab = B.get('fm:siteTab', 'overview');
     const as = assetsOf(bid);
     const ow = WOS.filter((w) => asset(w.asset).b === bid);
@@ -541,38 +579,63 @@
   }
 
   /* ---------------- Assets ---------------- */
-  function assetTable(rows, id) {
-    return ui.table({ id, rows, pageSize: 15, rowGo: (a) => `${R}-asset-${a.tag}`, cols: [
-      { key: 'tag', label: L('Asset tag', 'رمز الأصل'), sort: true, render: (a) => tag(a.tag), m: 'meta' },
-      { key: 'name', label: L('Asset', 'الأصل'), sort: true, render: (a) => `<div class="fm-cell"><span class="li-icon">${icon(catIcon(a.cat))}</span><div style="min-width:0"><b>${tx(a.name)}</b><small>${tx(CATS[a.cat].n)} · ${esc(a.spec)}</small></div></div>`, mRender: (a) => tx(a.name), m: 'title' },
-      { key: 'loc', label: L('Location', 'الموقع'), render: (a) => `<span class="small">${sshort(a.b)}<br><span class="faint xs">${tx(a.loc)}</span></span>`, m: 'sub' },
-      { key: 'cond', label: L('Condition', 'الحالة'), sort: (a) => COND_ORDER.indexOf(a.cond), render: (a) => cond(a.cond), m: 'meta' },
-      { key: 'ms', label: L('Maintenance', 'الصيانة'), render: (a) => ui.status(a.ms), m: 'end' },
-      { key: 'last', label: L('Last inspection', 'آخر فحص'), sort: true, render: (a) => `<span class="nowrap small">${B.dateShort(a.last)}</span>`, m: 'hide' },
-      { key: 'next', label: L('Next scheduled', 'الموعد القادم'), sort: true, align: 'end', render: (a) => `<span class="nowrap small ${a.next < TODAY ? 'fm-due over' : ''}">${B.dateShort(a.next)}</span>`, m: 'meta' },
-    ] });
+  const REG = [
+    { id: 'all', n: T('All assets', 'كل الأصول'), cats: null, icon: 'layers' },
+    { id: 'elevator', n: T('Elevators', 'المصاعد'), cats: ['elevator'], icon: 'elevator' },
+    { id: 'hvac', n: T('HVAC', 'التكييف والتهوية'), cats: ['hvac'], icon: 'wind' },
+    { id: 'pumps', n: T('Pumps', 'المضخات'), cats: ['pump'], icon: 'pump' },
+    { id: 'gen', n: T('Generators', 'المولدات'), cats: ['generator'], icon: 'generator' },
+    { id: 'fire', n: T('Fire safety', 'السلامة من الحريق'), cats: ['fire'], icon: 'fireExt' },
+    { id: 'elec', n: T('Electrical systems', 'الأنظمة الكهربائية'), cats: ['electrical'], icon: 'zap' },
+    { id: 'water', n: T('Water systems', 'أنظمة المياه'), cats: ['water', 'medgas'], icon: 'droplet' },
+    { id: 'sec', n: T('Security & BMS', 'الأمن وإدارة المبنى'), cats: ['access', 'cctv', 'bms'], icon: 'shield' },
+  ];
+  const teamOf = (a) => TEAM[a.cat] || ['t_yazan'];
+  const teamCell = (a) => { const [t, c] = teamOf(a); return `<span class="row-sm nowrap">${ui.avatar(TECHS[t].n, 'sm')}<span style="min-width:0"><span class="xt-strong">${tname(t)}</span>${c ? `<span class="xt-sub">+ ${esc(tx(D.provider(c).name))}</span>` : `<span class="xt-sub">${tx(TECHS[t].r)}</span>`}</span></span>`; };
+  const nextCell = (a) => { const d = B.daysFromToday(a.next); return `<span class="nowrap"><span class="xt-strong ${d < 0 ? 'fm-due over' : ''}">${B.dateShort(a.next)}</span><span class="xt-sub" style="${d < 0 ? 'color:var(--bad)' : d <= 7 ? 'color:var(--warn)' : ''}">${d < 0 ? L(`${-d} d overdue`, `متأخر ${-d} يوم`) : d === 0 ? L('today', 'اليوم') : L(`in ${d} d`, `خلال ${d} يوم`)}</span></span>`; };
+  function assetTable(rows, id, o = {}) {
+    return B.xtable({ id, rows, key: (a) => a.tag, pageSize: o.pageSize || 25, maxH: o.maxH, rowGo: (a) => `${R}-asset-${a.tag}`, defaultSort: o.sort || '',
+      bulk: [{ label: L('Create work orders', 'إنشاء أوامر عمل'), icon: 'clipboard', act: 'fmBulkWO' }, { label: L('Log inspection', 'تسجيل فحص'), icon: 'checkSquare', act: 'fmBulkInspect' }, { label: L('Print QR labels', 'طباعة ملصقات QR'), icon: 'qr', act: 'fmBulkQR' }, { label: L('Export', 'تصدير'), icon: 'download', act: 'fmExport' }],
+      cols: [
+        { key: 'tag', label: L('Asset tag', 'رمز الأصل'), sort: true, m: 'meta', render: (a) => tag(a.tag) },
+        { key: 'name', label: L('Asset', 'الأصل'), sort: (a) => tx(a.name), m: 'title', render: (a) => `<div class="fm-cell"><span class="li-icon">${icon(catIcon(a.cat))}</span><div style="min-width:0"><b>${tx(a.name)}</b><small>${tx(CATS[a.cat].n)} · ${esc(a.spec)}</small></div></div>`, mRender: (a) => tx(a.name) },
+        { key: 'loc', label: L('Location', 'الموقع'), sort: (a) => a.b + tx(a.loc), m: 'sub', render: (a) => `<span class="xt-strong">${sshort(a.b)}</span><span class="xt-sub">${tx(a.loc)}</span>` },
+        { key: 'crit', label: L('Crit.', 'الأهمية'), sort: true, align: 'center', cls: 'fm-hide-md', m: 'hide', render: (a) => `<span class="fm-crit c${a.crit}" title="${esc(L(`Criticality ${a.crit}`, `الأهمية ${a.crit}`))}">${a.crit}</span>` },
+        { key: 'cond', label: L('Condition', 'الحالة'), sort: (a) => COND_ORDER.indexOf(a.cond), m: 'meta', render: (a) => cond(a.cond) },
+        { key: 'next', label: L('Next maintenance', 'الصيانة القادمة'), sort: true, m: 'meta', render: nextCell },
+        { key: 'team', label: L('Assigned team', 'الفريق المسؤول'), sort: (a) => tname(teamOf(a)[0]), m: 'hide', render: teamCell },
+        { key: 'ms', label: L('Status', 'الوضع'), sort: (a) => ['fmFault', 'fmOverdue', 'fmRepair', 'fmDue', 'fmOk'].indexOf(a.ms), m: 'end', render: (a) => ui.status(a.ms) },
+      ] });
   }
   function assets() {
-    const q = B.get('fm:aq', ''), fc = B.get('fm:acat', 'all'), fs = B.get('fm:asite', 'all'), fco = B.get('fm:acond', 'all');
-    const rows = ASSETS.filter((a) => (fc === 'all' || a.cat === fc) && (fs === 'all' || a.b === fs) && (fco === 'all' || (fco === 'attn' ? a.ms !== 'fmOk' : a.cond === fco)) && B.match(q, a.tag, a.name, a.loc, a.spec));
-    const counts = COND_ORDER.map((c) => ({ c, n: ASSETS.filter((a) => a.cond === c).length }));
-    return `${ui.pageHead({ eyebrow: L('Portfolio', 'المحفظة'), title: L('Asset inventory', 'سجل الأصول'), sub: L(`${ASSETS.length} maintainable assets across ${SITE_IDS.length} facilities, tagged and linked to work orders and PM plans.`, `${ASSETS.length} أصلاً قابلاً للصيانة في ${SITE_IDS.length} مرافق، مُرمّزة ومرتبطة بأوامر العمل وخطط الصيانة.`),
+    fcrumbs({ label: L('Building assets', 'أصول المباني') });
+    const reg = B.get('fm:areg', 'all'), q = B.get('fm:aq', ''), fco = B.get('fm:acond', 'all');
+    const R0 = REG.find((r) => r.id === reg) || REG[0];
+    const scoped = ASSETS.filter((a) => inFs(a.b));
+    const inReg = (a, r) => !r.cats || r.cats.includes(a.cat);
+    const base = scoped.filter((a) => inReg(a, R0));
+    const rows = base.filter((a) => (fco === 'all' || (fco === 'attn' ? a.ms !== 'fmOk' : fco === 'due30' ? B.daysFromToday(a.next) <= 30 : a.cond === fco)) && B.match(q, a.tag, a.name, a.loc, a.spec));
+    const counts = COND_ORDER.map((c) => ({ c, n: base.filter((a) => a.cond === c).length }));
+    const tiles = REG.slice(1).map((r) => { const l = scoped.filter((a) => inReg(a, r)); if (!l.length) return ''; const nx = l.slice().sort(B.by('next'))[0]; const att = l.filter((a) => a.ms !== 'fmOk').length;
+      return `<button class="fm-reg ${reg === r.id ? 'on' : ''}" data-act="set" data-arg="fm:areg=${reg === r.id ? 'all' : r.id}"><div class="fm-reg-h"><span class="row-sm">${icon(r.icon)}<b>${tx(r.n)}</b></span><span class="fm-mono">${l.length}</span></div>
+        <div class="bar">${l.map((a) => `<i class="cell c-${a.cond}" title="${esc(a.tag)} · ${esc(ui.statusLabel(a.cond))}"></i>`).join('')}</div>
+        <div class="fm-reg-f"><span>${L('Next', 'القادم')} ${B.dateShort(nx.next)}</span>${att ? `<span class="fm-att">${icon('alertCircle')}${att}</span>` : `<span class="fm-okk">${icon('check')}</span>`}</div></button>`; }).join('');
+    return `${fhead({ eyebrow: L('Portfolio · asset registers', 'المحفظة · سجلات الأصول'), title: L('Building assets', 'أصول المباني'), sub: L(`${scoped.length} maintainable assets in ${fIds().length} facilit${fIds().length > 1 ? 'ies' : 'y'} — tagged, condition-rated and linked to PM plans and work orders.`, `${scoped.length} أصلاً قابلاً للصيانة في ${fIds().length} ${fIds().length > 1 ? 'مرافق' : 'مرفق'} — مُرمّزة ومقيّمة الحالة ومرتبطة بخطط الصيانة وأوامر العمل.`),
       actions: ui.btn(L('Print QR labels', 'طباعة ملصقات QR'), { icon: 'qr', act: 'fmQR', arg: 'SND-311-EL-01' }) + ui.btn(L('Add asset', 'إضافة أصل'), { icon: 'plus', kind: 'primary', act: 'fmAddAsset' }) })}
-    <div class="card pad-sm" style="margin-bottom:16px"><div class="row wrap between" style="gap:14px"><div class="grow" style="min-width:240px"><div class="fm-k" style="margin-bottom:8px">${L('Condition distribution', 'توزيع الحالة')}</div>
-      <div style="display:flex;height:12px;border-radius:99px;overflow:hidden;gap:2px">${counts.filter((x) => x.n).map((x) => `<i class="cell c-${x.c}" style="display:block;flex:${x.n}" title="${esc(ui.statusLabel(x.c))}: ${x.n}"></i>`).join('')}</div>
+    <div class="fm-regs">${tiles}</div>
+    <div class="card pad-sm" style="margin:12px 0 14px"><div class="row wrap between" style="gap:14px"><div class="grow" style="min-width:240px"><div class="fm-k" style="margin-bottom:8px">${L('Condition distribution', 'توزيع الحالة')} · ${tx(R0.n)}</div>
+      <div style="display:flex;height:10px;border-radius:99px;overflow:hidden;gap:2px">${counts.filter((x) => x.n).map((x) => `<i class="cell c-${x.c}" style="display:block;flex:${x.n}" title="${esc(ui.statusLabel(x.c))}: ${x.n}"></i>`).join('')}</div>
       <div class="fm-scale" style="margin-top:8px">${counts.map((x) => `<span class="fm-cond c-${x.c}"><i></i>${ui.statusLabel(x.c)} <span class="fm-mono faint">${x.n}</span></span>`).join('')}</div></div>
-      <div class="row" style="gap:22px">${[[ASSETS.filter((a) => a.crit === 'A').length, L('Critical (A)', 'حرجة (A)')], [ASSETS.filter((a) => a.ms === 'fmDue').length, L('Due ≤ 7 days', 'مستحقة ≤ 7 أيام')], [overdueInsp().length, L('Overdue', 'متأخرة')]].map(([v, l]) => `<div><b style="font-family:var(--font-display);font-size:22px">${v}</b><div class="xs faint">${l}</div></div>`).join('')}</div></div></div>
-    <div class="toolbar">${ui.search('fm:aq', L('Search tag, name, location…', 'ابحث بالرمز أو الاسم أو الموقع…'), { reset: 'fm-as:page' })}
-      ${ui.select('fm:acat', [{ v: 'all', l: L('All categories', 'كل الفئات') }].concat(Object.keys(CATS).map((k) => ({ v: k, l: tx(CATS[k].n) }))), { reset: 'fm-as:page', label: L('Category', 'الفئة') })}
-      ${ui.select('fm:asite', [{ v: 'all', l: L('All facilities', 'كل المرافق') }].concat(SITE_IDS.map((b) => ({ v: b, l: sshort(b) }))), { reset: 'fm-as:page', label: L('Facility', 'المرفق') })}</div>
-    <div style="margin-bottom:14px">${ui.chips('fm:acond', [{ id: 'all', label: L('All', 'الكل'), count: ASSETS.length }, { id: 'attn', label: L('Needs attention', 'بحاجة لانتباه'), icon: 'alertCircle', count: ASSETS.filter((a) => a.ms !== 'fmOk').length }].concat(COND_ORDER.filter((c) => ASSETS.some((a) => a.cond === c)).map((c) => ({ id: c, label: ui.statusLabel(c) }))), fco, 'fm-as:page')}</div>
-    ${assetTable(rows, 'fm-as')}`;
+      <div class="row" style="gap:22px">${[[base.filter((a) => a.crit === 'A').length, L('Criticality A', 'أهمية A')], [base.filter((a) => B.daysFromToday(a.next) >= 0 && B.daysFromToday(a.next) <= 7).length, L('Due ≤ 7 days', 'مستحقة ≤ 7 أيام')], [base.filter((a) => a.next < TODAY).length, L('Overdue', 'متأخرة')]].map(([v, l]) => `<div><b class="fm-mono" style="font-size:20px">${v}</b><div class="xs faint">${l}</div></div>`).join('')}</div></div></div>
+    <div class="toolbar mg-fbar">${ui.search('fm:aq', L('Search tag, name, location…', 'ابحث بالرمز أو الاسم أو الموقع…'), { reset: 'fm-as:page' })}${siteSel()}
+      ${ui.chips('fm:acond', [{ id: 'all', label: L('All', 'الكل'), count: base.length }, { id: 'attn', label: L('Needs attention', 'بحاجة لانتباه'), icon: 'alertCircle', count: base.filter((a) => a.ms !== 'fmOk').length }, { id: 'due30', label: L('Due ≤ 30 d', 'مستحقة ≤ 30 يوماً'), count: base.filter((a) => B.daysFromToday(a.next) <= 30).length }].concat(COND_ORDER.filter((c) => base.some((a) => a.cond === c)).map((c) => ({ id: c, label: ui.statusLabel(c) }))), fco, 'fm-as:page')}</div>
+    ${assetTable(rows, 'fm-as', { maxH: 'calc(100vh - 260px)', sort: 'next' })}`;
   }
-
   function assetDetail(t) {
     const a = asset(t);
     if (!a) return ui.empty({ icon: 'cpu', title: L('Asset not found', 'الأصل غير موجود'), action: ui.btn(L('Asset inventory', 'سجل الأصول'), { kind: 'primary', go: `${R}-assets` }) });
-    B.title(a.tag);
+    B.title(a.tag); B.navActive('assets');
+    fcrumbs({ label: L('Building assets', 'أصول المباني'), go: `${R}-assets` }, { label: sshort(a.b), go: `${R}-site-${a.b}` }, { label: a.tag });
     const ws = WOS.filter((w) => w.asset === a.tag);
     const plans = PM.filter((p) => p.cat === a.cat && p.sites.includes(a.b.slice(-3)));
     const ci = COND_ORDER.indexOf(a.cond);
@@ -593,7 +656,7 @@
     </div>
     <div class="grid g-main">
       <div class="stack">
-        ${ui.card({ title: L('Specifications', 'المواصفات'), body: ui.kvGrid([[L('Asset tag', 'رمز الأصل'), tag(a.tag)], [L('Category', 'الفئة'), tx(CATS[a.cat].n)], [L('Rating', 'المواصفة'), esc(a.spec)], [L('Installed', 'التركيب'), a.year], [L('Facility', 'المرفق'), `<button class="mint-ink" style="font-weight:600;text-align:start" data-go="${R}-site-${a.b}">${sshort(a.b)}</button>`], [L('Location', 'الموقع'), tx(a.loc)], [L('Warranty', 'الضمان'), a.year >= 2024 ? L('Active until 2027', 'سارٍ حتى 2027') : L('Expired', 'منتهي')], [L('Maintained by', 'الصيانة بواسطة'), plans[0] && plans[0].by !== 'in' ? tx(D.provider(plans[0].by).name) : L('Sanad in-house', 'فريق سند الداخلي')]]) })}
+        ${ui.card({ title: L('Specifications', 'المواصفات'), body: ui.kvGrid([[L('Asset tag', 'رمز الأصل'), tag(a.tag)], [L('Category', 'الفئة'), tx(CATS[a.cat].n)], [L('Rating', 'المواصفة'), esc(a.spec)], [L('Installed', 'التركيب'), a.year], [L('Assigned team', 'الفريق المسؤول'), teamCell(a)], [L('Facility', 'المرفق'), `<button class="mint-ink" style="font-weight:600;text-align:start" data-go="${R}-site-${a.b}">${sshort(a.b)}</button>`], [L('Location', 'الموقع'), tx(a.loc)], [L('Warranty', 'الضمان'), a.year >= 2024 ? L('Active until 2027', 'سارٍ حتى 2027') : L('Expired', 'منتهي')], [L('Maintained by', 'الصيانة بواسطة'), plans[0] && plans[0].by !== 'in' ? tx(D.provider(plans[0].by).name) : L('Sanad in-house', 'فريق سند الداخلي')]]) })}
         ${ui.card({ title: L('Work orders', 'أوامر العمل'), link: { label: L('New', 'جديد'), act: 'fmNewWO', arg: a.tag }, body: ws.length ? ui.list(ws.map((w) => ui.li({ icon: 'clipboard', tone: w.status === 'completed' ? 'mint' : w.priority === 'critical' ? 'bad' : '', title: tx(w.title), sub: `${ui.idMono(w.id)} · ${who(w)}`, end: ui.status(w.status), go: `${R}-wo-${w.id}` }))) : ui.empty({ icon: 'checkCircle', title: L('No work orders in the last 30 days', 'لا توجد أوامر عمل في آخر 30 يوماً') }) })}
         ${ui.card({ title: L('Maintenance history', 'سجل الصيانة'), body: ui.timeline(hist) })}
       </div>
@@ -607,29 +670,37 @@
 
   /* ---------------- Work orders ---------------- */
   function workorders() {
+    fcrumbs({ label: L('Work orders', 'أوامر العمل') });
     const view = B.get('fm:woView', 'list');
-    const sf = B.get('fm:woS', 'open'), pf = B.get('fm:woP', 'all'), site_ = B.get('fm:woSite', 'all'), q = B.get('fm:woQ', '');
-    const base = WOS.filter((w) => (pf === 'all' || w.priority === pf) && (site_ === 'all' || asset(w.asset).b === site_) && B.match(q, w.id, w.title, w.asset));
+    const sf = B.get('fm:woS', 'open'), pf = B.get('fm:woP', 'all'), tf = B.get('fm:woT', 'all'), q = B.get('fm:woQ', '');
+    const scoped = WOS.filter((w) => inFs(asset(w.asset).b));
+    const base = scoped.filter((w) => (pf === 'all' || w.priority === pf) && (tf === 'all' || w.type === tf) && B.match(q, w.id, w.title, w.asset));
     const rows = base.filter((w) => (sf === 'all' ? true : sf === 'open' ? isOpen(w) : sf === 'late' ? isLate(w) : w.status === sf));
-    const open = openWOs();
-    const board = `<div class="fm-board">${WO_COLS.map((st) => { const l = base.filter((w) => w.status === st); return `<div class="fm-col"><div class="fm-col-h">${ui.statusLabel(st)}<span>${l.length}</span></div>${l.map((w) => `<button class="fm-wo-card p-${w.priority}" data-go="${R}-wo-${w.id}"><div class="r">${ui.idMono(w.id)}${prio(w.priority)}</div><b>${tx(w.title)}</b><div class="r"><span>${sshort(asset(w.asset).b)}</span>${due(w)}</div><div class="r"><span class="row-sm">${w.tech ? ui.avatar(TECHS[w.tech].n, 'sm') + tname(w.tech) : w.contractor ? tx(D.provider(w.contractor).name) : L('Unassigned', 'غير مُسند')}</span></div></button>`).join('') || `<div class="xs faint" style="padding:8px 4px">${L('Nothing here', 'لا يوجد')}</div>`}</div>`; }).join('')}</div>`;
-    return `${ui.pageHead({ eyebrow: L('Operations', 'العمليات'), title: L('Work orders', 'أوامر العمل'), sub: L('Corrective, preventive and inspection work across all facilities.', 'الأعمال التصحيحية والوقائية والفحوصات في جميع المرافق.'), actions: ui.seg('fm:woView', [{ id: 'list', icon: 'list', label: L('List', 'قائمة') }, { id: 'board', icon: 'grid', label: L('Board', 'لوحة') }], view) + ui.btn(L('New work order', 'أمر عمل جديد'), { icon: 'plus', kind: 'primary', act: 'fmNewWO' }) })}
-    <div class="grid g4" style="margin-bottom:16px">
-      ${ui.kpi({ label: L('Open', 'مفتوحة'), value: open.length, icon: 'clipboard', foot: L(`${open.filter((w) => w.status === 'new').length} new · unassigned`, `${open.filter((w) => w.status === 'new').length} جديدة · غير مُسندة`) })}
-      ${ui.kpi({ label: L('Late', 'متأخرة'), value: open.filter(isLate).length, icon: 'alertCircle', tone: 'bad', foot: L('past due date', 'تجاوزت تاريخ الاستحقاق') })}
-      ${ui.kpi({ label: L('Closed this month', 'مُغلقة هذا الشهر'), value: 74, icon: 'checkCircle', tone: 'mint', delta: '+9%', dir: 'up', foot: L('vs October', 'مقابل ت١') })}
-      ${ui.kpi({ label: L('Mean time to repair', 'متوسط وقت الإصلاح'), value: '6.4', unit: L('h', 'س'), icon: 'clock', tone: 'info', delta: '−0.8 h', dir: 'up', foot: L('critical & high', 'حرجة وعالية') })}
-    </div>
-    <div class="toolbar">${ui.search('fm:woQ', L('Search ID, title or asset tag…', 'ابحث بالرقم أو العنوان أو رمز الأصل…'), { reset: 'fm-wo:page' })}
+    const open = scoped.filter(isOpen);
+    const board = `<div class="fm-board">${WO_COLS.map((st) => { const l = base.filter((w) => w.status === st); return `<div class="fm-col"><div class="fm-col-h">${ui.statusLabel(st)}<span>${l.length}</span></div>${l.map((w) => `<button class="fm-wo-card p-${w.priority}" data-go="${R}-wo-${w.id}"><div class="r">${ui.idMono(w.id)}${prio(w.priority)}</div><b>${tx(w.title)}</b><div class="r"><span>${tag(w.asset)}</span><span>${due(w)}</span></div><div class="r"><span>${who(w)}</span><span>${sshort(asset(w.asset).b)}</span></div></button>`).join('') || `<div class="xs faint" style="padding:6px">${L('Empty', 'فارغ')}</div>`}</div>`; }).join('')}</div>`;
+    const list = B.xtable({ id: 'fm-wo', rows, pageSize: 20, maxH: 'calc(100vh - 280px)', rowGo: (w) => `${R}-wo-${w.id}`, defaultSort: 'due',
+      bulk: [{ label: L('Assign technician', 'إسناد فني'), icon: 'userPlus', act: 'fmBulkAssign' }, { label: L('Print job sheets', 'طباعة أوراق العمل'), icon: 'doc', act: 'fmBulkPrint' }, { label: L('Export', 'تصدير'), icon: 'download', act: 'fmExport' }],
+      cols: [
+        { key: 'id', label: L('Work order', 'أمر العمل'), sort: true, m: 'title', render: (w) => `<div class="fm-cell"><span class="li-icon ${w.priority === 'critical' ? 'bad' : ''}">${icon(catIcon(asset(w.asset).cat))}</span><div style="min-width:0"><b>${tx(w.title)}</b><small>${ui.idMono(w.id)} · ${ui.statusLabel(w.type)}</small></div></div>`, mRender: (w) => tx(w.title) },
+        { key: 'asset', label: L('Asset', 'الأصل'), sort: true, m: 'meta', render: (w) => `${tag(w.asset)}<span class="xt-sub">${sshort(asset(w.asset).b)}</span>` },
+        { key: 'priority', label: L('Priority', 'الأولوية'), sort: (w) => ['critical', 'high', 'medium', 'low'].indexOf(w.priority), m: 'meta', render: (w) => prio(w.priority) },
+        { key: 'tech', label: L('Assigned', 'المُسند إليه'), sort: (w) => who(w), m: 'sub', render: (w) => (w.tech ? `<span class="row-sm nowrap">${ui.avatar(TECHS[w.tech].n, 'sm')}${tname(w.tech)}</span>` : w.contractor ? `<span class="small">${tx(D.provider(w.contractor).name)}</span>` : `<span class="faint small">${L('Unassigned', 'غير مُسند')}</span>`) },
+        { key: 'status', label: L('Status', 'الحالة'), sort: true, m: 'end', render: (w) => ui.status(w.status) },
+        { key: 'due', label: L('Due', 'الاستحقاق'), sort: true, align: 'end', m: 'meta', render: due },
+      ] });
+    return `${fhead({ eyebrow: L('Operations', 'العمليات'), title: L('Work orders', 'أوامر العمل'), sub: L('Corrective, preventive, inspection and emergency work across all facilities.', 'الأعمال التصحيحية والوقائية والفحوصات والطوارئ في جميع المرافق.'), actions: ui.seg('fm:woView', [{ id: 'list', icon: 'list', label: L('List', 'قائمة') }, { id: 'board', icon: 'grid', label: L('Board', 'لوحة') }], view) + ui.btn(L('New work order', 'أمر عمل جديد'), { icon: 'plus', kind: 'primary', act: 'fmNewWO' }) })}
+    ${opsStrip([[open.length, L('Open', 'مفتوحة'), `${R}-workorders`], [open.filter(isLate).length, L('Late — past due', 'متأخرة — تجاوزت الاستحقاق'), '', 'bad'], [open.filter((w) => w.status === 'new').length, L('New · unassigned', 'جديدة · غير مُسندة'), '', open.some((w) => w.status === 'new') ? 'warn' : ''], [open.filter((w) => w.priority === 'critical' || w.priority === 'high').length, L('Critical & high', 'حرجة وعالية'), '', 'warn'], [74, L('Closed this month', 'مُغلقة هذا الشهر')], ['6.4', L('MTTR · hours (crit./high)', 'متوسط الإصلاح · ساعات'), '', '', 'h']])}
+    <div class="toolbar mg-fbar">${ui.search('fm:woQ', L('Search ID, title or asset tag…', 'ابحث بالرقم أو العنوان أو رمز الأصل…'), { reset: 'fm-wo:page' })}
       ${ui.select('fm:woP', [{ v: 'all', l: L('All priorities', 'كل الأولويات') }, { v: 'critical', l: ui.statusLabel('critical') }, { v: 'high', l: ui.statusLabel('high') }, { v: 'medium', l: ui.statusLabel('medium') }, { v: 'low', l: ui.statusLabel('low') }], { reset: 'fm-wo:page', label: L('Priority', 'الأولوية') })}
-      ${ui.select('fm:woSite', [{ v: 'all', l: L('All facilities', 'كل المرافق') }].concat(SITE_IDS.map((b) => ({ v: b, l: sshort(b) }))), { reset: 'fm-wo:page', label: L('Facility', 'المرفق') })}</div>
-    ${view === 'board' ? board : `<div style="margin-bottom:14px">${ui.chips('fm:woS', [{ id: 'open', label: L('Open', 'مفتوحة'), count: base.filter(isOpen).length }, { id: 'late', label: L('Late', 'متأخرة'), count: base.filter(isLate).length }, { id: 'new', label: ui.statusLabel('new') }, { id: 'inProgress', label: ui.statusLabel('inProgress') }, { id: 'onHold', label: ui.statusLabel('onHold') }, { id: 'completed', label: ui.statusLabel('completed') }, { id: 'all', label: L('All', 'الكل'), count: base.length }], sf, 'fm-wo:page')}</div>${woTable(rows, 'fm-wo', 12)}`}`;
+      ${ui.select('fm:woT', [{ v: 'all', l: L('All types', 'كل الأنواع') }].concat(['fmCorrective', 'fmPreventive', 'fmInspection', 'fmEmergency'].map((k) => ({ v: k, l: ui.statusLabel(k) }))), { reset: 'fm-wo:page', label: L('Type', 'النوع') })}
+      ${siteSel()}</div>
+    ${view === 'board' ? board : `<div style="margin-bottom:12px">${ui.chips('fm:woS', [{ id: 'open', label: L('Open', 'مفتوحة'), count: base.filter(isOpen).length }, { id: 'late', label: L('Late', 'متأخرة'), count: base.filter(isLate).length }, { id: 'new', label: ui.statusLabel('new') }, { id: 'inProgress', label: ui.statusLabel('inProgress') }, { id: 'onHold', label: ui.statusLabel('onHold') }, { id: 'completed', label: ui.statusLabel('completed') }, { id: 'all', label: L('All', 'الكل'), count: base.length }], sf, 'fm-wo:page')}</div>${list}`}`;
   }
-
   function woDetail(id) {
     const w = wo(id);
     if (!w) return ui.empty({ icon: 'clipboard', title: L('Work order not found', 'أمر العمل غير موجود'), action: ui.btn(L('Work orders', 'أوامر العمل'), { kind: 'primary', go: `${R}-workorders` }) });
-    B.title(w.id);
+    B.title(w.id); B.navActive('workorders');
+    fcrumbs({ label: L('Work orders', 'أوامر العمل'), go: `${R}-workorders` }, { label: w.id });
     const a = asset(w.asset);
     const done = w.checklist.filter((c) => c.done).length;
     const partsTotal = B.sum(w.parts, (p) => p[1] * p[2]);
@@ -661,6 +732,7 @@
 
   /* ---------------- Preventive maintenance ---------------- */
   function pm() {
+    fcrumbs({ label: L('Preventive maintenance', 'الصيانة الوقائية') });
     const mo = B.get('fm:pmM', 10);
     const year = 2026 + Math.floor(mo / 12), month = ((mo % 12) + 12) % 12;
     const events = [];
@@ -672,7 +744,7 @@
       if (!dates.length && pmOccurs(p, year, month) && `${mkey}-99` > p.next) { const d = Math.min(p.day, new Date(year, month + 1, 0).getDate()); const key = `${mkey}-${String(d).padStart(2, '0')}`; dates.push([key, key < TODAY ? 'mint' : p.by === 'in' ? '' : 'info']); }
       dates.forEach(([date, tone]) => events.push({ date, label: tx(p.n), tone, act: 'fmPM', arg: p.id }));
     });
-    const sf = B.get('fm:pmSite', 'all');
+    const sf = fscope();
     const rows = PM.filter((p) => sf === 'all' || p.sites.includes(sf.slice(-3)));
     return `${ui.pageHead({ eyebrow: L('Operations', 'العمليات'), title: L('Preventive maintenance', 'الصيانة الوقائية'), sub: L('Planned maintenance plans, schedule and statutory compliance.', 'خطط الصيانة المخططة والجدول والامتثال للمتطلبات القانونية.'), actions: ui.btn(L('Compliance report', 'تقرير الامتثال'), { icon: 'download', act: 'previewDoc', arg: L('PM compliance — November 2026.pdf', 'امتثال الصيانة الوقائية — ت٢ 2026.pdf') }) + ui.btn(L('New PM plan', 'خطة جديدة'), { icon: 'plus', kind: 'primary', act: 'fmNewPM' }) })}
     <div class="grid g4" style="margin-bottom:16px">
@@ -691,7 +763,7 @@
         ${ui.card({ title: L('Compliance by system', 'الامتثال حسب النظام'), body: B.charts.bars({ data: [['elevator', 'vt'], ['hvac', 'hvac'], ['fire', 'fire'], ['generator', 'power'], ['water', 'plumb']].map(([c]) => { const l = PM.filter((p) => p.cat === c || (c === 'water' && (p.cat === 'pump' || p.cat === 'medgas'))); const v = Math.round(B.sum(l, (p) => p.comp) / l.length); return { label: tx(CATS[c].n).split(' ')[0], value: v, color: v >= 92 ? '#142B3B' : '#F2B35A' }; }), height: 150, max: 100, showValues: true, format: (v) => Math.round(v) + '%' }) })}
       </div>
     </div>
-    <section style="margin-top:20px">${sec(L('Maintenance schedule', 'جدول الصيانة'), ui.select('fm:pmSite', [{ v: 'all', l: L('All facilities', 'كل المرافق') }].concat(SITE_IDS.map((b) => ({ v: b, l: sshort(b) }))), { label: L('Facility', 'المرفق') }).replace('class="select"', 'class="select" style="width:auto;min-width:160px"'))}
+    <section style="margin-top:20px">${sec(L('Maintenance schedule', 'جدول الصيانة'), siteSel().replace('class="select"', 'class="select" style="width:auto;min-width:160px"'))}
       ${ui.table({ id: 'fm-pm', rows, rowAct: (p) => ({ act: 'fmPM', arg: p.id }), cols: [
         { key: 'n', label: L('Plan', 'الخطة'), render: (p) => `<div class="fm-cell"><span class="li-icon">${icon(catIcon(p.cat))}</span><div style="min-width:0"><b>${tx(p.n)}</b><small>${ui.idMono(p.id)} · ${p.sites.map((s) => sshort('BN-RAM-00' + s)).join(', ')}</small></div></div>`, mRender: (p) => tx(p.n), m: 'title' },
         { key: 'freq', label: L('Frequency', 'التكرار'), sort: (p) => ['weekly', 'monthly', 'quarterly', 'semiannual', 'annual'].indexOf(p.freq), render: (p) => `<span class="badge">${tx(FREQ[p.freq])}</span>`, m: 'meta' },
@@ -704,6 +776,7 @@
 
   /* ---------------- Contractors ---------------- */
   function contractors() {
+    fcrumbs({ label: L('Contractors', 'المقاولون') });
     return `${ui.pageHead({ eyebrow: L('Portfolio', 'المحفظة'), title: L('Contractors', 'المقاولون'), sub: L('Specialist contractors under Sanad service agreements, with SLA performance.', 'المقاولون المتخصصون بموجب اتفاقيات خدمة سند، مع أداء مستوى الخدمة.'), actions: ui.btn(L('Find contractors', 'ابحث عن مقاولين'), { icon: 'search', go: `${R}-services` }) + ui.btn(L('Add contractor', 'إضافة مقاول'), { icon: 'plus', kind: 'primary', act: 'fmAddContractor' }) })}
     <div class="grid g4" style="margin-bottom:16px">
       ${ui.kpi({ label: L('Active contracts', 'عقود نشطة'), value: CONTRACTORS.length, icon: 'handshake' })}
@@ -729,6 +802,7 @@
 
   /* ---------------- Connected building (simulated) ---------------- */
   function connected() {
+    fcrumbs({ label: L('Connected building (preview)', 'المبنى المتصل (معاينة)') });
     const bid = B.get('fm:cnSite', SITE_IDS[0]);
     const b = D.building(bid);
     const r = B.rng(bid.charCodeAt(9) * 977);
@@ -857,6 +931,21 @@
   A.fmPilot = () => B.modal({ title: L('Request an integration pilot', 'طلب تجربة تكامل'), sub: L('Connect one building\'s systems to BENA (future capability)', 'ربط أنظمة مبنى واحد ببينا (قدرة مستقبلية)'), form: 'fmPilot', size: 'md', body: `<div class="stack">${ui.field({ name: 'site', label: L('Facility', 'المرفق'), type: 'select', options: SITE_IDS.map((b) => ({ v: b, l: bname(b) })) })}<div class="field"><span class="label">${L('Systems to include', 'الأنظمة المشمولة')}</span><div class="row wrap" style="gap:14px">${[L('HVAC / BMS', 'التكييف / BMS'), L('Elevators', 'المصاعد'), L('Access control', 'التحكم بالدخول'), L('CCTV', 'الكاميرات'), L('Energy meters', 'عدادات الطاقة'), L('Water & leak sensors', 'المياه وحساسات التسرب')].map((l, i) => `<label class="check"><input type="checkbox" name="s${i}" ${i < 2 ? 'checked' : ''}>${l}</label>`).join('')}</div></div>${ui.field({ name: 'notes', label: L('Notes', 'ملاحظات'), type: 'textarea', placeholder: L('Existing BMS vendor, protocols, IT contact…', 'مزوّد BMS الحالي، البروتوكولات، جهة اتصال تقنية المعلومات…') })}</div>`, foot: foot(L('Send request', 'إرسال الطلب'), 'send') });
   B.submit.fmPilot = () => B.success({ title: L('Pilot request sent', 'تم إرسال طلب التجربة'), text: L('The BENA integrations team will contact you to plan a site survey. No equipment is connected in this demo.', 'سيتواصل معك فريق التكامل في بينا لتخطيط مسح الموقع. لا توجد معدات متصلة في هذه النسخة التجريبية.'), ref: 'INT-' + String(Date.now()).slice(-5) });
 
+  /* bulk actions on registers / work orders */
+  const keysOf = (arg) => String(arg || '').split(',').filter(Boolean);
+  A.fmBulkWO = (arg) => { const ts = keysOf(arg).filter((t) => asset(t)); B.confirm({ title: L(`Create ${ts.length} work orders?`, `إنشاء ${ts.length} أوامر عمل؟`), text: L('One corrective work order per asset, routed to the assigned team with the standard checklist.', 'أمر عمل تصحيحي لكل أصل، يُوجَّه للفريق المسؤول مع قائمة التحقق القياسية.'), ok: L('Create', 'إنشاء'), onOk: () => { ts.forEach((t) => { const a = asset(t); const id = 'WO-26-' + (1189 + WOS.length - 18); const sys = CATS[a.cat].sys; WOS.unshift({ id, asset: t, title: { en: `Inspection follow-up — ${a.name.en}`, ar: `متابعة فحص — ${a.name.ar}` }, type: 'fmCorrective', priority: 'medium', status: 'assigned', tech: teamOf(a)[0], contractor: null, created: TODAY, due: '2026-12-02', checklist: (CHECK[sys === 'vt' ? 'elevator' : sys] || CHECK.sec).map((x) => ({ t: x, done: false })), parts: [], labour: 0 }); }); B.vs['fm-as:sel'] = []; B.success({ title: L(`${ts.length} work orders created`, `تم إنشاء ${ts.length} أوامر عمل`), text: L('Technicians were notified on the Sanad mobile app (simulated).', 'تم إشعار الفنيين على تطبيق سند (محاكاة).'), ref: B.uid('WO') }); B.refresh(); } }); };
+  A.fmBulkInspect = (arg) => { const ts = keysOf(arg); B.confirm({ title: L(`Log inspection for ${ts.length} assets?`, `تسجيل فحص لـ ${ts.length} أصول؟`), text: L('Records a satisfactory visual inspection today and reschedules overdue items in 30 days.', 'يسجّل فحصاً بصرياً مُرضياً اليوم ويعيد جدولة المتأخر بعد 30 يوماً.'), ok: L('Log inspection', 'تسجيل'), onOk: () => { ts.forEach((t) => { const a = asset(t); if (!a) return; a.last = TODAY; if (a.ms === 'fmOverdue' || a.ms === 'fmDue') { a.ms = 'fmOk'; a.next = '2026-12-25'; } }); B.vs['fm-as:sel'] = []; B.success({ title: L('Inspections logged', 'تم تسجيل الفحوصات'), ref: B.uid('INS') }); B.refresh(); } }); };
+  A.fmBulkQR = (arg) => { const n = keysOf(arg).length; B.success({ title: L(`${n} QR labels ready`, `${n} ملصقات QR جاهزة`), text: L('Label sheet prepared for printing (simulated).', 'تم تجهيز ورقة الملصقات للطباعة (محاكاة).'), ref: B.uid('QR') }); };
+  A.fmBulkAssign = (arg) => { const ids = keysOf(arg); B.modal({ title: L(`Assign ${ids.length} work orders`, `إسناد ${ids.length} أوامر عمل`), size: 'sm', form: 'fmBulkAssign', body: `<input type="hidden" name="ids" value="${esc(ids.join(','))}">${ui.field({ name: 'tech', label: L('Technician', 'الفني'), type: 'select', options: techOpts().slice(1) })}`, foot: foot(L('Assign', 'إسناد'), 'userPlus') }); };
+  B.submit.fmBulkAssign = (d) => { keysOf(d.ids).forEach((id) => { const w = wo(id); if (w && isOpen(w)) { w.tech = d.tech || 't_yazan'; if (w.status === 'new') w.status = 'assigned'; } }); B.vs['fm-wo:sel'] = []; B.success({ title: L('Work orders assigned', 'تم إسناد أوامر العمل'), text: L(`${tname(d.tech || 't_yazan')} was notified.`, `تم إشعار ${tname(d.tech || 't_yazan')}.`), ref: B.uid('ASG') }); B.refresh(); };
+  A.fmBulkPrint = (arg) => B.success({ title: L('Job sheets prepared', 'تم تجهيز أوراق العمل'), text: L(`${keysOf(arg).length} job sheets with QR check-in codes (simulated).`, `${keysOf(arg).length} أوراق عمل مع رموز QR لتسجيل الدخول (محاكاة).`), ref: B.uid('JOB') });
+  /** Simulated export (format + period); nothing is downloaded. */
+  A.fmExport = (what) => { const name = keysOf(what).length > 1 || /^(SND|WO)-/.test(String(what)) ? L(`${keysOf(what).length} selected rows`, `${keysOf(what).length} صفوف محددة`) : String(what || L('Report', 'تقرير')); B.modal({ title: L('Export', 'تصدير'), sub: esc(name), size: 'sm', form: 'fmExport', body: `<input type="hidden" name="what" value="${esc(name)}"><div class="stack">${ui.field({ name: 'fmt', label: L('Format', 'الصيغة'), type: 'radio', value: 'pdf', options: [{ v: 'pdf', l: 'PDF', icon: 'doc' }, { v: 'xlsx', l: 'Excel (.xlsx)', icon: 'grid' }, { v: 'csv', l: 'CSV', icon: 'list' }] })}${ui.callout(L('Simulated export — the file is prepared in the demo but nothing is downloaded or sent.', 'تصدير محاكاة — يُجهَّز الملف في النسخة التجريبية دون تنزيل أو إرسال أي شيء.'), '', 'info')}</div>`, foot: foot(L('Prepare file', 'تجهيز الملف'), 'download') }); };
+  B.submit.fmExport = (d) => B.success({ title: L('File prepared (simulated)', 'تم تجهيز الملف (محاكاة)'), text: `${esc(d.what)} · ${String(d.fmt || 'pdf').toUpperCase()}`, ref: B.uid('EXP') });
+
+  /* Internals shared with facility2.js */
+  D.fmX = { R, TODAY, T, SITE, SITE_IDS, site, sshort, bname, CATS, SYSTEMS, COND_ORDER, ASSETS, asset, assetsOf, worst, healthScore, TECHS, tname, WOS, wo, isOpen, isLate, PM, FREQ, pmOccurs, CONTRACTORS, CHECK, TEAM, teamOf, teamCell, nextCell, tag, cond, prio, due, catIcon, who, fscope, fIds, inFs, siteSel, fcrumbs, fhead, opsStrip, sec, photoArt, keysOf, foot, techOpts, REG };
+
   /* ======================================================================
      Register role
      ====================================================================== */
@@ -869,17 +958,23 @@
     desc: T('Assets, work orders, preventive maintenance and contractors across commercial buildings.', 'الأصول وأوامر العمل والصيانة الوقائية والمقاولون في المباني التجارية.'),
     personaTitle: T('Omar Saleh · Facilities Director', 'عمر صالح · مدير المرافق'),
     home: 'home',
+    workspaces: [{ id: 'all', label: T('All facilities', 'كل المرافق'), icon: 'layers' }].concat(SITE_IDS.map((b) => ({ id: b, label: SITE[b].short, icon: 'building' }))),
     menu: [
       { group: T('Operations', 'العمليات') },
-      { id: 'home', label: T('Operations overview', 'نظرة عامة على العمليات'), icon: 'gauge' },
+      { id: 'home', label: T('Facility overview', 'نظرة عامة على المرافق'), icon: 'gauge' },
       { id: 'workorders', label: T('Work orders', 'أوامر العمل'), icon: 'clipboard', match: ['wo'], count: WOS.filter(isOpen).length },
+      { id: 'calendar', label: T('Maintenance calendar', 'تقويم الصيانة'), icon: 'calendar' },
       { id: 'pm', label: T('Preventive maintenance', 'الصيانة الوقائية'), icon: 'calendarCheck' },
-      { group: T('Portfolio', 'المحفظة') },
+      { id: 'inspections', label: T('Inspections', 'الفحوصات'), icon: 'checkSquare' },
+      { group: T('Facilities & assets', 'المرافق والأصول') },
       { id: 'sites', label: T('Facilities', 'المرافق'), icon: 'city', match: ['site'] },
-      { id: 'assets', label: T('Assets', 'الأصول'), icon: 'cpu', match: ['asset'] },
+      { id: 'assets', label: T('Building assets', 'أصول المباني'), icon: 'cpu', match: ['asset'] },
+      { id: 'history', label: T('Service history', 'سجل الخدمة'), icon: 'history' },
       { id: 'contractors', label: T('Contractors', 'المقاولون'), icon: 'handshake' },
-      { group: T('Smart building', 'المبنى الذكي') },
-      { id: 'connected', label: T('Connected building', 'المبنى المتصل'), icon: 'wifi' },
+      { group: T('Performance', 'الأداء') },
+      { id: 'energy', label: T('Energy & water', 'الطاقة والمياه'), icon: 'zap' },
+      { id: 'reports', label: T('Facility reports', 'تقارير المرافق'), icon: 'chart' },
+      { id: 'connected', label: T('Connected building · preview', 'المبنى المتصل · معاينة'), icon: 'wifi' },
     ],
     pages: { home, workorders, wo: woDetail, pm, sites, site: siteDetail, assets, asset: assetDetail, contractors, connected, services, building },
     notifications: () => [

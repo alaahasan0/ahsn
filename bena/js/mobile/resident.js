@@ -70,6 +70,8 @@
 
   /* ---------------- styles (prefix mr-) ---------------- */
   B.css(`
+  /* shell's '.mx-tab span' rule clips tab badges; keep the icon wrapper unclipped for this role */
+  .mx-tabs:has([data-go^="m-resident-"]) .mx-tab .mt-i { overflow: visible; max-width: none; }
   .mr-num { font-family: var(--font-display); font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
   .mr-ava { border-radius: 50%; padding: 0; }
   .mr-ava .avatar { width: 44px; height: 44px; font-size: 15px; box-shadow: 0 0 0 3px #fff, 0 2px 8px rgba(20,43,59,.12); }
@@ -522,7 +524,7 @@
         <div class="mr-legend">${exp.slice(0, 4).map((e) => `<span><i style="background:${e.color}"></i>${e.label}</span>`).join('')}<span>+${exp.length - 4}</span></div>`, '', { go: 'expenses' })}
       <div class="mr-foot">${L('Prototype · fictional sample data · payments are simulated', 'نموذج أولي · بيانات نموذجية وهمية · المدفوعات محاكاة')}</div>`;
     return {
-      title: `${greet()}, ${first()}`, large: true, kicker: `${dayLine()} · ${L('Ramallah 14°', 'رام الله 14°')}`, body,
+      title: `${greet()}${L(', ', '، ')}${first()}`, large: true, kicker: `${dayLine()} · ${L('Ramallah 14°', 'رام الله 14°')}`, body,
       actions: [{ icon: 'bell', go: 'notifications', label: L('Notifications', 'الإشعارات'), dot: !st.seenNotifs }],
       largeEnd: `<button class="mr-ava" data-go="profile" aria-label="${L('Profile', 'الملف الشخصي')}">${ui.avatar(D.person(ME).name)}</button>`,
     };
@@ -754,7 +756,7 @@
     const docs = DOCS().filter((d) => B.match(q, d.t));
     const groups = [['mine', L('Added by you', 'أضفتِها أنتِ')], ['tenancy', L('Tenancy', 'الإيجار')], ['receipts', L('Receipts', 'الإيصالات')], ['building', L('Building', 'المبنى')]];
     const body = `${M.search('mr:docQ', L('Search documents', 'ابحثي في المستندات'))}
-      ${docs.length ? groups.map(([g, label]) => { const r = docs.filter((d) => d.g === g); return r.length ? M.group(r.map((d) => M.cell({ icon: d.icon, tone: g === 'receipts' ? 'mint' : g === 'building' ? 'info' : g === 'mine' ? 'warn' : 'navy', title: d.t, sub: `${B.date(d.d)} · ${d.size}`, badge: ui.prov(d.prov), act: d.pay ? 'mrReceipt' : 'mrDoc', arg: d.pay || d.id })), label) : ''; }).join('') : M.empty('search', L('No matching documents', 'لا توجد مستندات مطابقة'))}
+      ${docs.length ? groups.map(([g, label]) => { const r = docs.filter((d) => d.g === g); return r.length ? M.group(r.map((d) => M.cell({ icon: d.icon, tone: g === 'receipts' ? 'mint' : g === 'building' ? 'info' : g === 'mine' ? 'warn' : 'navy', title: d.t, sub: `${B.date(d.d)} · <bdi>${d.size}</bdi>`, badge: ui.prov(d.prov), act: d.pay ? 'mrReceipt' : 'mrDoc', arg: d.pay || d.id })), label) : ''; }).join('') : M.empty('search', L('No matching documents', 'لا توجد مستندات مطابقة'))}
       ${note(L('Uploaded files stay “pending review” until your building manager checks them. Nothing leaves this device in the prototype.', 'تبقى الملفات المرفوعة «قيد المراجعة» حتى تتحقق منها إدارة المبنى. لا يغادر أي شيء هذا الجهاز في النموذج.'), 'lock')}`;
     return { title: L('Documents', 'المستندات'), large: true, back: back || 'profile', body, actions: [{ icon: 'upload', act: 'mrUpload', label: L('Upload', 'رفع') }] };
   };
@@ -961,7 +963,7 @@
   A.mrDoc = (did) => {
     const d = DOCS().find((x) => x.id === did);
     if (!d) return;
-    M.sheet({ title: d.t, sub: `${B.date(d.d)} · ${d.size}${d.by ? ' · ' + d.by : ''}`, body: `<div class="mr-doc"><div class="d-h">${icon(d.icon)}<b>${d.t}</b></div>${[92, 100, 84, 96, 70, 100, 88, 60].map((w) => `<i style="width:${w}%"></i>`).join('')}<div class="d-s"><em>${d.g === 'tenancy' ? 'L. Haddad' : ''}</em><span>${icon('check')}</span></div></div><div class="row-sm" style="justify-content:center">${ui.prov(d.prov, true)}</div>`,
+    M.sheet({ title: d.t, sub: `${B.date(d.d)} · <bdi>${d.size}</bdi>${d.by ? ' · ' + d.by : ''}`, body: `<div class="mr-doc"><div class="d-h">${icon(d.icon)}<b>${d.t}</b></div>${[92, 100, 84, 96, 70, 100, 88, 60].map((w) => `<i style="width:${w}%"></i>`).join('')}<div class="d-s"><em>${d.g === 'tenancy' ? 'L. Haddad' : ''}</em><span>${icon('check')}</span></div></div><div class="row-sm" style="justify-content:center">${ui.prov(d.prov, true)}</div>`,
       foot: `${M.btn(L('Share', 'مشاركة'), { icon: 'share', act: 'mxSoon', arg: L('Share', 'مشاركة') })}${M.btn(L('Download', 'تنزيل'), { kind: 'dark', icon: 'download', act: 'mxSoon', arg: L('Download', 'تنزيل') })}` });
   };
   A.mrUpload = () => M.sheet({ title: L('Add a document', 'إضافة مستند'), sub: L('Shared with your building manager for review.', 'يُشارك مع إدارة المبنى للمراجعة.'), form: 'mrUpload',

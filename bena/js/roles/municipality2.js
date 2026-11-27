@@ -13,6 +13,7 @@
   const D = B.data;
   const M = B.mu;
   if (!M) return;
+  const { scrollPane, openPane } = M;
   const { R, T, hash, qf, dName, typeIcon, pct, upd, units, parcelTxt, srcLabel, rgo, crumbs, hdr, strip, views, dt, selOf, attrs, flagChips, refCell, quickView, sampleTag } = M;
   const today = '2026-11-25';
   const addDays = (d, n) => { const x = new Date(d + 'T12:00:00'); x.setDate(x.getDate() + n); return x.toISOString().slice(0, 10); };
@@ -142,7 +143,8 @@
   .mu-pm svg { width: 13px; height: 13px; }
   .mu-pm th.on { background: var(--mint-50); color: var(--mint-ink); }
   .mu-pm td.on { background: #F6FCF9; }
-  .mu-ws { display: inline-flex; gap: 4px; flex-wrap: wrap; }
+  .mu-ws { display: inline-flex; gap: 4px; flex-wrap: wrap; max-width: 220px; }
+  .mu-dt .mu-ws { flex-wrap: nowrap; }
   .mu-ws span { font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 5px; background: var(--line-2); color: var(--text-2); white-space: nowrap; }
   .mu-rule { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 13px 0; border-bottom: 1px solid var(--line-2); }
   .mu-rule:last-child { border-bottom: 0; }
@@ -383,7 +385,7 @@
     indep: (x) => VQ_OPEN.includes(x.status) && D.building(x.b).source === 'independent', mine: (x) => VQ_OPEN.includes(x.status) && x.who === 'p_maha', done: (x) => !VQ_OPEN.includes(x.status),
   };
   const SRC = { app: T('Owner app', 'تطبيق المالك'), committee: T('Committee portal', 'بوابة اللجنة'), manager: T('Manager portal', 'بوابة المدير'), import: T('Bulk import', 'استيراد مجمّع'), field: T('Field survey', 'مسح ميداني') };
-  B.act.muVqOpen = (id) => { B.vs['vq:cur'] = id; if (B.route.page !== 'verify') B.go(rgo('verify')); else B.refresh(); };
+  B.act.muVqOpen = (id) => { B.vs['vq:cur'] = id; openPane(); if (B.route.page !== 'verify') B.go(rgo('verify')); else B.refresh(); };
   B.act.muVqX = () => { B.vs['vq:cur'] = ''; B.refresh(); };
   B.act.muVqNav = (dir) => { const ids = B.vs['vq:_ids'] || []; const i = ids.indexOf(B.get('vq:cur', '')); const n = ids[i + (+dir)]; if (n) { B.vs['vq:cur'] = n; B.refresh(); } };
   const vqDecide = (x, st) => {
@@ -426,6 +428,7 @@
 
   function verify() {
     crumbs([[L('Verification Queue', 'قائمة التحقق')]]);
+    scrollPane();
     const view = B.get('vq:view', 'open'), q = B.get('vq:q', ''), src = B.get('vq:src', 'all'), dist = B.get('vq:dist', 'all'), risk = B.get('vq:risk', 'all');
     const base = VQ.filter((x) => { const b = D.building(x.b); return (src === 'all' || x.src === src) && (dist === 'all' || b.district === dist) && (risk === 'all' || x.risk === risk) && B.match(q, x.id, b.id, b.name, b.address, b.ref); });
     const rows = base.filter(VQ_VIEWS[view] || VQ_VIEWS.open);
@@ -472,7 +475,7 @@
           ${ui.select('vq:dist', M.optsDist(), { def: 'all', label: L('District', 'الحي'), reset: 'vq:page' })}
           ${ui.select('vq:risk', [{ v: 'all', l: L('Any risk', 'أي مستوى مخاطر') }, { v: 'high', l: B.statuses.high }, { v: 'medium', l: B.statuses.medium }, { v: 'low', l: B.statuses.low }], { def: 'all', label: L('Risk', 'المخاطر'), reset: 'vq:page' })}
           <span class="mu-count">${L(`${rows.length} items`, `${rows.length} عنصر`)}</span></div>
-        ${sx ? `<div class="mu-split wide">${table}${pane}</div>` : table}
+        ${sx ? `<div class="mu-split">${table}${pane}</div>` : table}
       </div>`;
   }
 
@@ -508,12 +511,12 @@
       x.flags.includes('heritage') ? ['warn', L('Heritage zone — conservation sign-off required', 'منطقة تراثية — تتطلب موافقة وحدة الحفاظ')] : null,
       x.flags.includes('permit') ? ['warn', L('No building permit linked', 'لا توجد رخصة بناء مرتبطة')] : null,
     ].filter(Boolean);
-    return `<aside class="card mu-pane">
+    return `<aside class="card mu-pane" style="--pt:384px">
       <div class="mu-pane-h"><div class="grow" style="min-width:0">
           <div class="row-sm wrap" style="margin-bottom:6px">${ui.idMono(x.id)}${ui.status(x.status)}${ui.status(x.risk)}</div>
           <h3 style="font-size:16px;line-height:1.3">${esc(tx(b.name))}</h3>
           <div class="xs faint" style="margin-top:2px"><bdi>${b.id}</bdi> · ${dName(b.district)} · ${tx(SRC[x.src])} · ${L(`submitted ${B.dateShort(x.date)}`, `قُدّم ${B.dateShort(x.date)}`)}</div></div>
-        <div class="mu-rv-nav"><button class="icon-btn" data-act="muVqNav" data-arg="-1" ${i <= 0 ? 'disabled' : ''} aria-label="${L('Previous', 'السابق')}">${icon('chevL', 'flip')}</button><button class="icon-btn" data-act="muVqNav" data-arg="1" ${i < 0 || i >= ids.length - 1 ? 'disabled' : ''} aria-label="${L('Next', 'التالي')}">${icon('chevR', 'flip')}</button><button class="icon-btn" data-act="muVqX" aria-label="${L('Close', 'إغلاق')}">${icon('x')}</button></div></div>
+        <div class="mu-rv-nav"><button class="icon-btn" data-go="${rgo(`building-${b.id}`)}" title="${esc(L('Open Building Identity workspace', 'فتح مساحة هوية المبنى'))}" aria-label="${esc(L('Open Building Identity workspace', 'فتح مساحة هوية المبنى'))}">${icon('fingerprint')}</button><button class="icon-btn" data-act="muVqNav" data-arg="-1" ${i <= 0 ? 'disabled' : ''} aria-label="${L('Previous', 'السابق')}">${icon('chevL', 'flip')}</button><button class="icon-btn" data-act="muVqNav" data-arg="1" ${i < 0 || i >= ids.length - 1 ? 'disabled' : ''} aria-label="${L('Next', 'التالي')}">${icon('chevR', 'flip')}</button><button class="icon-btn" data-act="muVqX" aria-label="${L('Close', 'إغلاق')}">${icon('x')}</button></div></div>
       <div class="mu-pane-b">
         <div class="mu-sec"><span class="grow">${L('Submitted vs reference', 'المقدّم مقابل المرجع')}</span>${nd ? ui.badge(L(`${nd} difference(s)`, `${nd} اختلاف`), 'warn', 'alert') : ui.badge(L('Consistent', 'متسق'), 'ok', 'check')}</div>
         ${cmp}
@@ -527,9 +530,9 @@
         <textarea class="textarea" id="vq-note" data-model="vq:note:${x.id}" data-norender placeholder="${esc(L('Optional note shared with the submitter', 'ملاحظة اختيارية تُرسل لمقدّم السجل'))}" style="min-height:70px">${esc(B.get('vq:note:' + x.id, ''))}</textarea>
         <div class="mu-own">${icon('info')}<span>${L('Verifying confirms the building record matches the reference data. It does not confirm legal ownership.', 'يؤكد التوثيق تطابق سجل المبنى مع البيانات المرجعية، ولا يُثبت الملكية القانونية.')}</span></div>
       </div>
-      <div class="mu-pane-f">${open ? `${ui.btn(L('Verify', 'توثيق'), { kind: 'primary', icon: 'shieldCheck', act: 'muVqDec', arg: `${x.id}:verified` })}${ui.btn(L('Request info', 'طلب معلومات'), { icon: 'alertCircle', act: 'muVqDec', arg: `${x.id}:needsInfo` })}${ui.btn(L('Escalate', 'تصعيد'), { icon: 'flag', act: 'muVqDec', arg: `${x.id}:escalated` })}${ui.btn(L('Reject', 'رفض'), { kind: 'danger', icon: 'xCircle', act: 'muVqDec', arg: `${x.id}:rejected` })}`
+      <div class="mu-pane-f">${open ? `${ui.btn(L('Verify', 'توثيق'), { kind: 'primary', icon: 'shieldCheck', act: 'muVqDec', arg: `${x.id}:verified` })}${ui.btn(L('Request info', 'طلب معلومات'), { icon: 'alertCircle', act: 'muVqDec', arg: `${x.id}:needsInfo` })}${ui.btn('', { icon: 'flag', act: 'muVqDec', arg: `${x.id}:escalated`, title: L('Escalate to unit lead', 'تصعيد إلى رئيس الوحدة') })}${ui.btn(L('Reject', 'رفض'), { kind: 'danger', icon: 'xCircle', act: 'muVqDec', arg: `${x.id}:rejected` })}`
         : `${ui.callout(L(`Decision recorded: <b>${ui.statusLabel(x.status)}</b>`, `تم تسجيل القرار: <b>${ui.statusLabel(x.status)}</b>`), x.status === 'verified' ? 'mint' : '', 'check')}${ui.btn(L('Reopen', 'إعادة فتح'), { icon: 'refresh', act: 'muVqDec', arg: `${x.id}:toReview` })}`}
-        ${ui.btn(L('Building Identity', 'هوية المبنى'), { icon: 'fingerprint', go: rgo(`building-${b.id}`) })}</div>
+</div>
     </aside>`;
   }
 
@@ -538,7 +541,7 @@
      ================================================================= */
   const fdKey = (c, f) => `cr:d:${c.id}:${f}`;
   const fdOf = (c, ch) => ch.d || B.get(fdKey(c, ch.f), 'accept');
-  B.act.muCrSel = (id) => { B.vs['cr:sel'] = id; if (B.route.page === 'correction') B.go(rgo(`correction-${id}`)); else B.refresh(); };
+  B.act.muCrSel = (id) => { B.vs['cr:sel'] = id; openPane(); if (B.route.page === 'correction') B.go(rgo(`correction-${id}`)); else B.refresh(); };
   B.act.muCrFd = (arg) => { const [id, f, v] = arg.split('|'); B.vs[`cr:d:${id}:${f}`] = v; B.refresh(); };
   B.act.muCrApply = (id) => {
     const c = corOf(id); const b = D.building(c.b);
@@ -559,6 +562,7 @@
 
   function corrections(id) {
     if (id) { B.vs['cr:sel'] = id; B.navActive('corrections'); }
+    scrollPane();
     const view = B.get('cr:view', 'open'), q = B.get('cr:q', '');
     const base = COR.filter((c) => { const b = D.building(c.b); return B.match(q, c.id, b.id, b.name, D.pname(c.by)); });
     const rows = base.filter(CR_VIEWS[view] || CR_VIEWS.open).sort(B.by('date', -1));
@@ -599,7 +603,7 @@
       c.status === 'needsInfo' ? { state: 'current', icon: 'alertCircle', title: L('Evidence requested', 'طُلبت مستندات'), meta: c.note ? tx(c.note) : '' } : null,
       !open ? { state: 'done', icon: c.status === 'rejected' ? 'xCircle' : 'check', title: ui.statusLabel(c.status), meta: `${B.date(c.decided || today)}${c.note ? ' · ' + tx(c.note) : ''}` } : { state: '', icon: 'gavel', title: L('Decision', 'القرار'), meta: L('Accept / reject each field, then apply', 'اقبل أو ارفض كل حقل ثم طبّق') },
     ].filter(Boolean);
-    return `<div class="stack">
+    return `<div class="stack mu-detail">
       <section class="card">
         <div class="row between wrap" style="gap:12px;align-items:flex-start">
           <div style="min-width:0"><div class="row-sm wrap" style="margin-bottom:6px">${ui.idMono(c.id)}${ui.status(c.status)}${ui.prov(c.channel === 'field' ? 'official' : 'submitted')}${sampleTag(L('Demo request', 'طلب تجريبي'))}</div>
@@ -624,12 +628,13 @@
      ================================================================= */
   B.act.muDqCat = (k) => { B.vs['dq:cat'] = B.get('dq:cat', '') === k ? '' : k; B.vs['dqb:page'] = 0; B.vs['dq:qv'] = ''; B.refresh(); };
   B.act.muDqDist = (k) => { B.vs['dq:dist'] = B.get('dq:dist', 'all') === k ? 'all' : k; B.vs['dqb:page'] = 0; B.vs['dq:qv'] = ''; B.refresh(); };
-  B.act.muDqQv = (id) => { B.vs['dq:qv'] = B.get('dq:qv', '') === id ? '' : id; B.refresh(); };
+  B.act.muDqQv = (id) => { B.vs['dq:qv'] = B.get('dq:qv', '') === id ? '' : id; openPane(); B.refresh(); };
   B.act.muDqQvX = () => { B.vs['dq:qv'] = ''; B.refresh(); };
   B.act.muDqGis = () => { const cat = B.get('dq:cat', ''); B.vs['gx:flag'] = !!cat && cat !== 'outdated' && cat !== 'unlinked'; B.vs['gx:dist'] = B.get('dq:dist', 'all'); B.vs['gx:l:qf'] = true; B.go(`${R}-explorer`); };
   const heatCol = (v) => (v >= 97 ? ['#E3F7EF', '#0A7A55'] : v >= 92 ? ['#EEF8F2', '#2E7D5B'] : v >= 85 ? ['#FDF5E6', '#9A5B0B'] : ['#FBE7E5', '#B0332C']);
   function quality() {
     crumbs([[L('Data Quality', 'جودة البيانات')]]);
+    scrollPane();
     const cat = B.get('dq:cat', ''), dist = B.get('dq:dist', 'all');
     const all = dqDistrict('all');
     const dRows = D.districts.map((d) => ({ d, m: dqDistrict(d.id) })).sort(B.by((x) => x.m.score));
@@ -701,7 +706,7 @@
      9 · Building Matching Workspace
      ================================================================= */
   const MC_VIEWS = { toReview: (m) => m.status === 'toReview', deferred: (m) => m.status === 'deferred', matched: (m) => m.status === 'matched', rejected: (m) => m.status === 'rejected', all: () => true };
-  B.act.muMcOpen = (id) => { B.vs['mc:sel'] = id; if (B.route.page !== 'matching') B.go(rgo('matching')); else B.refresh(); };
+  B.act.muMcOpen = (id) => { B.vs['mc:sel'] = id; openPane(); if (B.route.page !== 'matching') B.go(rgo('matching')); else B.refresh(); };
   B.act.muMcAlt = (arg) => { const [id, gis] = arg.split('|'); const m = mcOf(id); if (m) m.pick = gis; B.refresh(); };
   B.act.muMcDec = (arg) => {
     const [id, st] = arg.split(':');
@@ -721,6 +726,7 @@
   };
   function matching() {
     crumbs([[L('Building Matching', 'مطابقة المباني')]]);
+    scrollPane();
     const view = B.get('mc:view', 'toReview'), bnd = B.get('mc:band', 'all'), q = B.get('mc:q', '');
     const base = MC.filter((m) => { const b = D.building(m.b); return (bnd === 'all' || band(m.score) === bnd) && B.match(q, m.id, b.id, b.name, m.ref.gis); });
     const rows = base.filter(MC_VIEWS[view] || MC_VIEWS.toReview).sort(B.by('score', -1));
@@ -733,7 +739,7 @@
     const list = `<div class="card pad-0">
       <div style="padding:12px 14px;border-bottom:1px solid var(--line-2)" class="stack-sm">${ui.search('mc:q', L('Search candidate, BENA ID, ref.', 'ابحث بالمرشح أو رقم بينا أو المرجع'))}
         <div class="mu-views" style="margin-top:8px">${[['all', L('Any', 'الكل')], ['high', L('High', 'عالية')], ['medium', L('Medium', 'متوسطة')], ['low', L('Low', 'منخفضة')]].map(([k, l]) => `<button class="mu-vchip ${bnd === k ? 'on' : ''}" data-act="set" data-arg="mc:band=${k}">${l}</button>`).join('')}</div></div>
-      <div class="mu-clist" style="max-height:calc(100dvh - 380px);overflow:auto">${rows.length ? rows.map((r) => { const b = D.building(r.b); return `<button class="${r.id === sel ? 'on' : ''}" data-act="muMcOpen" data-arg="${r.id}"><span style="min-width:0"><b>${esc(tx(b.name))}</b><small><bdi>${b.id}</bdi> → <bdi>${r.ref.gis}</bdi></small><small>${dName(b.district)} · ${L(`overlap ${r.overlap}%`, `تداخل ${r.overlap}%`)}</small></span><span class="r">${confBar(r.score)}${r.status !== 'toReview' ? ui.status(r.status) : ''}</span></button>`; }).join('') : `<div style="padding:20px">${ui.empty({ icon: 'link', title: L('No candidates', 'لا يوجد مرشحون'), text: L('Nothing matches this view.', 'لا شيء يطابق هذا العرض.') })}</div>`}</div></div>`;
+      <div class="mu-clist" style="max-height:calc(100dvh - 380px);overflow:auto">${rows.length ? rows.map((r) => { const b = D.building(r.b); return `<button class="${r.id === sel ? 'on' : ''}" data-act="muMcOpen" data-arg="${r.id}"><span style="min-width:0"><b>${esc(tx(b.name))}</b><small><bdi>${b.id}</bdi> ${L('→', '←')} <bdi>${r.ref.gis}</bdi></small><small>${dName(b.district)} · ${L(`overlap ${r.overlap}%`, `تداخل ${r.overlap}%`)}</small></span><span class="r">${confBar(r.score)}${r.status !== 'toReview' ? ui.status(r.status) : ''}</span></button>`; }).join('') : `<div style="padding:20px">${ui.empty({ icon: 'link', title: L('No candidates', 'لا يوجد مرشحون'), text: L('Nothing matches this view.', 'لا شيء يطابق هذا العرض.') })}</div>`}</div></div>`;
     return `${hdr({ title: L('Building Matching Workspace', 'مساحة مطابقة المباني'), sub: L('Match independently submitted BENA records to sample municipal references. Confidence combines footprint overlap, parcel, address and attributes.', 'طابق سجلات بينا المُقدّمة بشكل مستقل مع مراجع بلدية نموذجية. تجمع الثقة بين تداخل المسقط والقطعة والعنوان والسمات.'),
       actions: ui.btn(L('Matching rules', 'قواعد المطابقة'), { icon: 'sliders', go: B.roles[ADMIN] ? `${ADMIN}-rules` : rgo('matching') }) + ui.btn(L('Run auto-suggest', 'تشغيل الاقتراح الآلي'), { icon: 'sparkles', act: 'soon', arg: L('Auto-suggest run', 'تشغيل الاقتراح الآلي') }) })}
       <div class="stack">
@@ -769,7 +775,7 @@
     const table = `<table class="mu-cmp"><thead><tr><th>${L('Attribute', 'السمة')}</th><th>${L('BENA record', 'سجل بينا')}<br>${ui.prov('submitted')}</th><th>${L('Sample municipal ref.', 'المرجع البلدي النموذجي')}<br>${ui.prov('official')}</th></tr></thead><tbody>${ar.map(([k, a, r, s]) => `<tr class="${s !== 'ok' ? 'hl' : ''}"><td>${k}</td><td>${a}</td><td>${mi(s)}${r}</td></tr>`).join('')}</tbody></table>`;
     const breakdown = `<div class="mu-cbk">${ar.filter((x) => x[4]).map(([k, , , s, w, got]) => `<span>${k} <span class="xs faint">(${w})</span></span><b>${got}</b><span class="tr"><i style="width:${(got / w) * 100}%;background:${s === 'ok' ? 'var(--mint)' : s === 'partial' ? '#E9A23B' : 'var(--bad)'}"></i></span>`).join('')}</div>`;
     const alts = `<div class="mu-alt">${[{ gis: m.ref.gis, score: m.score, overlap: m.overlap, note: T('Best candidate', 'أفضل مرشح') }].concat(m.alts).map((a) => `<label class="${m.pick === a.gis ? 'on' : ''}" data-act="${open ? 'muMcAlt' : 'muMeasNoop'}" data-arg="${m.id}|${a.gis}"><input type="radio" name="mcalt" ${m.pick === a.gis ? 'checked' : ''} ${open ? '' : 'disabled'} tabindex="-1"><span style="min-width:0"><b class="id-mono">${a.gis}</b><small>${tx(a.note)} · ${L(`overlap ${a.overlap}%`, `تداخل ${a.overlap}%`)}</small></span>${confBar(a.score)}</label>`).join('')}</div>`;
-    return `<div class="stack">
+    return `<div class="stack mu-detail">
       <section class="card">
         <div class="row between wrap" style="gap:12px;align-items:flex-start">
           <div style="min-width:0"><div class="row-sm wrap" style="margin-bottom:6px">${ui.idMono(m.id)}${ui.status(m.status)}${ui.badge(band(m.score) === 'high' ? L('High confidence', 'ثقة عالية') : band(m.score) === 'medium' ? L('Medium confidence', 'ثقة متوسطة') : L('Low confidence', 'ثقة منخفضة'), band(m.score) === 'high' ? 'ok' : band(m.score) === 'medium' ? 'warn' : 'bad')}</div>
@@ -879,8 +885,9 @@
     ['users', T('Manage users & roles', 'إدارة المستخدمين والأدوار'), T('Invite, suspend, assign roles', 'دعوة وإيقاف وإسناد الأدوار'), { lead: 0, admin: 2, analyst: 0, officer: 0, reviewer: 0, surveyor: 0, viewer: 0 }],
     ['audit', T('View audit trail', 'عرض سجل التدقيق'), T('All tenant activity', 'كامل نشاط الجهة'), { lead: 1, admin: 2, analyst: 0, officer: 0, reviewer: 0, surveyor: 0, viewer: 0 }],
   ];
+  const uEmail = (r) => D.person(r.id).email || `${r.id.replace('p_mu_', '').replace('p_', '')}@sample-municipality.example`;
   const wsLbl = (id) => tx((M.WORKSPACES.find((w) => w.id === id) || {}).label || id).replace(/ \(.*\)$/, '');
-  B.act.muUserQv = (id) => { B.vs['us:qv'] = B.get('us:qv', '') === id ? '' : id; B.refresh(); };
+  B.act.muUserQv = (id) => { B.vs['us:qv'] = B.get('us:qv', '') === id ? '' : id; openPane(); B.refresh(); };
   B.act.muInvite = () => B.modal({ title: L('Invite a staff member', 'دعوة موظف'), sub: L('Sends a BENA invitation for this municipal tenant (demo).', 'يرسل دعوة بينا لهذه الجهة البلدية (تجريبي).'), form: 'muInvite', size: 'md',
     body: `<div class="form-grid">${ui.field({ name: 'name', label: L('Full name', 'الاسم الكامل'), required: true })}${ui.field({ name: 'email', label: L('Work email', 'البريد الوظيفي'), type: 'email', required: true, placeholder: 'name@sample-municipality.example' })}
       ${ui.field({ name: 'role', label: L('Role', 'الدور'), type: 'select', options: Object.keys(ROLES).map((k) => ({ v: k, l: ROLES[k].t })) })}${ui.field({ name: 'ws', label: L('Workspace', 'مساحة العمل'), type: 'select', options: M.WORKSPACES.map((w) => ({ v: w.id, l: w.label })) })}</div>
@@ -894,6 +901,7 @@
   function users() {
     const admin = isAdmin();
     crumbs([[admin ? L('Users & Roles', 'المستخدمون والأدوار') : L('Users & Permissions', 'المستخدمون والصلاحيات')]]);
+    scrollPane();
     const q = B.get('us:q', ''), rf = B.get('us:role', 'all'), hr = B.get('us:hl', '');
     const rows = M.STAFF.filter((s) => (rf === 'all' || s.role === rf) && B.match(q, D.person(s.id).name, s.id, s.unit));
     let qv = B.get('us:qv', '');
@@ -903,9 +911,9 @@
       id: 'us', rows, select: admin, active: qv, defaultSort: 'name', rowAct: (r) => ({ act: 'muUserQv', arg: r.id }),
       bulk: () => `${ui.btn(L('Require 2FA', 'اشتراط المصادقة الثنائية'), { icon: 'shield', act: 'toast', arg: L('2FA required for selected users (demo)', 'تم اشتراط المصادقة الثنائية للمستخدمين المحددين (تجريبي)') })}${ui.btn(L('Export', 'تصدير'), { icon: 'download', act: 'soon', arg: L('Export', 'التصدير') })}`,
       cols: [
-        { key: 'name', label: L('Staff member', 'الموظف'), sort: (r) => D.pname(r.id), m: 'title', mRender: (r) => esc(D.pname(r.id)), render: (r) => `<div class="mu-cell">${ui.avatar(D.person(r.id).name)}<div><b>${esc(D.pname(r.id))}</b><small>${esc(D.person(r.id).email || `${r.id.replace('p_mu_', '').replace('p_', '')}@sample-municipality.example`)}</small></div></div>` },
+        { key: 'name', label: L('Staff member', 'الموظف'), sort: (r) => D.pname(r.id), m: 'title', mRender: (r) => esc(D.pname(r.id)), render: (r) => `<div class="mu-cell">${ui.avatar(D.person(r.id).name)}<div><b>${esc(D.pname(r.id))}</b><small>${tx(r.unit)}</small></div></div>` },
         { key: 'role', label: L('Role', 'الدور'), sort: (r) => tx(ROLES[r.role].t), render: (r) => ui.badge(ROLES[r.role].t, ROLES[r.role].tone), m: 'sub' },
-        { key: 'unit', label: L('Unit', 'الوحدة'), sort: (r) => tx(r.unit), render: (r) => `<span class="small">${tx(r.unit)}</span>`, hide: !!qv },
+        { key: 'email', label: L('Email', 'البريد الإلكتروني'), render: (r) => `<span class="small faint">${esc(uEmail(r))}</span>`, hide: !!qv || window.innerWidth < 1400 },
         { key: 'ws', label: L('Workspaces', 'مساحات العمل'), render: (r) => `<span class="mu-ws">${r.ws.map((w) => `<span>${wsLbl(w)}</span>`).join('')}</span>`, hide: !!qv },
         { key: 'mfa', label: L('2FA', 'المصادقة الثنائية'), sort: (r) => (r.mfa ? 1 : 0), render: (r) => (r.mfa ? `<span class="badge ok">${icon('shieldCheck')}${L('On', 'مفعّلة')}</span>` : `<span class="badge warn">${icon('alert')}${L('Off', 'غير مفعّلة')}</span>`) },
         { key: 'last', label: L('Last active', 'آخر نشاط'), sort: (r) => r.last || '', render: (r) => `<span class="small nowrap">${r.last ? B.ago(r.last) : '—'}</span>`, m: 'meta' },
@@ -913,7 +921,7 @@
       ],
     });
     const pane = qs ? `<aside class="card mu-pane"><div class="mu-pane-h">${ui.avatar(D.person(qs.id).name)}<div class="grow" style="min-width:0"><h3 style="font-size:16px">${esc(D.pname(qs.id))}</h3><div class="xs faint">${tx(ROLES[qs.role].t)} · ${tx(qs.unit)}</div></div><button class="icon-btn" style="width:32px;height:32px" data-act="muUserQv" data-arg="${qs.id}" aria-label="${L('Close', 'إغلاق')}">${icon('x')}</button></div>
-      <div class="mu-pane-b">${attrs([[L('Status', 'الحالة'), ui.status(qs.status)], [L('Role', 'الدور'), ui.badge(ROLES[qs.role].t, ROLES[qs.role].tone)], [L('Workspaces', 'مساحات العمل'), `<span class="mu-ws">${qs.ws.map((w) => `<span>${wsLbl(w)}</span>`).join('')}</span>`], [L('Two-factor auth', 'المصادقة الثنائية'), qs.mfa ? L('Enabled', 'مفعّلة') : L('Not enabled', 'غير مفعّلة')], [L('Last active', 'آخر نشاط'), qs.last ? B.date(qs.last) : '—']])}
+      <div class="mu-pane-b">${attrs([[L('Email', 'البريد الإلكتروني'), esc(uEmail(qs))], [L('Status', 'الحالة'), ui.status(qs.status)], [L('Role', 'الدور'), ui.badge(ROLES[qs.role].t, ROLES[qs.role].tone)], [L('Workspaces', 'مساحات العمل'), `<span class="mu-ws">${qs.ws.map((w) => `<span>${wsLbl(w)}</span>`).join('')}</span>`], [L('Two-factor auth', 'المصادقة الثنائية'), qs.mfa ? L('Enabled', 'مفعّلة') : L('Not enabled', 'غير مفعّلة')], [L('Last active', 'آخر نشاط'), qs.last ? B.date(qs.last) : '—']])}
         <div class="mu-sec">${L('Effective permissions', 'الصلاحيات الفعلية')}</div>
         <div class="rq-checks">${PERMS.map(([, t, , v]) => `<div class="${v[qs.role] ? 'ok' : ''}" style="${v[qs.role] ? '' : 'color:var(--text-3)'}">${icon(v[qs.role] === 2 ? 'checkCircle' : v[qs.role] === 1 ? 'alertCircle' : 'minus')}<span>${tx(t)}${v[qs.role] === 1 ? ` <span class="xs faint">(${L('limited', 'محدودة')})</span>` : ''}</span></div>`).join('')}</div>
       </div>
@@ -960,9 +968,10 @@
   ];
   const ACT = { verify: T('Verification', 'التحقق'), role: T('Roles', 'الأدوار'), sync: T('Sync', 'المزامنة'), reject: T('Verification', 'التحقق'), link: T('Linking', 'الربط'), edit: T('Edit', 'التعديل'), invite: T('Users', 'المستخدمون'), export: T('Export', 'التصدير'), rule: T('Rules', 'القواعد'), suspend: T('Users', 'المستخدمون') };
   const actor = (w) => (w === 'system' ? L('System (scheduled)', 'النظام (مجدول)') : esc(D.pname(w)));
-  B.act.muAuQv = (id) => { B.vs['au:qv'] = B.get('au:qv', '') === id ? '' : id; B.refresh(); };
+  B.act.muAuQv = (id) => { B.vs['au:qv'] = B.get('au:qv', '') === id ? '' : id; openPane(); B.refresh(); };
   function audit() {
     crumbs([[L('Audit Trail', 'سجل التدقيق')]]);
+    scrollPane();
     const q = B.get('au:q', ''), a = B.get('au:act', 'all'), who = B.get('au:who', 'all'), per = B.get('au:per', '7');
     const rows = AUDIT.filter((e) => (a === 'all' || tx(ACT[e.act]) === a) && (who === 'all' || e.who === who) && (per === '7' || e.t >= '2026-11-25') && B.match(q, e.id, e.what, e.ent, D.pname(e.who)));
     let qv = B.get('au:qv', '');
@@ -1075,7 +1084,7 @@
         ])}
         <div class="grid g-main">
           ${ui.card({ title: L('Workspaces', 'مساحات العمل'), sub: L('Sample municipalities in this tenant', 'بلديات نموذجية في هذه الجهة'), link: { label: L('Tenant settings', 'إعدادات الجهة'), go: `${ADMIN}-settings` },
-            body: [['ramallah', 'active', 'ok', 12862, 9], ['albireh', 'inProgress', 'violet', 2140, 3], ['birzeit', 'draft', 'neutral', 0, 1]].map(([id, st, tone, n, u]) => `<div class="mu-wsrow"><span class="li-icon navy" style="width:36px;height:36px;border-radius:10px">${icon('landmark')}</span><div><b>${tx(M.WORKSPACES.find((w) => w.id === id).label)}</b><small>${n ? L(`${B.num(n)} building records`, `${B.num(n)} سجل مبنى`) : L('Not configured yet', 'لم تُهيأ بعد')} · ${L(`${u} users`, `${u} مستخدمين`)}</small></div>${ui.badge(B.statuses[st], tone)}${ui.btn(L('Open', 'فتح'), { size: 'sm', icon: 'arrowRight', iconCls: 'flip', go: id === 'ramallah' ? `${R}-home` : `${ADMIN}-settings` })}</div>`).join('') })}
+            body: [['ramallah', 'active', 'ok', 12862, 9], ['albireh', 'inProgress', 'violet', 2140, 3], ['birzeit', 'draft', 'neutral', 0, 1]].map(([id, st, tone, n, u]) => `<div class="mu-wsrow"><span class="li-icon navy" style="width:36px;height:36px;border-radius:10px">${icon('landmark')}</span><div><b>${tx(M.WORKSPACES.find((w) => w.id === id).label)}</b><small>${n ? L(`${B.num(n)} building records`, `${B.num(n)} سجل مبنى`) : L('Not configured yet', 'لم تُهيأ بعد')} · ${L(`${u} user${u === 1 ? '' : 's'}`, `${u === 1 ? 'مستخدم واحد' : `${u} مستخدمين`}`)}</small></div>${ui.badge(B.statuses[st], tone)}${ui.btn(L('Open', 'فتح'), { size: 'sm', icon: 'arrowRight', iconCls: 'flip', go: id === 'ramallah' ? `${R}-home` : `${ADMIN}-settings` })}</div>`).join('') + `<div style="margin-top:14px">${ui.callout(L('Each workspace is a sample municipality with its own registry, GIS layers and staff. Workspaces are designed to connect to municipal systems; none is connected in this prototype.', 'كل مساحة عمل بلدية نموذجية لها سجلها وطبقاتها وموظفوها. صُممت مساحات العمل للاتصال بالأنظمة البلدية؛ ولا توجد أي منها متصلة في هذا النموذج.'), '', 'info')}</div>` })}
           ${ui.card({ title: L('Users by role', 'المستخدمون حسب الدور'), link: { label: L('Users & roles', 'المستخدمون والأدوار'), go: `${ADMIN}-users` }, body: B.charts.hbars({ data: byRole.map((r, i) => ({ ...r, color: i === 0 ? '#142B3B' : '#7FA7C2' })) }) })}
         </div>
         <div class="grid g2">

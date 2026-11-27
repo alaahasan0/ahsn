@@ -120,6 +120,13 @@
     ${opts.save === false ? '' : `<button class="mu-vsave" data-act="soon" data-arg="${esc(L('Saving a custom view', 'حفظ عرض مخصص'))}">${icon('plus')}<span>${L('Save view', 'حفظ العرض')}</span></button>`}</div>`;
 
   /* ---------------- dense data table with selection ---------------- */
+  /** On narrow screens split views stack: bring the opened detail pane into view after an explicit open. */
+  const scrollPane = () => {
+    if (!B.vs['mu:sp']) return;
+    B.vs['mu:sp'] = false;
+    B.afterRender(() => { if (window.innerWidth < 1180) { const el = document.querySelector('.mu-pane, .mu-detail'); if (el) el.scrollIntoView({ block: 'start', behavior: 'smooth' }); } });
+  };
+  const openPane = () => { B.vs['mu:sp'] = true; };
   const DTV = {};
   const selOf = (id) => B.get(id + ':sel', []);
   B.act.muRowSel = (arg) => { const i = arg.indexOf('|'); const tid = arg.slice(0, i), rid = arg.slice(i + 1); const s = new Set(selOf(tid)); if (s.has(rid)) s.delete(rid); else s.add(rid); B.vs[tid + ':sel'] = [...s]; B.refresh(); };
@@ -386,7 +393,8 @@
   .mu-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(360px, 420px); gap: var(--mu-gap); align-items: start; }
   .mu-split.wide { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); }
   .mu-split.narrow { grid-template-columns: minmax(300px, 380px) minmax(0, 1fr); }
-  .mu-pane { position: sticky; top: calc(var(--topbar-h) + 12px); max-height: calc(100dvh - var(--topbar-h) - 24px); overflow-y: auto; padding: 0; }
+  .mu-pane { position: sticky; top: calc(var(--topbar-h) + 12px); max-height: calc(100dvh - var(--pt, calc(var(--topbar-h) + 24px))); min-height: min(440px, calc(100dvh - var(--topbar-h) - 24px)); overflow-y: auto; padding: 0; display: flex; flex-direction: column; }
+  .mu-pane > .mu-pane-b { flex: 1; }
   .mu-pane-h { display: flex; align-items: flex-start; gap: 10px; padding: 16px 18px 12px; border-bottom: 1px solid var(--line-2); position: sticky; top: 0; background: #fff; z-index: 2; }
   .mu-pane-b { padding: 16px 18px; }
   .mu-pane-f { display: flex; gap: 8px; flex-wrap: wrap; padding: 12px 18px; border-top: 1px solid var(--line-2); position: sticky; bottom: 0; background: #fff; z-index: 2; }
@@ -395,7 +403,7 @@
   html[dir="rtl"] .mu-sec { letter-spacing: 0; }
   .mu-sec:first-child { margin-top: 0; }
   .mu-sec .grow { flex: 1; }
-  @media (max-width: 1180px) { .mu-split, .mu-split.wide, .mu-split.narrow { grid-template-columns: minmax(0, 1fr); } .mu-pane { position: static; max-height: none; } }
+  @media (max-width: 1180px) { .mu-split, .mu-split.wide, .mu-split.narrow { grid-template-columns: minmax(0, 1fr); } .mu-pane { position: static; max-height: none !important; min-height: 0; } }
 
   /* Attribute list */
   .mu-attrs { margin: 0; display: flex; flex-direction: column; }
@@ -589,7 +597,9 @@
     .mu-gbody, .mu-gbody.pc { display: flex; flex-direction: column; }
     .mu-rail { flex-direction: row; justify-content: space-around; padding: 4px 6px; order: 2; }
     .mu-rail .sp, .mu-rail .tip, .mu-rail .mu-rail-col { display: none; }
-    .mu-gmap { order: 1; height: 58dvh; min-height: 360px; flex: none; }
+    .mu-gmap { order: 1; height: auto; min-height: 0; flex: none; }
+    .mu-gmap .mu-gm { flex: none; }
+    .mu-gmap .map-shell { height: 58dvh !important; min-height: 340px; }
     .mu-gpanel, .mu-gbody.pc .mu-gpanel { order: 3; visibility: visible; border-inline-end: 0; max-height: none; }
     .mu-gp-b { overflow: visible; }
     .mu-feat { position: static; width: auto; box-shadow: none; border-top: 1px solid var(--line); border-radius: 0; order: 4; animation: none; }
@@ -721,7 +731,7 @@
       </div>`;
     return { head, body, acts };
   };
-  B.act.muCopy = (id) => { try { navigator.clipboard && navigator.clipboard.writeText(id); } catch (e) { /* ignore */ } B.toast(L(`${id} copied`, `تم نسخ ${id}`)); };
+  B.act.muCopy = (id) => { try { const pr = navigator.clipboard && navigator.clipboard.writeText(id); if (pr && pr.catch) pr.catch(() => {}); } catch (e) { /* ignore */ } B.toast(L(`${id} copied`, `تم نسخ ${id}`)); };
 
   /* building actions (shared) */
   B.act.muVerify = (id) => {
@@ -851,7 +861,7 @@
     recent: (b) => upd(b) >= '2026-11-01',
   };
 
-  B.act.muRgQv = (id) => { B.vs['rg:qv'] = B.vs['rg:qv'] === id ? '' : id; B.refresh(); };
+  B.act.muRgQv = (id) => { B.vs['rg:qv'] = B.vs['rg:qv'] === id ? '' : id; openPane(); B.refresh(); };
   B.act.muBulkVerify = (tid) => {
     const ids = selOf(tid).filter((id) => { const b = D.building(id); return b && b.verification !== 'verified'; });
     if (!ids.length) { B.toast(L('All selected records are already verified', 'جميع السجلات المحددة موثّقة مسبقاً'), 'info'); return; }
@@ -862,6 +872,7 @@
 
   function registry() {
     crumbs([[L('Building Registry', 'سجل المباني')]]);
+    scrollPane();
     const q = B.get('rg:q', ''), t = B.get('rg:type', 'all'), v = B.get('rg:ver', 'all'), s = B.get('rg:src', 'all'), d = B.get('rg:dist', 'all'), dq = B.get('rg:dq', ''), view = B.get('rg:view', 'all');
     const base = D.buildings.filter((b) => (t === 'all' || b.type === t) && (v === 'all' || b.verification === v) && (s === 'all' || b.source === s) && (d === 'all' || b.district === d) && (!dq || qf(b)[dq])
       && B.match(q, b.id, b.gis, b.ref, b.name, b.address, D.district(b.district).name));
@@ -886,7 +897,7 @@
       ],
     });
     const vc = (k) => base.filter(RG_VIEWS[k]).length;
-    const pane = qb ? (() => { const v2 = quickView(qb, { close: 'muRgQvX', ctx: 'registry' }); return `<aside class="card mu-pane">${v2.head}<div class="mu-pane-b">${v2.body}</div><div class="mu-pane-f" style="display:block">${v2.acts}</div></aside>`; })() : '';
+    const pane = qb ? (() => { const v2 = quickView(qb, { close: 'muRgQvX', ctx: 'registry' }); return `<aside class="card mu-pane" style="--pt:262px">${v2.head}<div class="mu-pane-b">${v2.body}</div><div class="mu-pane-f" style="display:block">${v2.acts}</div></aside>`; })() : '';
     return `${hdr({ title: L('Building Registry', 'سجل المباني'), sub: L(`${B.num(D.buildings.length)} records in the mapped sample area · ${B.num(C.total)} city-wide (sample)`, `${B.num(D.buildings.length)} سجلاً في المنطقة النموذجية · ${B.num(C.total)} على مستوى المدينة (نموذج)`),
       actions: ui.btn(L('Export CSV', 'تصدير CSV'), { icon: 'download', act: 'soon', arg: L('CSV export', 'تصدير CSV') }) + ui.btn(L('Open in GIS', 'فتح في الخريطة'), { icon: 'map', go: `${R}-explorer` }) + ui.btn(L('Register building', 'تسجيل مبنى'), { kind: 'primary', icon: 'plus', act: 'muNewBuilding' }) })}
       ${views('rg:view', [{ id: 'all', label: L('All records', 'جميع السجلات'), count: vc('all') }, { id: 'needs', label: L('Needs verification', 'بحاجة للتحقق'), count: vc('needs') }, { id: 'independent', label: L('Independent', 'مستقلة'), count: vc('independent') }, { id: 'flagged', label: L('Quality flags', 'مؤشرات الجودة'), count: vc('flagged') }, { id: 'recent', label: L('Updated this month', 'حُدّثت هذا الشهر'), count: vc('recent') }], view)}
@@ -1390,7 +1401,7 @@
   /* ---------------- expose for municipality2.js ---------------- */
   B.mu = {
     R, T, STAFF, WORKSPACES, REQ, RT, CH, OPEN, LAYERS, DQ, MAPID, M_PER_UNIT,
-    hash, qf, months, dName, typeIcon, sw, sampleTag, pct, upd, units, parcelTxt, srcLabel, orgName, rgo, crumbs, hdr, strip, views, dt, selOf, cb, attrs,
+    hash, qf, months, scrollPane, openPane, dName, typeIcon, sw, sampleTag, pct, upd, units, parcelTxt, srcLabel, orgName, rgo, crumbs, hdr, strip, views, dt, selOf, cb, attrs,
     flagChips, refCell, verProv, quickView, sampleQ, cityVer, districtView, openCount, reqOf, optsType, optsVer, optsSrc, optsDist,
     pages: { home, registry, explorer, requests, request: requestDetail, analytics, data },
     queueStats: null,
