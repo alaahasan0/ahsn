@@ -101,12 +101,7 @@
         </div>
       </div>
     </section>`;
-  S.ctaArt = () => {
-    let s = '<svg viewBox="0 0 1200 360" preserveAspectRatio="xMidYMid slice">';
-    for (let i = 0; i < 9; i++) s += `<rect x="${760 + i * 22}" y="${40 + i * 30}" width="${380 - i * 34}" height="22" rx="6" fill="none" stroke="#36D6A0" stroke-opacity="${0.1 + i * 0.05}"/>`;
-    s += '</svg>';
-    return s;
-  };
+  S.ctaArt = () => `<div class="ws-cta-tower">${S.tower({ theme: 'night', idp: 'cta', lit: ['8-3', '4-1', '11-2', '6-4'] })}</div>`;
 
   /* ------------------------------------------------------------------ */
   /* Isometric tower — the BENA "digital identity" building              */
@@ -177,11 +172,11 @@
             if (k <= 2) {
               const u0 = (k - 1) * TW / 2, uw = TW / 2;
               const x0 = u0 + uw * (w === 0 ? 0.12 : 0.55), x1 = x0 + uw * 0.33;
-              g += `<polygon class="ws-win" points="${qL(x0, x1, z0 + 4, z1 - 4)}" fill="${fill}" opacity="${op}"/>`;
+              g += `<polygon class="ws-win ${hot ? 'hot' : ''}" points="${qL(x0, x1, z0 + 4, z1 - 4)}" fill="${fill}" opacity="${op}"/>`;
             } else {
               const u0 = TD - (k - 3) * TD / 2, uw = TD / 2;
               const y0 = u0 - uw * (w === 0 ? 0.12 : 0.55), y1 = y0 - uw * 0.33;
-              g += `<polygon class="ws-win" points="${qR(y0, y1, z0 + 4, z1 - 4)}" fill="${fill}" opacity="${op}"/>`;
+              g += `<polygon class="ws-win ${hot ? 'hot' : ''}" points="${qR(y0, y1, z0 + 4, z1 - 4)}" fill="${fill}" opacity="${op}"/>`;
             }
           }
         }
@@ -340,7 +335,7 @@
       document.documentElement.classList.remove('ws-lock');
       S.bind(r);
     });
-    return `<div class="ws ws-p-${page || 'none'}" data-exp-root="site" data-page="${page || 'none'}">
+    return `<div class="ws ws-p-${page || 'none'} ${navigator.webdriver ? 'ws-auto' : ''}" data-exp-root="site" data-page="${page || 'none'}">
       ${header(r)}
       <main class="ws-main" id="ws-main">${body}</main>
       ${r.page === 'login' ? '' : footer()}
@@ -498,6 +493,7 @@
   /* header */
   .ws-hd { position: fixed; inset-inline: 0; top: 0; z-index: 60; transition: background .35s var(--ease), border-color .35s, box-shadow .35s, color .35s; border-bottom: 1px solid transparent; color: var(--navy); }
   .ws-hd[data-tone="dark"] { color: #fff; }
+  .ws-hd[data-tone="solid"] { background: #fff !important; }
   .ws-hd.is-solid, .ws-hd[data-tone="solid"] { background: rgba(255,255,255,.88); -webkit-backdrop-filter: saturate(1.6) blur(16px); backdrop-filter: saturate(1.6) blur(16px); border-bottom-color: rgba(20,43,59,.08); color: var(--navy); }
   .ws-hd-in { height: 76px; display: flex; align-items: center; gap: 28px; max-width: calc(var(--ws-max) + var(--ws-gut) * 2); margin-inline: auto; padding-inline: var(--ws-gut); transition: height .35s var(--ease); }
   .ws-hd.is-solid .ws-hd-in { height: 66px; }
@@ -582,10 +578,11 @@
 
   /* CTA band */
   .ws-cta { background: var(--ws-deep); color: #fff; padding: clamp(72px, 9vw, 128px) 0; overflow: hidden; }
-  .ws-cta-art { position: absolute; inset: 0; opacity: .9; pointer-events: none; }
-  .ws-cta-art svg { width: 100%; height: 100%; }
-  html[dir="rtl"] .ws-cta-art svg { transform: scaleX(-1); }
-  .ws-cta-in { position: relative; display: grid; grid-template-columns: minmax(0, 1.3fr) auto; gap: 40px; align-items: end; }
+  .ws-cta-art { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .ws-cta-tower { position: absolute; inset-inline-end: max(2vw, calc((100vw - var(--ws-max)) / 2 - 40px)); top: 8%; height: 125%; aspect-ratio: 336 / 467; opacity: .55; -webkit-mask-image: linear-gradient(180deg, #000 45%, transparent 92%); mask-image: linear-gradient(180deg, #000 45%, transparent 92%); }
+  .ws-cta-tower svg { width: 100%; height: 100%; }
+  .ws-cta-in { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); gap: 36px; align-items: start; }
+  .ws-cta-in > div:first-child { max-width: 820px; }
   .ws-cta .ws-h2 { color: #fff; max-width: 16em; }
   .ws-cta-actions { display: flex; flex-wrap: wrap; gap: 12px; }
 
@@ -616,7 +613,8 @@
   .ws-fl-hit { fill: transparent; transition: fill .2s; }
   .ws-fl:hover .ws-fl-hit, .ws-fl:focus-visible .ws-fl-hit { fill: rgba(54,214,160,.28); }
   .ws-fl.sel .ws-fl-hit { fill: rgba(54,214,160,.55); }
-  .ws-fl.sel .ws-win { fill: #0B8A60; }
+  .ws-fl.sel .ws-win { fill: #1F6E55; }
+  .ws-fl.sel .ws-win.hot { fill: #36D6A0; }
 
   /* responsive */
   @media (max-width: 1180px) {
@@ -624,6 +622,7 @@
     .ws-burger { display: inline-block; }
   }
   @media (max-width: 960px) {
+    .ws-cta-tower { opacity: .22; }
     .ws-sec-head, .ws-phero-in.has-aside, .ws-cta-in { grid-template-columns: minmax(0, 1fr); }
     .ws-ft-top { grid-template-columns: minmax(0, 1fr); gap: 40px; }
     .ws-ft-honest { grid-template-columns: minmax(0, 1fr); gap: 12px; }
@@ -640,6 +639,8 @@
     .ws-cta-actions .ws-btn { width: 100%; }
     .ws-body { font-size: 16px; }
   }
+  /* automated checks / screenshots: show end states of intro animations */
+  .ws-auto .ws-trace, .ws-auto .ws-hv-lead { animation: none !important; stroke-dashoffset: 0 !important; opacity: 1 !important; }
   @media (prefers-reduced-motion: reduce) {
     .ws-pre { opacity: 1 !important; transform: none !important; }
     .ws-trace { animation: none; stroke-dashoffset: 0; }
