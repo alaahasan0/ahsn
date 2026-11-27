@@ -91,9 +91,9 @@ const file = 'file://' + path.resolve(__dirname, '..', 'index.html');
         const nf = await page.evaluate(() => document.querySelector('.empty h3')?.textContent?.includes('not part of the demo'));
         if (nf) issues.push(`[route] ${desc} → NOT FOUND PAGE`);
         // submit any open modal form to exercise submit handlers
-        await page.evaluate(() => { const f = document.querySelector('.scrim form[data-submit]'); if (f) { f.querySelectorAll('[required]').forEach((x) => { if (!x.value) x.value = x.type === 'number' ? '1' : x.type === 'date' ? '2026-12-01' : 'Test'; }); f.requestSubmit ? f.requestSubmit() : f.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true })); } });
+        await page.evaluate(() => { const f = document.querySelector('.scrim form[data-submit], .mx-scrim form[data-submit]'); if (f) { f.querySelectorAll('[required]').forEach((x) => { if (!x.value) x.value = x.type === 'number' ? '1' : x.type === 'date' ? '2026-12-01' : 'Test'; }); f.requestSubmit ? f.requestSubmit() : f.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true })); } });
         await page.waitForTimeout(30);
-        await page.evaluate(() => window.B.closeModal(true));
+        await page.evaluate(() => { window.B.closeModal(true); if (window.B.m) window.B.m.close(true); });
         if (issues.length && !issues[issues.length - 1].includes('←')) issues[issues.length - 1] += `  ← after ${desc}`;
       }
     }

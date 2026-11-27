@@ -49,7 +49,7 @@
   .mx-head.line { border-bottom-color: var(--line); }
   .mx-head .mh-title { flex: 1; text-align: center; font: 600 17px/1.25 var(--font); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
   html[dir="rtl"] .mx-head .mh-title { font-family: var(--font-ar); }
-  .mx-head .mh-side { width: 92px; display: flex; gap: 2px; align-items: center; flex: none; }
+  .mx-head .mh-side { width: 118px; display: flex; gap: 2px; align-items: center; flex: none; }
   .mx-head .mh-side.end { justify-content: flex-end; }
   .mx-iconbtn { width: 44px; height: 44px; border-radius: 22px; display: grid; place-items: center; color: var(--ink); flex: none; }
   .mx-iconbtn:active { background: rgba(20,43,59,.06); }
@@ -199,7 +199,7 @@
     const a = attrs(o);
     const tag = a ? 'button' : 'div';
     const lead = o.avatar ? B.ui.avatar(o.avatar, '') : o.icon ? `<span class="mc-i ${o.tone || ''}">${icon(o.icon)}</span>` : '';
-    return `<${tag} class="mx-cell ${lead ? '' : 'noicon'}" ${a}>${lead}<span class="mc-b"><span class="mc-t" style="display:block">${tx(o.title)}</span>${o.sub ? `<span class="mc-s" style="display:block">${tx(o.sub)}</span>` : ''}</span>${o.value || o.badge ? `<span class="mc-v">${o.value ? `<b>${o.value}</b>` : ''}${o.badge || ''}${o.valueSub ? `<span>${tx(o.valueSub)}</span>` : ''}</span>` : ''}${a && o.chevron !== false ? icon('chevR', 'mc-c flip') : ''}</${tag}>`;
+    return `<${tag} class="mx-cell ${lead ? '' : 'noicon'}" ${a}>${lead}<span class="mc-b"><span class="mc-t" style="display:block">${tx(o.title)}</span>${o.sub ? `<span class="mc-s" style="display:block">${tx(o.sub)}</span>` : ''}</span>${o.value || o.badge || o.valueSub ? `<span class="mc-v">${o.value ? `<b>${o.value}</b>` : ''}${o.badge || ''}${o.valueSub ? `<span>${tx(o.valueSub)}</span>` : ''}</span>` : ''}${a && o.chevron !== false ? icon('chevR', 'mc-c flip') : ''}</${tag}>`;
   };
   /** group(cells[], label?) — inset grouped list */
   M.group = (cells, label = '') => `<div>${label ? `<div class="mx-glabel">${tx(label)}</div>` : ''}<div class="mx-group">${cells.join('')}</div></div>`;

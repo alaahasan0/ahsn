@@ -195,9 +195,9 @@
     { id: 'QT-3381', req: 'PR-24508', sent: '2026-11-21', valid: '2026-12-05', eta: 2, status: 'sent', lines: [QL(T('Clean and re-level cassette drain pan', 'تنظيف وتسوية حوض تصريف الكاسيت'), 1, 240), QL(T('Condensate pump replacement', 'استبدال مضخة التكثيف'), 1, 310)] },
     { id: 'QT-3376', req: 'PR-24496', sent: '2026-11-19', valid: '2026-12-03', eta: 3, status: 'sent', lines: [QL(T('Pressure switch 1.5–3 bar', 'مفتاح ضغط 1.5–3 بار'), 1, 380), QL(T('Pressure vessel recharge', 'إعادة شحن خزان الضغط'), 1, 160), QL(T('Labour (hours)', 'العمل (ساعات)'), 3, 85)] },
     { id: 'QT-3370', req: 'PR-24489', sent: '2026-11-17', valid: '2026-12-01', eta: 5, status: 'sent', lines: [QL(T('Bollard light fitting', 'عمود إنارة حديقة'), 14, 58), QL(T('Armoured cable 4 mm² (m)', 'كابل مسلح 4 مم² (م)'), 60, 6), QL(T('Labour (days)', 'العمل (أيام)'), 1, 102)] },
-    { id: 'QT-3362', req: 'JB-3104', sent: '2026-11-15', valid: '2026-11-29', eta: 4, status: 'accepted', lines: [QL(T('Split AC service', 'صيانة مكيف سبليت'), 6, 116)] },
-    { id: 'QT-3359', req: 'JB-3103', sent: '2026-11-12', valid: '2026-11-26', eta: 7, status: 'accepted', lines: [QL(T('LED downlight 12 W', 'سبوت LED ‏12 واط'), 22, 48), QL(T('Motion sensor', 'حساس حركة'), 1, 180), QL(T('Labour (hours)', 'العمل (ساعات)'), 6, 75)] },
-    { id: 'QT-3344', req: 'MR-24355', sent: '2026-11-11', valid: '2026-11-25', eta: 1, status: 'accepted', lines: [QL(T('Booster pump bearing kit', 'طقم محامل مضخة التعزيز'), 1, 420), QL(T('Labour (hours)', 'العمل (ساعات)'), 4, 70)] },
+    { id: 'QT-3362', req: 'JB-3104', sent: '2026-11-15', valid: '2026-11-29', eta: 4, status: 'accepted', lines: [QL(T('Split AC service', 'صيانة مكيف سبليت'), 6, 135)] },
+    { id: 'QT-3359', req: 'JB-3103', sent: '2026-11-12', valid: '2026-11-26', eta: 7, status: 'accepted', lines: [QL(T('LED downlight 12 W', 'سبوت LED ‏12 واط'), 22, 48), QL(T('Motion sensor', 'حساس حركة'), 1, 180), QL(T('Labour (lump sum)', 'العمل (مبلغ مقطوع)'), 1, 614)] },
+    { id: 'QT-3344', req: 'MR-24355', sent: '2026-11-11', valid: '2026-11-25', eta: 1, status: 'accepted', lines: [QL(T('Booster pump bearing kit', 'طقم محامل مضخة التعزيز'), 1, 420), QL(T('Labour (hours)', 'العمل (ساعات)'), 4, 80)] },
     { id: 'QT-3352', req: 'PR-24461', sent: '2026-11-05', valid: '2026-11-19', eta: 6, status: 'declined', lines: [QL(T('Aluminium window, double glazed', 'نافذة ألمنيوم بزجاج مزدوج'), 6, 330), QL(T('Removal & installation', 'الفك والتركيب'), 1, 320)] },
   ];
   const qSub = (q) => B.sum(q.lines, (l) => l.q * l.p);
@@ -442,7 +442,7 @@
     const toInvoice = JOBS.filter((j) => j.status === 'completed' && !j.paid && !j.invoiced);
     return {
       title: L('Today', 'اليوم'), large: true, kicker: L(`Good morning, Yousef · ${dow('2026-11-25', true)} ${B.dateShort('2026-11-25')}`, `صباح الخير يا يوسف · ${dow('2026-11-25', true)} ${B.dateShort('2026-11-25')}`), actions: [bell()],
-      body: `<div class="mp-biz"><div class="b-top"><span class="b-logo">JT</span><div style="min-width:0"><h2>${tx(P.name)}</h2><div class="b-sub">${P.verified ? `${icon('badgeCheck')}${L('Verified provider (sample)', 'مزوّد موثّق (نموذج)')} · ` : ''}★ ${P.rating} · ${P.reviews} ${L('reviews', 'تقييماً')}</div></div></div>
+      body: `<div class="mp-biz"><div class="b-top"><span class="b-logo">JT</span><div style="min-width:0"><h2>${tx(P.name)}</h2><div class="b-sub">${P.verified ? `<span style="white-space:nowrap">${icon('badgeCheck')}${L('Verified provider (sample)', 'مزوّد موثّق (نموذج)')}</span> · ` : ''}<span style="white-space:nowrap">★ ${P.rating} · ${P.reviews} ${L('reviews', 'تقييماً')}</span></div></div></div>
           <div class="b-stats"><button data-go="history"><b>${B.money(monthRev)}</b><small>${L('Billed in Nov', 'فواتير ت٢')}</small></button><button data-go="jobs"><b>${JOBS.filter((j) => j.status !== 'completed').length}</b><small>${L('Open jobs', 'مهام مفتوحة')}</small></button><div><b>${tx(P.response)}</b><small>${L('Response', 'سرعة الرد')}</small></div></div></div>`
         + M.kpis([{ label: L('New requests', 'طلبات جديدة'), value: nr.length, sub: L('Waiting for a quote', 'بانتظار عرض سعر'), icon: 'inbox', go: 'requests', alert: nr.some((r) => r.priority === 'high') }, { label: L('Quotes pending', 'عروض معلّقة'), value: sentQ.length, sub: B.money(B.sum(sentQ, qTot)), icon: 'doc', go: 'quotes' }])
         + (nr.length ? M.section(L('New requests', 'طلبات جديدة'), `<div class="mp-list">${nr.slice(0, 2).map(reqCard).join('')}</div>`, { link: { label: L(`All ${nr.length}`, `الكل ${nr.length}`), go: 'requests' } }) : '')
@@ -474,7 +474,7 @@
     if (r.status === 'new') dk = dock(M.btn(L('Decline', 'رفض'), { act: 'mpDecline', arg: r.id }) + M.btn(L('Send quote', 'إرسال عرض'), { kind: 'primary', act: 'mpQuote', arg: r.id, icon: 'send' }).replace('class="mx-btn', 'class="mx-btn grow2'));
     else if (r.status === 'quoted') dk = dock(M.btn(L('Message', 'رسالة'), { act: 'mxSoon', arg: L('Messaging', 'المراسلة'), icon: 'chat' }) + M.btn(L('Edit quote', 'تعديل العرض'), { kind: 'dark', act: 'mpQuote', arg: r.id, icon: 'edit' }).replace('class="mx-btn', 'class="mx-btn grow2'));
     return {
-      title: idm(r.id), back: 'requests', backLabel: L('Requests', 'الطلبات'), tab: 'requests', hideTabs: !!dk,
+      title: `<bdi>${r.id}</bdi>`, back: 'requests', backLabel: L('Requests', 'الطلبات'), tab: 'requests', hideTabs: !!dk,
       body: `<div class="mp-head"><div class="h-tags">${st(r.status)}${prioBadge(r.priority)}<span class="badge">${icon(c.icon)}${tx(c.name)}</span></div><h2>${tx(r.title)}</h2>
           <div class="h-meta"><span>${icon('pin')}${where(r)}</span>${r.pref ? `<span>${icon('calendar')}${L('Preferred', 'الموعد المفضّل')}: ${dow(r.pref.date, true)} ${B.dateShort(r.pref.date)} · ${tx(SLOT[r.pref.slot])}</span>` : ''}<span>${icon('clock')}${L('Posted', 'نُشر')} ${B.date(r.created)}</span></div></div>`
         + (q ? `<button class="mp-quote" data-act="mpQuoteView" data-arg="${q.id}" style="text-align:start"><span class="q-top"><span><small class="muted" style="font-size:13px">${L('Your quote', 'عرضك')} · ${idm(q.id)}</small><br><span class="q-amt">${B.money(qTot(q))}</span></span>${st(q.status)}</span><span class="q-row"><span>${L(`${q.lines.length} lines · valid until ${B.dateShort(q.valid)}`, `${q.lines.length} بنود · صالح حتى ${B.dateShort(q.valid)}`)}</span><b>${L('View', 'عرض')}</b></span></button>` : '')
@@ -526,7 +526,7 @@
     const dk = done ? dock(j.paid ? M.btn(L('Receipt', 'الإيصال'), { act: 'mxSoon', arg: L('Receipt', 'الإيصال'), icon: 'receipt' }) + M.btn(L('Book again', 'حجز جديد'), { kind: 'dark', act: 'mxSoon', arg: L('Booking', 'الحجز'), icon: 'calendar' }) : M.btn(L('Message', 'رسالة'), { act: 'mxSoon', arg: L('Messaging', 'المراسلة'), icon: 'chat' }) + M.btn(j.invoiced ? L('Invoice sent ✓', 'أُرسلت الفاتورة ✓') : L('Send invoice', 'إرسال الفاتورة'), { kind: j.invoiced ? 'soft' : 'primary', act: j.invoiced ? 'mxToast' : 'mpInvoice', arg: j.invoiced ? L('Waiting for payment (simulated)', 'بانتظار الدفع (محاكاة)') : j.id, icon: 'receipt' }).replace('class="mx-btn', 'class="mx-btn grow2'))
       : dock(M.btn(L('Call tech', 'اتصل بالفني'), { act: 'mxSoon', arg: L('Calling', 'الاتصال'), icon: 'phone' }) + M.btn(nextLabel, { kind: 'primary', act: 'mpAdvance', arg: j.id, icon: j.status === 'inProgress' ? 'checkCircle' : 'arrowRight', iconCls: j.status === 'inProgress' ? '' : 'flip' }).replace('class="mx-btn', 'class="mx-btn grow2'));
     return {
-      title: idm(j.id), back: 'jobs', backLabel: L('Jobs', 'المهام'), tab: 'jobs', hideTabs: true,
+      title: `<bdi>${j.id}</bdi>`, back: 'jobs', backLabel: L('Jobs', 'المهام'), tab: 'jobs', hideTabs: true,
       body: `<div class="mp-head"><div class="h-tags">${st(j.status)}<span class="badge">${icon(c.icon)}${tx(c.name)}</span></div><h2>${tx(j.title)}</h2>
           <div class="h-meta"><span>${icon('calendar')}${dow(j.date, true)} ${B.date(j.date)} · <bdi dir="ltr">${j.time}</bdi> · ${L(`${j.dur} h`, `${j.dur} س`)}</span><span>${icon('pin')}${where(j)}</span></div></div>`
         + tracker(j)
@@ -585,7 +585,7 @@
     return {
       title: L('Customers', 'العملاء'), large: true, back: 'menu', backLabel: L('More', 'المزيد'), tab: 'menu',
       body: M.search('mp:cq', L('Search customers', 'ابحث عن عميل'))
-        + (rows.length ? M.group(rows.map((r) => M.cell({ avatar: pobj(r.p).name, title: pname(r.p), sub: `${crole(r.p)} · ${L(`${r.n} jobs`, `${r.n} مهام`)}`, value: r.v ? B.money(r.v) : '—', go: `customer-${ckey(r.p)}` }))) : M.empty('users', L('No customers found', 'لا يوجد عملاء')))
+        + (rows.length ? M.group(rows.map((r) => M.cell({ avatar: pobj(r.p).name, title: pname(r.p), sub: `${crole(r.p)} · ${L(`${r.n} ${r.n === 1 ? 'job' : 'jobs'}`, `${r.n} ${r.n === 1 ? 'مهمة' : 'مهام'}`)}`, value: r.v ? B.money(r.v) : '—', go: `customer-${ckey(r.p)}` }))) : M.empty('users', L('No customers found', 'لا يوجد عملاء')))
         + note(L('Fictional customers', 'عملاء وهميون')),
     };
   };
@@ -612,6 +612,13 @@
       + M.group([M.cell({ icon: 'grid', title: L('Open the provider web portal', 'فتح بوابة المزوّد على الويب'), go: 'provider-home' }), M.cell({ icon: 'compass', title: L('Demo hub', 'مركز العرض'), go: 'hub' })])
       + note(L('Prototype · “verified” is a sample marketplace badge, not an official licence check', 'نموذج أولي · «موثّق» شارة نموذجية في السوق وليست تحققاً رسمياً من الترخيص')),
   });
+
+  /* notifications list (time shown as a trailing label) */
+  const notifScreen = () => {
+    const list = (B.mroles[R].notifications && B.mroles[R].notifications()) || [];
+    return { title: L('Notifications', 'الإشعارات'), large: true, back: 'home', tab: 'home', actions: [{ icon: 'checkCircle', act: 'mxToast', arg: L('All marked as read', 'تم تعليم الكل كمقروء'), label: L('Mark all read', 'تعليم الكل كمقروء') }],
+      body: list.length ? M.group(list.map((n) => M.cell({ icon: n.icon || 'bell', tone: n.tone || 'mint', title: String(tx(n.title)).replace(/\b([A-Z]{2,3}-\d{2}-\d{3,4}|[A-Z]{2,3}-\d{4,5})\b/g, '<span style="white-space:nowrap">$1</span>'), sub: n.sub, go: n.go, badge: `<span style="font-size:12.5px;color:var(--text-3);font-weight:500;white-space:nowrap">${tx(n.when || '')}</span>` }))) + `<div style="font-size:13px;color:var(--text-3);text-align:center">${L('Sample notifications', 'إشعارات نموذجية')}</div>` : M.empty('bell', L('You are all caught up', 'لا توجد إشعارات جديدة')) };
+  };
 
   /* ======================================================================
      Register
@@ -641,7 +648,7 @@
       request: (id) => requestScreen(id),
       job: (id) => jobScreen(id),
       customer: (id) => customerScreen(id),
-      notifications: () => ({ ...M.notificationsScreen(R), tab: 'home' }),
+      notifications: () => notifScreen(),
     },
     notifications: () => [
       { icon: 'inbox', tone: 'mint', title: L('New request: install 2 split AC units', 'طلب جديد: تركيب مكيفين سبليت'), sub: L('Khaled Mansour · Al-Masyoun Residence Tower', 'خالد منصور · برج الماصيون السكني'), when: L('Yesterday', 'أمس'), go: 'request-PR-24527' },

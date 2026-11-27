@@ -315,12 +315,12 @@
   const reqBase = (id, extra) => { const r = D.request ? D.request(id) : null; return { ...(r || {}), id, ...extra }; };
   const REQS = [
     reqBase('MR-24502', { cat: 'cleaning', title: T('Stairwell deep clean after renovation', 'تنظيف عميق للدرج بعد الترميم'), status: 'open', created: '2026-11-23', by: 'p_hiba', provider: null, scope: 'common', loc: T('Stairwell, floors 2–4', 'الدرج، الطوابق 2–4') }),
-    reqBase('MR-24496', { cat: 'plumbing', title: T('Booster pump pressure switch replacement', 'استبدال مفتاح ضغط مضخة التعزيز'), desc: T('Duty pump short-cycles at night. Fixed quote requested before the general assembly.', 'المضخة العاملة تعمل وتتوقف بشكل متكرر ليلاً. طُلب عرض ثابت قبل الهيئة العامة.'), status: 'quoted', created: '2026-11-18', by: 'p_mona', provider: 'sp_jaber', quote: 980, quoteId: 'QT-3376', scope: 'common', loc: T('Roof plant room', 'غرفة المعدات على السطح') }),
+    reqBase('MR-24496', { cat: 'plumbing', title: T('Booster pump pressure switch replacement', 'استبدال مفتاح ضغط مضخة التعزيز'), desc: T('Duty pump short-cycles at night. Fixed quote requested before the general assembly.', 'المضخة العاملة تعمل وتتوقف بشكل متكرر ليلاً. طُلب عرض ثابت قبل الهيئة العامة.'), status: 'quoted', created: '2026-11-18', by: 'p_mona', provider: 'sp_jaber', quote: 922, quoteId: 'QT-3376', scope: 'common', loc: T('Roof plant room', 'غرفة المعدات على السطح') }),
     reqBase('MR-24477', { cat: 'elevators', status: 'inProgress', provider: 'sp_lift', scope: 'common', loc: T('Elevator B, core', 'المصعد ب، النواة'), title: T('Elevator B stops between floors 9 and 10', 'المصعد ب يتوقف بين الطابقين 9 و10'), created: '2026-11-20', by: 'p_fadi' }),
     reqBase('JB-3103', { cat: 'electrical', title: T('Lobby lighting retrofit to LED', 'تحويل إنارة الردهة إلى LED'), desc: T('Replace 22 downlights and add a motion sensor.', 'استبدال 22 سبوت وإضافة حساس حركة.'), status: 'scheduled', visit: '2026-11-25', created: '2026-11-12', by: 'p_samer', provider: 'sp_jaber', scope: 'common', loc: T('Lobby', 'الردهة') }),
     reqBase('MR-24390', { cat: 'tanks', status: 'scheduled', provider: 'sp_pure', scope: 'common', visit: '2026-12-03', loc: T('Roof', 'السطح'), title: T('Quarterly rooftop tank cleaning', 'التنظيف الربعي لخزانات السطح'), created: '2026-11-10', by: 'p_mona' }),
-    reqBase('MR-24170', { cat: 'general', title: T('Parking ramp drain cleared', 'تسليك تصريف منحدر الموقف'), status: 'completed', closed: '2026-11-04', created: '2026-11-02', by: 'p_adel', provider: 'sp_handy', scope: 'common', loc: T('Parking level −1', 'الطابق −1'), rating: 4 }),
-    reqBase('MR-24102', { cat: 'electrical', title: T('Winter generator test', 'اختبار المولد الشتوي'), status: 'completed', closed: '2026-11-14', created: '2026-11-09', by: 'p_mona', provider: 'sp_volt', scope: 'common', loc: T('Parking level −1', 'الطابق −1'), rating: 5 }),
+    reqBase('MR-24170', { cat: 'general', title: T('Parking ramp drain cleared', 'تسليك تصريف منحدر الموقف'), status: 'completed', closed: '2026-11-04', created: '2026-11-02', by: 'p_adel', provider: 'sp_handy', scope: 'common', loc: T('Parking level −1', 'الطابق السفلي الأول'), rating: 4 }),
+    reqBase('MR-24102', { cat: 'electrical', title: T('Winter generator test', 'اختبار المولد الشتوي'), status: 'completed', closed: '2026-11-14', created: '2026-11-09', by: 'p_mona', provider: 'sp_volt', scope: 'common', loc: T('Parking level −1', 'الطابق السفلي الأول'), rating: 5 }),
   ];
   const req = (id) => REQS.find((r) => r.id === id);
   const prov = (id) => (id && D.provider ? D.provider(id) : null);
@@ -490,7 +490,7 @@
     let foot = M.btn(L('Done', 'تم'), { kind: 'primary', act: 'mxClose' });
     let extra = '';
     if (r.status === 'quoted') {
-      extra = `<div class="mc-big" style="padding:14px 16px;gap:6px"><small>${L('Fixed quote', 'عرض سعر ثابت')} · ${idm(r.quoteId || '')}</small><div class="bg-top"><span class="bg-v">${B.money(r.quote)}</span><span class="badge violet">${L('Awaiting your approval', 'بانتظار موافقتك')}</span></div><small>${L('Includes parts and labour · valid until 3 Dec', 'يشمل القطع والعمل · ساري حتى 3 ك١')}</small></div>`;
+      extra = `<div class="mc-big" style="padding:14px 16px;gap:6px"><small>${L('Fixed quote', 'عرض سعر ثابت')} · ${idm(r.quoteId || '')}</small><div class="bg-top"><span class="bg-v">${B.money(r.quote)}</span><span class="badge violet">${L('Awaiting your approval', 'بانتظار موافقتك')}</span></div><small>${L('Incl. parts, labour and 16% VAT · valid until 3 Dec', 'يشمل القطع والعمل وضريبة 16% · ساري حتى 3 ك١')}</small></div>`;
       foot = M.btn(L('Decline', 'رفض'), { kind: 'danger', act: 'mcQuote', arg: `${r.id}:no` }) + M.btn(L('Approve quote', 'الموافقة على العرض'), { kind: 'primary', act: 'mcQuote', arg: `${r.id}:yes`, icon: 'check' });
     } else if (r.status === 'open') {
       foot = M.btn(L('Close', 'إغلاق'), { act: 'mxClose' }) + M.btn(L('Assign provider', 'إسناد مزوّد'), { kind: 'primary', act: 'mcAssign', arg: r.id, icon: 'userPlus' });
@@ -656,7 +656,7 @@
     const minutes = m.minutes ? M.section(L('Minutes (summary)', 'المحضر (ملخص)'), `<div class="mx-card"><div class="mc-text">${tx(m.minutes)}</div></div>`) : '';
     const docs = M.group([M.cell({ icon: 'doc', title: past ? L('Signed minutes (PDF)', 'المحضر الموقّع (PDF)') : L('Meeting pack (PDF)', 'ملف الاجتماع (PDF)'), sub: L('Sample document', 'مستند نموذجي'), act: 'mcDoc', arg: past ? 'd7' : 'd5' }), m.status === 'scheduled' ? M.cell({ icon: 'calendar', title: L('Add to calendar', 'أضف إلى التقويم'), act: 'mxSoon', arg: L('Calendar export', 'تصدير التقويم') }) : '', isLive ? M.cell({ icon: 'globe', tone: 'mint', title: L('Rejoin the call', 'العودة إلى المكالمة'), sub: L('Audio only · simulated', 'صوت فقط · محاكاة'), act: 'mxSoon', arg: L('Joining the call', 'الانضمام للمكالمة') }) : ''].filter(Boolean));
     return {
-      title: idm(m.id), back: 'meetings', backLabel: L('Meetings', 'الاجتماعات'), tab: 'meetings',
+      title: L('Meeting', 'الاجتماع'), back: 'meetings', backLabel: L('Meetings', 'الاجتماعات'), tab: 'meetings',
       body: head + (isLive ? voteCard() : '') + att + rsvp + M.section(L('Agenda', 'جدول الأعمال'), agenda) + res + minutes + docs
         + note(isLive ? L('Simulated live vote — nothing is legally recorded.', 'تصويت مباشر محاكى — لا يُسجَّل أي شيء قانونياً.') : L('Sample meeting record', 'سجل اجتماع نموذجي')),
     };
@@ -759,6 +759,13 @@
       + note(L('Prototype · fictional association and sample data', 'نموذج أولي · جمعية وهمية وبيانات نموذجية')),
   });
 
+  /* notifications list (time shown as a trailing label) */
+  const notifScreen = () => {
+    const list = (B.mroles[R].notifications && B.mroles[R].notifications()) || [];
+    return { title: L('Notifications', 'الإشعارات'), large: true, back: 'home', tab: 'home', actions: [{ icon: 'checkCircle', act: 'mxToast', arg: L('All marked as read', 'تم تعليم الكل كمقروء'), label: L('Mark all read', 'تعليم الكل كمقروء') }],
+      body: list.length ? M.group(list.map((n) => M.cell({ icon: n.icon || 'bell', tone: n.tone || 'mint', title: String(tx(n.title)).replace(/\b([A-Z]{2,3}-\d{2}-\d{3,4}|[A-Z]{2,3}-\d{4,5})\b/g, '<span style="white-space:nowrap">$1</span>'), sub: n.sub, go: n.go, badge: `<span style="font-size:12.5px;color:var(--text-3);font-weight:500;white-space:nowrap">${tx(n.when || '')}</span>` }))) + `<div style="font-size:13px;color:var(--text-3);text-align:center">${L('Sample notifications', 'إشعارات نموذجية')}</div>` : M.empty('bell', L('You are all caught up', 'لا توجد إشعارات جديدة')) };
+  };
+
   /* ======================================================================
      Register
      ====================================================================== */
@@ -785,12 +792,12 @@
     screens: {
       home, members, announcements, meetings, decisions: decisionsScreen, expenses, budget, maintenance, documents, menu,
       meeting: (id) => meetingScreen(id),
-      notifications: () => ({ ...M.notificationsScreen(R), tab: 'home' }),
+      notifications: () => notifScreen(),
     },
     notifications: () => [
       { icon: 'vote', tone: 'violet', title: L('Vote open: Elevator B repair', 'التصويت مفتوح: إصلاح المصعد ب'), sub: L('Urgent committee call · started 09:30', 'اجتماع طارئ للجنة · بدأ 09:30'), when: '09:31', go: 'meeting-MT-2613' },
       { icon: 'receipt', tone: 'warn', title: L('New expense to approve', 'مصروف جديد بانتظار الموافقة'), sub: L('Diesel 200 L · ₪640 · from Hiba Nasser', 'سولار 200 لتر · 640 ₪ · من هبة ناصر'), when: '08:50', go: 'expenses' },
-      { icon: 'doc', tone: 'info', title: L('Quote received from Jaber Technical', 'تم استلام عرض من جابر الفنية'), sub: L('Booster pump pressure switch · ₪980', 'مفتاح ضغط مضخة التعزيز · 980 ₪'), when: L('Yesterday', 'أمس'), go: 'maintenance' },
+      { icon: 'doc', tone: 'info', title: L('Quote received from Jaber Technical', 'تم استلام عرض من جابر الفنية'), sub: L('Booster pump pressure switch · ₪922 incl. VAT', 'مفتاح ضغط مضخة التعزيز · 922 ₪ شاملة الضريبة'), when: L('Yesterday', 'أمس'), go: 'maintenance' },
       { icon: 'calendarCheck', tone: 'mint', title: L('29 units confirmed for the general assembly', '29 وحدة أكدت حضور الهيئة العامة'), sub: L('52.3% of shares — quorum reached', '52.3% من الحصص — اكتمل النصاب'), when: L('Yesterday', 'أمس'), go: 'meeting-MT-2612' },
       { icon: 'megaphone', tone: 'mint', title: L('Water-cut notice read by 47 units', 'إشعار انقطاع المياه قرأته 47 وحدة'), sub: L('Pinned announcement', 'إعلان مثبّت'), when: L('2 days ago', 'قبل يومين'), go: 'announcements' },
     ],
