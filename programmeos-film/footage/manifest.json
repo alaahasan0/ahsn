@@ -1,0 +1,713 @@
+{
+  "source": "ProgrammeOS Expo web build (programmeos/), served locally, captured in headless Chromium",
+  "viewport": "390×844 CSS px at 3× density (1170×2532 px); sequences at 24 fps",
+  "demoDate": "Monday 29 March 2027 (the app’s fixed demo date)",
+  "note": "Unmodified captures of the app’s own UI and sample data. No retouching, redrawing or generated UI.",
+  "footage": [
+    {
+      "name": "dk_elp_finance",
+      "type": "still",
+      "route": "/programme/p-elp/finance",
+      "role": "programme_manager",
+      "theme": "dark",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Vertical V7"
+      ],
+      "file": "footage/stills/dk_elp_finance.png"
+    },
+    {
+      "name": "dk_elp_overview",
+      "type": "still",
+      "route": "/programme/p-elp",
+      "role": "programme_manager",
+      "theme": "dark",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S09",
+        "Vertical V7"
+      ],
+      "file": "footage/stills/dk_elp_overview.png"
+    },
+    {
+      "name": "dk_home",
+      "type": "still",
+      "route": "/home",
+      "role": "programme_manager",
+      "theme": "dark",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S09",
+        "Vertical V7"
+      ],
+      "file": "footage/stills/dk_home.png"
+    },
+    {
+      "name": "dk_itinerary_vasquez",
+      "type": "still",
+      "route": "/travel/ti-elp-17",
+      "role": "programme_manager",
+      "theme": "dark",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [],
+      "file": "footage/stills/dk_itinerary_vasquez.png"
+    },
+    {
+      "name": "dk_readiness",
+      "type": "still",
+      "route": "/programme/p-elp/readiness",
+      "role": "programme_manager",
+      "theme": "dark",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S09",
+        "Vertical V7"
+      ],
+      "file": "footage/stills/dk_readiness.png"
+    },
+    {
+      "name": "dk_report_executive",
+      "type": "still",
+      "route": "/report/executive",
+      "role": "programme_manager",
+      "theme": "dark",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S09",
+        "Vertical V7"
+      ],
+      "file": "footage/stills/dk_report_executive.png"
+    },
+    {
+      "name": "s03_elp_overview",
+      "type": "still",
+      "route": "/programme/p-elp",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S03"
+      ],
+      "file": "footage/stills/s03_elp_overview.png"
+    },
+    {
+      "name": "s03_elp_timeline",
+      "type": "still",
+      "route": "/programme/p-elp/timeline",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S03",
+        "Vertical V7"
+      ],
+      "file": "footage/stills/s03_elp_timeline.png"
+    },
+    {
+      "name": "s03_home",
+      "type": "still",
+      "route": "/home",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S03",
+        "Film S09",
+        "Vertical V7"
+      ],
+      "file": "footage/stills/s03_home.png"
+    },
+    {
+      "name": "s03_programmes",
+      "type": "still",
+      "route": "/programmes",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [],
+      "file": "footage/stills/s03_programmes.png"
+    },
+    {
+      "name": "s04_elp_faculty",
+      "type": "still",
+      "route": "/programme/p-elp/faculty",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S04"
+      ],
+      "file": "footage/stills/s04_elp_faculty.png"
+    },
+    {
+      "name": "s04_elp_participants",
+      "type": "still",
+      "route": "/programme/p-elp/participants",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S09",
+        "Vertical V7"
+      ],
+      "file": "footage/stills/s04_elp_participants.png"
+    },
+    {
+      "name": "s04_faculty_directory",
+      "type": "still",
+      "route": "/faculty",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S04",
+        "Film S09",
+        "Vertical V7"
+      ],
+      "file": "footage/stills/s04_faculty_directory.png"
+    },
+    {
+      "name": "s04_faculty_vasquez",
+      "type": "still",
+      "route": "/faculty/f-vasquez",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S04"
+      ],
+      "file": "footage/stills/s04_faculty_vasquez.png"
+    },
+    {
+      "name": "s04_learner_noor",
+      "type": "still",
+      "route": "/learner/l-13",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S04"
+      ],
+      "file": "footage/stills/s04_learner_noor.png"
+    },
+    {
+      "name": "s05_calendar_agenda",
+      "type": "still",
+      "route": "/calendar",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S09",
+        "Vertical V7"
+      ],
+      "file": "footage/stills/s05_calendar_agenda.png"
+    },
+    {
+      "name": "s05_calendar_month",
+      "type": "still",
+      "route": "/calendar",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S09",
+        "Vertical V7"
+      ],
+      "file": "footage/stills/s05_calendar_month.png"
+    },
+    {
+      "name": "s05_calendar_week_elp",
+      "type": "still",
+      "route": "/calendar",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S05"
+      ],
+      "file": "footage/stills/s05_calendar_week_elp.png"
+    },
+    {
+      "name": "s05_elp_academics",
+      "type": "still",
+      "route": "/programme/p-elp/academics",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S05"
+      ],
+      "file": "footage/stills/s05_elp_academics.png"
+    },
+    {
+      "name": "s05_elp_sessions",
+      "type": "still",
+      "route": "/programme/p-elp/sessions",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Vertical V7"
+      ],
+      "file": "footage/stills/s05_elp_sessions.png"
+    },
+    {
+      "name": "s05_module_strategy",
+      "type": "still",
+      "route": "/module/m-elp-2",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S05"
+      ],
+      "file": "footage/stills/s05_module_strategy.png"
+    },
+    {
+      "name": "s05_session_keynote",
+      "type": "still",
+      "route": "/session/ss-elp-1",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S05"
+      ],
+      "file": "footage/stills/s05_session_keynote.png"
+    },
+    {
+      "name": "s06_checklist_elp",
+      "type": "still",
+      "route": "/logistics/checklist/p-elp",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S06"
+      ],
+      "file": "footage/stills/s06_checklist_elp.png"
+    },
+    {
+      "name": "s06_elp_logistics",
+      "type": "still",
+      "route": "/programme/p-elp/logistics",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [],
+      "file": "footage/stills/s06_elp_logistics.png"
+    },
+    {
+      "name": "s06_hotel_creekside",
+      "type": "still",
+      "route": "/hotel/h-creekside",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S09",
+        "Vertical V7"
+      ],
+      "file": "footage/stills/s06_hotel_creekside.png"
+    },
+    {
+      "name": "s06_itinerary_vasquez",
+      "type": "still",
+      "route": "/travel/ti-elp-17",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S06",
+        "Vertical V3–V6"
+      ],
+      "file": "footage/stills/s06_itinerary_vasquez.png"
+    },
+    {
+      "name": "s06_rooming_elp",
+      "type": "still",
+      "route": "/rooming/p-elp",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S06",
+        "Film S09",
+        "Vertical V7"
+      ],
+      "file": "footage/stills/s06_rooming_elp.png"
+    },
+    {
+      "name": "s06_travel_elp",
+      "type": "still",
+      "route": "/travel?programme=p-elp",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S09",
+        "Vertical V7"
+      ],
+      "file": "footage/stills/s06_travel_elp.png"
+    },
+    {
+      "name": "s06_venue_booking",
+      "type": "still",
+      "route": "/venue-booking/vb-elp-1",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S06",
+        "Vertical V7"
+      ],
+      "file": "footage/stills/s06_venue_booking.png"
+    },
+    {
+      "name": "s06_venue_creekside",
+      "type": "still",
+      "route": "/venue/v-creekside",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [],
+      "file": "footage/stills/s06_venue_creekside.png"
+    },
+    {
+      "name": "s07_elp_finance",
+      "type": "still",
+      "route": "/programme/p-elp/finance",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S07",
+        "Vertical V3–V6"
+      ],
+      "file": "footage/stills/s07_elp_finance.png"
+    },
+    {
+      "name": "s07_finance",
+      "type": "still",
+      "route": "/finance",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S09",
+        "Vertical V7"
+      ],
+      "file": "footage/stills/s07_finance.png"
+    },
+    {
+      "name": "s07_report_budget",
+      "type": "still",
+      "route": "/report/budget",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S07",
+        "Film S09",
+        "Vertical V7"
+      ],
+      "file": "footage/stills/s07_report_budget.png"
+    },
+    {
+      "name": "s07_transactions",
+      "type": "still",
+      "route": "/finance/transactions",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S07",
+        "Film S09",
+        "Vertical V7"
+      ],
+      "file": "footage/stills/s07_transactions.png"
+    },
+    {
+      "name": "s08_alerts",
+      "type": "still",
+      "route": "/alerts",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S08",
+        "Film S09",
+        "Vertical V7"
+      ],
+      "file": "footage/stills/s08_alerts.png"
+    },
+    {
+      "name": "s08_approval_deposit",
+      "type": "still",
+      "route": "/approval/a-01",
+      "role": "finance_approver",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S08"
+      ],
+      "file": "footage/stills/s08_approval_deposit.png"
+    },
+    {
+      "name": "s08_assistant",
+      "type": "still",
+      "route": "/assistant?q=What%20is%20still%20pending%20before%20ELP%3F",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S08"
+      ],
+      "file": "footage/stills/s08_assistant.png"
+    },
+    {
+      "name": "s08_readiness_after_toast",
+      "type": "still",
+      "route": "/programme/p-elp/readiness",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [],
+      "file": "footage/stills/s08_readiness_after_toast.png"
+    },
+    {
+      "name": "s08_readiness_after_top",
+      "type": "still",
+      "route": "/programme/p-elp/readiness",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [],
+      "file": "footage/stills/s08_readiness_after_top.png"
+    },
+    {
+      "name": "s08_readiness_before",
+      "type": "still",
+      "route": "/programme/p-elp/readiness",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S03",
+        "Film S08"
+      ],
+      "file": "footage/stills/s08_readiness_before.png"
+    },
+    {
+      "name": "s08_tap_after",
+      "type": "still",
+      "route": "/programme/p-elp/readiness (after tapping \"Mark ticketed\")",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture_readiness_tap.cjs",
+      "usedIn": [
+        "Film S08",
+        "Vertical V3–V6"
+      ],
+      "file": "footage/stills/s08_tap_after.png"
+    },
+    {
+      "name": "s08_tap_before",
+      "type": "still",
+      "route": "/programme/p-elp/readiness",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture_readiness_tap.cjs",
+      "usedIn": [
+        "Film S08",
+        "Vertical V3–V6"
+      ],
+      "file": "footage/stills/s08_tap_before.png"
+    },
+    {
+      "name": "s09_home_exec",
+      "type": "still",
+      "route": "/home",
+      "role": "senior_management",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S09",
+        "Vertical V7"
+      ],
+      "file": "footage/stills/s09_home_exec.png"
+    },
+    {
+      "name": "s09_programmes",
+      "type": "still",
+      "route": "/programmes",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Vertical V7"
+      ],
+      "file": "footage/stills/s09_programmes.png"
+    },
+    {
+      "name": "s09_report_executive",
+      "type": "still",
+      "route": "/report/executive",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S09",
+        "Vertical V7"
+      ],
+      "file": "footage/stills/s09_report_executive.png"
+    },
+    {
+      "name": "s09_report_readiness",
+      "type": "still",
+      "route": "/report/readiness",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S09",
+        "Vertical V7"
+      ],
+      "file": "footage/stills/s09_report_readiness.png"
+    },
+    {
+      "name": "s09_reports",
+      "type": "still",
+      "route": "/reports",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S09",
+        "Vertical V7"
+      ],
+      "file": "footage/stills/s09_reports.png"
+    },
+    {
+      "name": "s03_elp_overview_scroll",
+      "type": "sequence",
+      "route": "/programme/p-elp",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S03",
+        "Vertical V3–V6"
+      ],
+      "frames": 108,
+      "clip": "footage/clips/s03_elp_overview_scroll.mp4"
+    },
+    {
+      "name": "s03_home_scroll_elp",
+      "type": "sequence",
+      "route": "/home",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture_home_tap.cjs",
+      "usedIn": [
+        "Film S03"
+      ],
+      "frames": 77,
+      "clip": "footage/clips/s03_home_scroll_elp.mp4"
+    },
+    {
+      "name": "s04_elp_participants_scroll",
+      "type": "sequence",
+      "route": "/programme/p-elp/participants",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S04"
+      ],
+      "frames": 96,
+      "clip": "footage/clips/s04_elp_participants_scroll.mp4"
+    },
+    {
+      "name": "s05_elp_sessions_scroll",
+      "type": "sequence",
+      "route": "/programme/p-elp/sessions",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S05"
+      ],
+      "frames": 108,
+      "clip": "footage/clips/s05_elp_sessions_scroll.mp4"
+    },
+    {
+      "name": "s06_rooming_elp_scroll",
+      "type": "sequence",
+      "route": "/rooming/p-elp",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S06",
+        "Vertical V3–V6"
+      ],
+      "frames": 96,
+      "clip": "footage/clips/s06_rooming_elp_scroll.mp4"
+    },
+    {
+      "name": "s07_elp_finance_scroll",
+      "type": "sequence",
+      "route": "/programme/p-elp/finance",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S07"
+      ],
+      "frames": 120,
+      "clip": "footage/clips/s07_elp_finance_scroll.mp4"
+    },
+    {
+      "name": "s08_after_to_top",
+      "type": "sequence",
+      "route": "/programme/p-elp/readiness (after tapping \"Mark ticketed\")",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture_readiness_tap.cjs",
+      "usedIn": [
+        "Film S08",
+        "Vertical V3–V6"
+      ],
+      "frames": 24,
+      "clip": "footage/clips/s08_after_to_top.mp4"
+    },
+    {
+      "name": "s08_readiness_to_alert",
+      "type": "sequence",
+      "route": "/programme/p-elp/readiness",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture_readiness_tap.cjs",
+      "usedIn": [
+        "Film S08"
+      ],
+      "frames": 106,
+      "clip": "footage/clips/s08_readiness_to_alert.mp4"
+    },
+    {
+      "name": "s09_programmes_scroll",
+      "type": "sequence",
+      "route": "/programmes",
+      "role": "programme_manager",
+      "theme": "light",
+      "capturedBy": "capture/capture.cjs",
+      "usedIn": [
+        "Film S09"
+      ],
+      "frames": 120,
+      "clip": "footage/clips/s09_programmes_scroll.mp4"
+    }
+  ]
+}

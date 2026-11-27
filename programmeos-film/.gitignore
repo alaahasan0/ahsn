@@ -1,0 +1,8 @@
+# JPEG scroll takes: restored from footage/clips/ by footage/clips/extract.sh
+footage/sequences/
+# WAV stems and mixes: rebuilt by audio/mix.py
+audio/mix/*.wav
+audio/vo/*.wav
+# Delivery files over GitHub's 100 MB limit or rebuilt from the WAV mix
+output/*4K*
+output/*.wav

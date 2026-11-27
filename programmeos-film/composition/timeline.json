@@ -1,0 +1,415 @@
+{
+  "fps": 24,
+  "duration": 150,
+  "scenes": [
+    {
+      "id": "S01",
+      "title": "The Complexity",
+      "start": 0,
+      "end": 12
+    },
+    {
+      "id": "S02",
+      "title": "The Reveal",
+      "start": 12,
+      "end": 24
+    },
+    {
+      "id": "S03",
+      "title": "One Programme. One Workspace.",
+      "start": 24,
+      "end": 40
+    },
+    {
+      "id": "S04",
+      "title": "People. Connected.",
+      "start": 40,
+      "end": 55
+    },
+    {
+      "id": "S05",
+      "title": "The Academic Experience",
+      "start": 55,
+      "end": 69
+    },
+    {
+      "id": "S06",
+      "title": "Every Detail. Orchestrated.",
+      "start": 69,
+      "end": 85
+    },
+    {
+      "id": "S07",
+      "title": "Financial Control",
+      "start": 85,
+      "end": 99
+    },
+    {
+      "id": "S08",
+      "title": "Intelligence at Work",
+      "start": 99,
+      "end": 116
+    },
+    {
+      "id": "S09",
+      "title": "From Programmes to Portfolio",
+      "start": 116,
+      "end": 132
+    },
+    {
+      "id": "S10",
+      "title": "The Product Statement",
+      "start": 132,
+      "end": 150
+    }
+  ],
+  "vo": [
+    {
+      "file": "vo/vo01.mp3",
+      "start": 2.4,
+      "cues": [
+        [
+          0.16,
+          4.12,
+          "Behind every exceptional executive education programme..."
+        ],
+        [
+          4.16,
+          7.3,
+          "there is an extraordinary amount of coordination."
+        ]
+      ]
+    },
+    {
+      "file": "vo/vo02.mp3",
+      "start": 13.8,
+      "cues": [
+        [
+          0.24,
+          3.36,
+          "What if every moving part came together..."
+        ],
+        [
+          3.48,
+          6.24,
+          "in one intelligent operating environment?"
+        ]
+      ]
+    },
+    {
+      "file": "vo/vo03.mp3",
+      "start": 25.8,
+      "cues": [
+        [
+          0.24,
+          1.6,
+          "Meet ProgrammeOS."
+        ],
+        [
+          1.68,
+          5.64,
+          "A unified platform designed to bring every programme,"
+        ],
+        [
+          5.68,
+          9.4,
+          "every team, and every critical detail into focus."
+        ]
+      ]
+    },
+    {
+      "file": "vo/vo04.mp3",
+      "start": 41.8,
+      "cues": [
+        [
+          0.45,
+          3.72,
+          "Connect faculty, learners and internal teams..."
+        ],
+        [
+          3.76,
+          6.2,
+          "through one coordinated experience."
+        ]
+      ]
+    },
+    {
+      "file": "vo/vo05.mp3",
+      "start": 56.8,
+      "cues": [
+        [
+          0.16,
+          3.24,
+          "Coordinate academic content, schedules,"
+        ],
+        [
+          3.36,
+          5.76,
+          "sessions and learning activities..."
+        ],
+        [
+          5.84,
+          7.96,
+          "with clarity and consistency."
+        ]
+      ]
+    },
+    {
+      "file": "vo/vo06.mp3",
+      "start": 71.2,
+      "cues": [
+        [
+          0.3,
+          3.92,
+          "From travel and accommodation to venues and logistics..."
+        ],
+        [
+          4.0,
+          6.58,
+          "every operational detail has its place."
+        ]
+      ]
+    },
+    {
+      "file": "vo/vo07.mp3",
+      "start": 86.8,
+      "cues": [
+        [
+          0.24,
+          2.48,
+          "Maintain financial visibility across"
+        ],
+        [
+          2.56,
+          5.28,
+          "budgets, commitments, expenses..."
+        ],
+        [
+          5.44,
+          7.08,
+          "and programme performance."
+        ]
+      ]
+    },
+    {
+      "file": "vo/vo08.mp3",
+      "start": 101.2,
+      "cues": [
+        [
+          0.38,
+          1.56,
+          "See what is ready."
+        ],
+        [
+          1.84,
+          4.08,
+          "Identify what needs attention."
+        ],
+        [
+          4.32,
+          7.96,
+          "And bring critical decisions closer to the people who make them."
+        ]
+      ]
+    },
+    {
+      "file": "vo/vo09.mp3",
+      "start": 117.8,
+      "cues": [
+        [
+          0.08,
+          3.2,
+          "And as your portfolio grows, ProgrammeOS"
+        ],
+        [
+          3.28,
+          5.36,
+          "gives you the visibility to scale..."
+        ],
+        [
+          5.52,
+          7.08,
+          "without losing control."
+        ]
+      ]
+    },
+    {
+      "file": "vo/vo10.mp3",
+      "start": 134.4,
+      "cues": [
+        [
+          0.08,
+          1.44,
+          "ProgrammeOS."
+        ],
+        [
+          2.0,
+          3.64,
+          "Beyond training management."
+        ],
+        [
+          4.32,
+          5.36,
+          "One platform."
+        ],
+        [
+          5.6,
+          6.76,
+          "Every programme."
+        ],
+        [
+          6.96,
+          8.24,
+          "Complete control."
+        ]
+      ]
+    }
+  ],
+  "vo10Words": {
+    "programmeos": 134.48,
+    "beyond": 136.4,
+    "onePlatform": 138.72,
+    "everyProgramme": 140.0,
+    "completeControl": 141.36,
+    "end": 142.64
+  },
+  "sfx": [
+    {
+      "file": "sfx/complexity_activity.mp3",
+      "at": 0.6,
+      "gainDb": -9,
+      "fadeOut": [
+        8.6,
+        10.8
+      ]
+    },
+    {
+      "file": "sfx/whoosh_a.mp3",
+      "at": 9.35,
+      "gainDb": -12
+    },
+    {
+      "file": "sfx/reveal_shimmer_impact.mp3",
+      "at": 11.29,
+      "gainDb": -9
+    },
+    {
+      "file": "sfx/whoosh_b.mp3",
+      "at": 23.1,
+      "gainDb": -18
+    },
+    {
+      "file": "sfx/ui_tap_a.mp3",
+      "at": 31.15,
+      "gainDb": -8
+    },
+    {
+      "file": "sfx/whoosh_c.mp3",
+      "at": 39.6,
+      "gainDb": -18
+    },
+    {
+      "file": "sfx/whoosh_a.mp3",
+      "at": 54.6,
+      "gainDb": -19
+    },
+    {
+      "file": "sfx/ui_tap_b.mp3",
+      "at": 59.95,
+      "gainDb": -12
+    },
+    {
+      "file": "sfx/whoosh_b.mp3",
+      "at": 68.5,
+      "gainDb": -18
+    },
+    {
+      "file": "sfx/whoosh_c.mp3",
+      "at": 84.6,
+      "gainDb": -18
+    },
+    {
+      "file": "sfx/whoosh_a.mp3",
+      "at": 98.6,
+      "gainDb": -18
+    },
+    {
+      "file": "sfx/ui_tap_a.mp3",
+      "at": 107.95,
+      "gainDb": -7
+    },
+    {
+      "file": "sfx/whoosh_b.mp3",
+      "at": 115.5,
+      "gainDb": -18
+    },
+    {
+      "file": "sfx/whoosh_c.mp3",
+      "at": 131.4,
+      "gainDb": -16
+    },
+    {
+      "file": "sfx/logo_resolve.mp3",
+      "at": 134.1,
+      "gainDb": -10
+    },
+    {
+      "file": "sfx/reveal_shimmer_impact.mp3",
+      "at": 140.65,
+      "gainDb": -14
+    }
+  ],
+  "musicGain": [
+    [
+      0,
+      -24
+    ],
+    [
+      9.4,
+      -20
+    ],
+    [
+      11.9,
+      -9
+    ],
+    [
+      12.6,
+      -7.5
+    ],
+    [
+      24,
+      -9.5
+    ],
+    [
+      40,
+      -9
+    ],
+    [
+      69,
+      -8
+    ],
+    [
+      99,
+      -7.5
+    ],
+    [
+      132,
+      -7
+    ],
+    [
+      148.5,
+      -7.5
+    ],
+    [
+      150,
+      -30
+    ]
+  ],
+  "musicFilter": {
+    "darkUntil": 9.4,
+    "openBy": 13.6,
+    "darkHz": 480,
+    "midHz": 1800
+  },
+  "duckDb": -10.5
+}
