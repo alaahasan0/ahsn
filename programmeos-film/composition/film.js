@@ -566,7 +566,7 @@ function buildFilm() {
     const segs = [
       { at: 0, media: S('s05_calendar_week_elp') },
       { at: 60.08, media: S('s05_session_keynote'), tr: 'push' },
-      { at: 64.35, media: Q('s05_elp_sessions_scroll', 64.7), tr: 'fade', d: 0.5 },
+      { at: 64.35, media: Q('s05_elp_sessions_scroll', 64.7), tr: 'push' },
     ];
     return (t) => {
       sceneOut(root, t, 68.3, 0.9);
@@ -579,7 +579,7 @@ function buildFilm() {
       D.tapAt(t, 60.0 - TAP_PEAK, 240, 700);
       L.show(t, [{ at: 0, media: S('s05_elp_academics') }]);
       R.show(t, [{ at: 0, media: S('s05_module_strategy') }]);
-      col.update(t, 55.5, [55.8, 56.4], 63.8);
+      col.update(t, 55.5, [55.8, 56.4], 63.6);
     };
   });
 
@@ -591,10 +591,7 @@ function buildFilm() {
     const pass = new Crop(world, 's06_itinerary_vasquez', [48, 742, 1074, 658], 640);
     const W4 = ['Travel.', 'Accommodation.', 'Venues.', 'Logistics.'].map((w) => h('div', 'txt h1', root, { fontSize: '84px', left: '0px', top: '0px', transformOrigin: '0 0' }, w));
     const colPos = W4.map((e, i) => [170, 540 + (i - 1.5) * 100 - 46]);
-    const fs = 56 / 84, gap = 24;
-    const rw = W4.map((e) => e.offsetWidth * fs);
-    let xx = (SW - rw.reduce((a, b) => a + b) - 3 * gap) / 2;
-    const rowPos = rw.map((w) => { const p = [xx, 120]; xx += w + gap; return p; });
+    const rowLine = centred(root, 'Travel. Accommodation. Venues. Logistics.', 'txt h1', { fontSize: '56px' }, 151);
     const eb = h('div', 'txt eyebrow', root, { left: '170px', top: colPos[0][1] - 56 + 'px' }, 'Every detail. Orchestrated.');
     const lines = connector(root, [[530, 600, 650, 600], [900, 600, 1020, 600], [1270, 600, 1390, 600]]);
     const caption = centred(root, 'Executive Leadership Programme · 12–16 April 2027 · Creekside Grand Hotel, Dubai', 'txt label', { fontSize: '21px' }, 930);
@@ -608,16 +605,15 @@ function buildFilm() {
     const miniMedia = ['s06_itinerary_vasquez', 's06_rooming_elp', 's06_venue_booking', 's06_checklist_elp'];
     return (t) => {
       sceneOut(root, t, 84.5, 0.8);
-      const fin = E.inOut(clamp((t - 82.4) / 1.0));
+      // The column builds word by word; at the finale it gives way to the full line above the four screens.
       W4.forEach((e, i) => {
-        const nextAt = appear[i + 1] ?? 999;
-        const dim = E.inOut(clamp((t - nextAt) / 0.6)) * (1 - fin);
-        const x = lerp(colPos[i][0], rowPos[i][0], fin), y = lerp(colPos[i][1], rowPos[i][1], fin);
-        rv(e, t, appear[i], null, { base: `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px) scale(${lerp(1, fs, fin).toFixed(4)})`, op: 1 - 0.6 * dim });
+        const dim = E.inOut(clamp((t - (appear[i + 1] ?? 999)) / 0.6));
+        rv(e, t, appear[i], 82.3, { base: `translate(${colPos[i][0]}px, ${colPos[i][1]}px)`, op: 1 - 0.6 * dim, outDur: 0.45 });
       });
-      rv(eb, t, 69.2, 82.4, { dy: 14, blur: 6 });
+      rvWords(rowLine.spans, t, 82.85, null, { stagger: 0.06, dur: 0.9 });
+      rv(eb, t, 69.2, 82.3, { dy: 14, blur: 6, outDur: 0.45 });
       const e = E.outQuint(clamp((t - 69.0) / 1.3));
-      const hout = E.inOut(clamp((t - 82.4) / 0.7));
+      const hout = E.inOut(clamp((t - 82.3) / 0.5));
       D.place({ x: lerp(HX + 140, HX, e), y: -20 * hout, s: 1 - 0.18 * hout, ry: lerp(-16, -7, e) + 3 * Math.sin(t * 0.35), op: e * (1 - hout), zi: 3 });
       D.show(t, segs);
       const pin = E.outQuint(clamp((t - 70.4) / 0.9)), pout = E.inOut(clamp((t - 72.4) / 0.6));
@@ -660,7 +656,7 @@ function buildFilm() {
         const q = E.inOut(clamp((t - 92.5 - (3 - r) * 0.06) / 0.55));
         crop.place({ x, y: y + (1 - p) * 36 + q * 18, z: 60, s: lerp(0.94, 1, p) * (1 - 0.05 * q), op: p * (1 - q), blur: (1 - p) * 8, zi: 6 });
       });
-      col.update(t, 85.5, [85.8, 86.4], 95.0);
+      col.update(t, 85.5, [85.8, 86.4], 94.7);
     };
   });
 
@@ -680,7 +676,7 @@ function buildFilm() {
       { at: 107.52, media: S('s08_tap_before') },
       { at: 108.34, media: S('s08_tap_after') },
       { at: 110.0, media: Q('s08_after_to_top', 110.0) },
-      { at: 111.45, media: S('s08_approval_deposit'), tr: 'fade', d: 0.6 },
+      { at: 111.45, media: S('s08_approval_deposit'), tr: 'push' },
     ];
     return (t) => {
       sceneOut(root, t, 115.3, 0.9);
@@ -690,8 +686,8 @@ function buildFilm() {
         x: lerp(HX + 140, HX, e), ry: lerp(-16, -7, e),
         s: lerp(lerp(lerp(1, 1.12, p1), 1.06, p2), 1.12, p3), y: lerp(lerp(lerp(0, 60, p1), 30, p2), 84, p3),
       };
-      if (t < 111.2) { D.place({ ...from, op: e, zi: 3 }); L.hide(); R.hide(); labs.forEach((l) => l && rv(l, t, 999, null)); }
-      else { trio(t, 111.2, D, L, R, from); labs.forEach((l, i) => l && rv(l, t, 111.9 + i * 0.12, null, { dy: 10, blur: 4 })); }
+      if (t < 111.3) { D.place({ ...from, op: e, zi: 3 }); L.hide(); R.hide(); labs.forEach((l) => l && rv(l, t, 999, null)); }
+      else { trio(t, 111.3, D, L, R, from); labs.forEach((l, i) => l && rv(l, t, 112.0 + i * 0.12, null, { dy: 10, blur: 4 })); }
       D.show(t, segs);
       D.tapAt(t, 108.22 - TAP_PEAK, btn.x + btn.width / 2, btn.y + btn.height / 2);
       L.show(t, [{ at: 0, media: S('s08_alerts') }]);
@@ -700,9 +696,9 @@ function buildFilm() {
       ring.place({ x: lerp(HX, 300, rin) + 80 * rout, y: lerp(-150, -70, rin) - 60 * rout, z: 120, s: lerp(0.7, 1, rin) * (1 - 0.2 * rout), op: rin * (1 - rout), zi: 6 });
       const tin = E.outQuint(clamp((t - 108.55) / 0.8)), tout = E.inOut(clamp((t - 110.0) / 0.45));
       toast.place({ x: lerp(HX, 330, tin), y: lerp(-380, -330, tin) - 20 * tout, z: 120, s: lerp(0.66, 1, tin), op: tin * (1 - tout), zi: 6 });
-      col.update(t, 101.0, [101.4, 103.0], 111.0);
-      rv(cap1, t, 109.0, 111.0, { dy: 12, blur: 5 });
-      rv(cap2, t, 109.25, 111.0, { dy: 12, blur: 5 });
+      col.update(t, 101.0, [101.4, 103.0], 110.7);
+      rv(cap1, t, 109.0, 110.7, { dy: 12, blur: 5 });
+      rv(cap2, t, 109.25, 110.7, { dy: 12, blur: 5 });
     };
   });
 

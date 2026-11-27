@@ -9,7 +9,7 @@ for clip in "$HERE"/*.mp4; do
   out="$HERE/../sequences/$name"
   rm -rf "$out" && mkdir -p "$out"
   ffmpeg -hide_banner -loglevel error -i "$clip" \
-    -vf "scale=in_color_matrix=bt709:in_range=tv:out_color_matrix=bt601:out_range=pc,format=yuvj420p" \
+    -vf "scale=in_color_matrix=bt709:in_range=tv,format=rgb24" \
     -q:v 2 -start_number 0 "$out/%04d.jpg"
   echo "$name: $(ls "$out" | wc -l) frames"
 done

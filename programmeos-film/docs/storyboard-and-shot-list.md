@@ -96,7 +96,7 @@ The source of truth for timing is `composition/timeline.json` (scenes, narration
 | 5.1 | 00:55.0–01:00.0 | Calendar, week of 12–18 April 2027: ELP sessions, a schedule conflict flag, Monday's agenda. | `s05_calendar_week_elp` |
 | 5.2 | 01:00.0 | Tap indicator on "Opening Keynote: Leading in an Age of Disruption". | Edit overlay |
 | 5.3 | 01:00.1–01:04.2 | Push to the session: date and time zone, venue Al Majlis Ballroom, Prof. Elena Vasquez, capacity 21/24. Slow push-in. | `s05_session_keynote` |
-| 5.4 | 01:04.2–01:08.3 | Three-screen composition: Academics hierarchy (materials 8/8 approved), Sessions (real scroll), Module 2 "Leading Strategy". Labels. | `s05_elp_academics`, `s05_elp_sessions_scroll`, `s05_module_strategy` |
+| 5.4 | 01:04.2–01:08.3 | Three-screen composition: Academics hierarchy (materials 8/8 approved), Sessions (push, then real scroll), Module 2 "Leading Strategy". Labels. | `s05_elp_academics`, `s05_elp_sessions_scroll`, `s05_module_strategy` |
 | 5.5 | 01:08.3–01:09.2 | Fade. | — |
 
 ## Scene 06 · Every Detail. Orchestrated. · 01:09–01:25
@@ -114,7 +114,7 @@ The source of truth for timing is `composition/timeline.json` (scenes, narration
 | 6.3 | 01:13.0–01:16.6 | "Accommodation." Push to the ELP rooming list (Creekside Grand Hotel, 26 rooms, 26/26 confirmed), real scroll. | `s06_rooming_elp_scroll` |
 | 6.4 | 01:16.6–01:20.2 | "Venues." Push to the venue booking: Al Majlis Ballroom, set-up 7/10, contract awaiting countersignature. | `s06_venue_booking` |
 | 6.5 | 01:20.2–01:22.4 | "Logistics." Push to the ELP logistics checklist (11 of 24 complete, feeds readiness). | `s06_checklist_elp` |
-| 6.6 | 01:22.4–01:24.5 | The four words re-flow into one line. The four screens sit side by side, joined by connecting lines. Caption: "Executive Leadership Programme · 12–16 April 2027 · Creekside Grand Hotel, Dubai". | Same four captures, connecting lines are an edit overlay |
+| 6.6 | 01:22.3–01:24.5 | The column gives way to the full line "Travel. Accommodation. Venues. Logistics." The four screens sit side by side, joined by connecting lines. Caption: "Executive Leadership Programme · 12–16 April 2027 · Creekside Grand Hotel, Dubai". | Same four captures, connecting lines are an edit overlay |
 | 6.7 | 01:24.5–01:25.3 | Fade. | — |
 
 ## Scene 07 · Financial Control · 01:25–01:39
@@ -149,7 +149,7 @@ The source of truth for timing is `composition/timeline.json` (scenes, narration
 | 8.4 | 01:47.5–01:48.3 | Tap indicator on "Mark ticketed" for "Flights for Saeed Al Harthy". | `s08_tap_before` + edit overlay |
 | 8.5 | 01:48.3–01:50.0 | The real result 0.7 s after the tap: the alert is cleared, Travel reads 70%, and the app's toast says "Travel now 70% · Overall readiness 83% · updated from the source record". The toast is lifted forward as a close-up (01:48.6–01:50.5). Caption appears on the left. | `s08_tap_after`, crop of `s08_tap_after` |
 | 8.6 | 01:50.0–01:51.0 | Real scroll back to the top: overall readiness 83%. | `s08_after_to_top` |
-| 8.7 | 01:51.2–01:55.3 | Three-screen composition: Smart alerts · Approvals (hotel deposit, Finance Approver view) · Programme Assistant, labelled "Concept prototype · simulated responses". | `s08_alerts`, `s08_approval_deposit`, `s08_assistant` |
+| 8.7 | 01:51.3–01:55.3 | Three-screen composition: Smart alerts · Approvals (hotel deposit, Finance Approver view) · Programme Assistant, labelled "Concept prototype · simulated responses". The centre screen pushes from Readiness to the approval. | `s08_alerts`, `s08_approval_deposit`, `s08_assistant` |
 | 8.8 | 01:55.3–01:56.2 | Fade. | — |
 
 ## Scene 09 · From Programmes to Portfolio · 01:56–02:12
