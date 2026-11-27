@@ -68,7 +68,7 @@
   .mx-tabs { position: absolute; inset-inline: 0; bottom: 0; z-index: 8; display: flex; padding: 8px 8px 26px; background: rgba(255,255,255,.92); backdrop-filter: saturate(1.6) blur(20px); -webkit-backdrop-filter: saturate(1.6) blur(20px); border-top: 1px solid var(--line); }
   .mx-tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 4px 0; font-size: 11px; font-weight: 600; color: var(--text-3); min-width: 0; min-height: 50px; }
   .mx-tab svg { width: 25px; height: 25px; }
-  .mx-tab span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  .mx-tab > span:last-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
   .mx-tab.on { color: var(--navy); }
   .mx-tab.on .mt-i { color: var(--mint-ink); }
   .mx-tab .mt-i { position: relative; }
