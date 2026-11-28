@@ -78,7 +78,7 @@ export const barbers: Barber[] = [
     role: 'barber',
     serviceIds: ['s1', 's2', 's3', 's4', 's5', 's7'],
     schedule: ensureWorksToday(yousefSchedule),
-    daysOff: [toISODate(addDays(today(), 4))],
+    daysOff: [toISODate(addDays(today(), 8))],
     active: true,
     acceptsOnline: true,
     joinedAt: '2019-06-15',

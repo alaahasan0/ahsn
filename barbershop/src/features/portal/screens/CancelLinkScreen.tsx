@@ -97,8 +97,8 @@ export default function CancelLinkScreen() {
         tone="danger"
         title={t('portal.cancel.confirmTitle')}
         message={t('portal.cancel.confirmBody')}
-        confirmLabel={t('portal.cancel.confirm')}
-        cancelLabel={t('portal.cancel.keep')}
+        confirmLabel={t('portal.cancel.dialogConfirm')}
+        cancelLabel={t('portal.cancel.dialogKeep')}
         onConfirm={() => {
           actions.setAppointmentStatus(appt.id, 'cancelled', { actor: 'customer', reason: reason ? t(`portal.cancel.reasons.${reason}`) : undefined });
           setDone(true);

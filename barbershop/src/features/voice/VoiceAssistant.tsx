@@ -268,7 +268,7 @@ export function VoiceAssistant({ variant, onClose }: VoiceAssistantProps) {
                 <ExampleRow
                   key={intent}
                   icon={intent === 'next' ? 'user' : intent === 'count' ? 'hash' : intent === 'close' ? 'slash' : 'calendar'}
-                  text={`“${utteranceFor(intent, ctxRef.current)}”`}
+                  text={utteranceFor(intent, ctxRef.current)}
                   onPress={() => start(intent)}
                 />
               ))}

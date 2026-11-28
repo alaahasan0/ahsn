@@ -113,8 +113,12 @@ export function createFormatters(opts: FormatOptions) {
   /** "19/12" */
   const dateNumeric = (d: Date) => D(`${d.getDate()}/${d.getMonth() + 1}`);
 
-  /** Wrap in a left-to-right isolate so "+12%", phone numbers or codes don't reorder inside Arabic text. */
-  const ltr = (s: string) => `\u200E${s}\u200E`;
+  /**
+   * Keep "+970 59 912 3456", "+12%" or codes in left-to-right order inside Arabic text.
+   * Spaces become no-break spaces (bidi class CS) so digit groups form one number run, and the
+   * whole string is wrapped in a left-to-right isolate for engines that honour it.
+   */
+  const ltr = (s: string) => `\u2066${s.replace(/ /g, '\u00A0')}\u2069`;
 
   /** "December 2026" */
   const monthYear = (d: Date) => D(`${month(d)} ${d.getFullYear()}`);
@@ -152,8 +156,9 @@ export function createFormatters(opts: FormatOptions) {
   const phone = (countryCode: string, national: string) => {
     const digits = national.replace(/\D/g, '');
     const grouped = digits.length === 9 ? `${digits.slice(0, 2)} ${digits.slice(2, 5)} ${digits.slice(5)}` : digits;
-    // Phone numbers are always shown left-to-right with Latin digits for clarity.
-    return `${countryCode} ${grouped}`;
+    // Phone numbers are always shown left-to-right with Latin digits; no-break spaces keep the
+    // groups in order when the number sits inside right-to-left text.
+    return `${countryCode} ${grouped}`.replace(/ /g, '\u00A0');
   };
 
   return { dayShort, dateNumeric, ltr, number, money, percent, currencySymbol, time, clock, timeRange, weekday, month, dateLong, dateMedium, dateShort, dayMonth, monthYear, duration, relative, phone, digits: D };

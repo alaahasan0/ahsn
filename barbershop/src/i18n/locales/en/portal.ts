@@ -65,7 +65,7 @@ const portal = {
     phoneInvalid: 'Enter a valid mobile number',
   },
   verify: {
-    body: 'Enter the 6-digit code we sent to {{phone}}.',
+    body: 'Enter the 6-digit code we sent to',
     demo: 'Prototype: any 6 digits work.',
     resendIn: 'Resend code in {{seconds}}s',
     resend: 'Resend code',
@@ -104,7 +104,7 @@ const portal = {
     open: 'Open',
   },
   link: {
-    secure: 'Secure link for {{phone}}',
+    secure: 'Secure link for',
     greeting: 'Hi {{name}},',
     pendingIntro: 'Your appointment at {{salon}} is reserved. Please confirm you’re coming.',
     confirmedIntro: 'Your appointment is confirmed. See you soon!',
@@ -149,6 +149,8 @@ const portal = {
       somethingElse: 'Other',
     },
     confirm: 'Cancel my appointment',
+    dialogConfirm: 'Yes, cancel',
+    dialogKeep: 'No, keep it',
     confirmTitle: 'Cancel this appointment?',
     confirmBody: 'Your slot will be released for other customers.',
     keep: 'Keep appointment',

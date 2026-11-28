@@ -86,13 +86,10 @@ export default function ReviewStep() {
       </Section>
       <Section card>
         <SummaryRow icon="user-check" label={t('portal.review.customer')} value={draft.name} />
-        <SummaryRow
-          icon="phone"
-          label={t('portal.review.phone')}
-          value={f.phone(draft.phone.country, draft.phone.number)}
-          ltr
-          sub={!draft.whatsappSame && draft.whatsapp.number ? `${t('common.labels.whatsapp')}: ${f.ltr(f.phone(draft.whatsapp.country, draft.whatsapp.number))}` : undefined}
-        />
+        <SummaryRow icon="phone" label={t('portal.review.phone')} value={f.phone(draft.phone.country, draft.phone.number)} ltr />
+        {!draft.whatsappSame && draft.whatsapp.number ? (
+          <SummaryRow icon="message-circle" label={t('common.labels.whatsapp')} value={f.phone(draft.whatsapp.country, draft.whatsapp.number)} ltr />
+        ) : null}
       </Section>
       <Card style={{ flexDirection: 'row', alignItems: 'center' }}>
         <Text variant="callout" tone="secondary" style={{ flex: 1 }}>

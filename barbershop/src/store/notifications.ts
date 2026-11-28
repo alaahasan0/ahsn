@@ -13,7 +13,7 @@ export function buildNotifications(appointments: Appointment[]): AppNotification
       const type: AppNotification['type'] | null =
         e.type === 'created' ? (a.status === 'draft' ? 'request' : 'new_booking') : e.type === 'confirmed' ? 'confirmed' : e.type === 'cancelled' ? 'cancelled' : e.type === 'rescheduled' && a.status === 'rescheduled' ? 'rescheduled' : e.type === 'no_show' ? 'no_show' : e.type === 'expired' ? 'link_expired' : e.type === 'reminder_sent' ? 'reminder' : null;
       if (!type) continue;
-      out.push({ id: `nt_${e.id}`, type, at: e.at, read: t < DEMO_NOW.getTime() - 5 * 3600_000, appointmentId: a.id, customerId: a.customerId, barberId: a.barberId });
+      out.push({ id: `nt_${e.id}`, type, at: e.at, read: t < DEMO_NOW.getTime() - 75 * 60_000, appointmentId: a.id, customerId: a.customerId, barberId: a.barberId });
     }
   }
   // "Starting soon" alerts for the next hour.

@@ -46,7 +46,7 @@ export default function ManageLookupScreen() {
       salonName={salon.name}
       back={path()}
       title={t('portal.manage.title')}
-      subtitle={stage === 'list' ? undefined : stage === 'code' ? t('portal.verify.body', { phone: f.ltr(f.phone(phone.country, phone.number)) }) : t('portal.manage.body')}
+      subtitle={stage === 'phone' ? t('portal.manage.body') : undefined}
       footer={
         stage === 'phone' ? (
           <Button label={t('portal.manage.sendCode')} size="lg" disabled={!isValidMobile(phone)} onPress={() => setStage('code')} />
@@ -58,6 +58,14 @@ export default function ManageLookupScreen() {
       {stage === 'phone' ? <PhoneInput label={t('common.labels.phone')} value={phone} onChange={setPhone} hint={t('common.phone.hint')} /> : null}
       {stage === 'code' ? (
         <View style={{ gap: 12 }}>
+          <View style={{ gap: 2 }}>
+            <Text variant="callout" tone="secondary">
+              {t('portal.verify.body')}
+            </Text>
+            <Text variant="headline" style={{ writingDirection: 'ltr' }}>
+              {f.phone(phone.country, phone.number)}
+            </Text>
+          </View>
           <OtpInput value={code} onChange={setCode} autoFocus />
           <Text variant="footnote" tone="tertiary" align="center">
             {t('portal.verify.demo')}

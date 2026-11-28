@@ -65,9 +65,9 @@ const ev = (at: Date, type: AppointmentEvent['type'], actor: AppointmentEvent['a
 });
 
 export const timeBlocks: TimeBlock[] = [
-  { id: 'tb1', barberId: 'b1', start: atClock(T, '16:30').toISOString(), end: atClock(T, '17:00').toISOString(), reason: 'meeting', note: 'Supplier visit — new clippers' },
-  { id: 'tb2', barberId: 'b3', start: atClock(addDays(T, 1), '12:00').toISOString(), end: atClock(addDays(T, 1), '13:00').toISOString(), reason: 'personal', note: 'University registration' },
-  { id: 'tb3', barberId: 'all', start: atClock(addDays(T, 6), '09:00').toISOString(), end: atClock(addDays(T, 6), '11:00').toISOString(), reason: 'meeting', note: 'Team training: new booking system' },
+  { id: 'tb1', barberId: 'b1', start: atClock(T, '16:30').toISOString(), end: atClock(T, '17:00').toISOString(), reason: 'meeting' },
+  { id: 'tb2', barberId: 'b3', start: atClock(addDays(T, 1), '12:00').toISOString(), end: atClock(addDays(T, 1), '13:00').toISOString(), reason: 'personal' },
+  { id: 'tb3', barberId: 'all', start: atClock(addDays(T, 6), '09:00').toISOString(), end: atClock(addDays(T, 6), '11:00').toISOString(), reason: 'meeting' },
 ];
 
 interface Busy {
@@ -321,12 +321,12 @@ function curate(list: Appointment[], customers: Customer[]): Appointment[] {
     const onBreak = sched.breaks.some((br) => overlaps(NOW, addMinutes(NOW, 1), atClock(T, br.start), atClock(T, br.end)));
     const busyNow = list.some((a) => a.barberId === b.id && active(a) && overlaps(NOW, addMinutes(NOW, 1), new Date(a.start), addMinutes(new Date(a.start), a.durationMin)));
     if (onBreak || busyNow || NOW < atClock(T, sched.start) || NOW > atClock(T, sched.end)) continue;
-    const svc = allServices.find((s) => s.id === (b.id === 'b2' ? 's7' : 's1'))!;
     const start = addMinutes(NOW, -10);
     start.setMinutes(Math.floor(start.getMinutes() / 5) * 5, 0, 0);
-    const end = addMinutes(start, svc.durationMin);
-    const clash = list.some((a) => a.barberId === b.id && active(a) && overlaps(start, end, new Date(a.start), addMinutes(new Date(a.start), a.durationMin)));
-    if (clash) continue;
+    const svc = [b.id === 'b2' ? 's7' : 's1', 's2', 's4']
+      .map((id) => allServices.find((x) => x.id === id)!)
+      .find((x) => b.serviceIds.includes(x.id) && !list.some((a) => a.barberId === b.id && active(a) && overlaps(start, addMinutes(start, x.durationMin), new Date(a.start), addMinutes(new Date(a.start), a.durationMin))));
+    if (!svc) continue;
     const taken = new Set(list.filter((a) => isSameDay(new Date(a.start), T)).map((a) => a.customerId));
     const cust = customers.find((c) => !taken.has(c.id) && c.category === 'regular' && c.preferredBarberId === b.id) ?? customers.find((c) => !taken.has(c.id))!;
     list.push({
@@ -345,6 +345,23 @@ function curate(list: Appointment[], customers: Customer[]): Appointment[] {
       notes: [],
       history: [],
     });
+  }
+
+  // Voice-assistant showcase (spec example): Yousef is booked at 5:00 PM today and free at 5:30 PM.
+  {
+    const at = (t: string) => atClock(T, t);
+    const isLive = (a: Appointment) => ['confirmed', 'pending', 'draft', 'checked_in'].includes(a.status);
+    const span = (a: Appointment) => [new Date(a.start), addMinutes(new Date(a.start), a.durationMin)] as const;
+    for (let i = list.length - 1; i >= 0; i--) {
+      const a = list[i];
+      if (a.barberId !== 'b2' || !isSameDay(new Date(a.start), T) || !isLive(a)) continue;
+      const [s0, e0] = span(a);
+      if (overlaps(s0, e0, at('17:00'), at('18:05'))) list.splice(i, 1);
+    }
+    const svc = allServices.find((x) => x.id === 's1')!;
+    const taken = new Set(list.filter((a) => isSameDay(new Date(a.start), T)).map((a) => a.customerId));
+    const cust = customers.find((c) => !taken.has(c.id) && c.id !== 'c1' && c.preferredBarberId === 'b2' && c.category === 'regular')!;
+    list.push({ id: nextId(), salonId: SALON_ID, customerId: cust.id, serviceId: svc.id, barberId: 'b2', start: at('17:00').toISOString(), durationMin: svc.durationMin, price: svc.price, status: 'confirmed', source: 'whatsapp', createdAt: addDays(T, -1).toISOString(), createdBy: 'staff', notes: [], history: [] });
   }
 
   // One appointment from today moved to tomorrow (shows the rescheduled trail).

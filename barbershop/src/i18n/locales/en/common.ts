@@ -126,6 +126,11 @@ const common = {
       jo: 'Jordan',
     },
   },
+  notFound: {
+    title: 'This page doesn’t exist',
+    body: 'The link may be old or mistyped.',
+    home: 'Go to start',
+  },
   states: {
     loading: 'Loading…',
     emptyTitle: 'Nothing here yet',

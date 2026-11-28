@@ -129,6 +129,11 @@ const common: DeepTranslation<typeof en> = {
       jo: 'الأردن',
     },
   },
+  notFound: {
+    title: 'هالصفحة مش موجودة',
+    body: 'يمكن الرابط قديم أو فيه غلط بالكتابة.',
+    home: 'رجوع للبداية',
+  },
   states: {
     loading: 'جاري التحميل…',
     emptyTitle: 'ما في إشي لهلّق',

@@ -68,7 +68,7 @@ const portal: DeepTranslation<typeof en> = {
     phoneInvalid: 'اكتب رقم جوال صحيح',
   },
   verify: {
-    body: 'اكتب الكود المكوّن من 6 أرقام اللي بعتناه على {{phone}}.',
+    body: 'اكتب الكود المكوّن من 6 أرقام اللي بعتناه على',
     demo: 'نموذج أولي: أي 6 أرقام بتزبط.',
     resendIn: 'إعادة إرسال الكود بعد {{seconds}} ث',
     resend: 'إعادة إرسال الكود',
@@ -107,7 +107,7 @@ const portal: DeepTranslation<typeof en> = {
     open: 'فتح',
   },
   link: {
-    secure: 'رابط آمن لـ {{phone}}',
+    secure: 'رابط آمن لـ',
     greeting: 'مرحباً {{name}}،',
     pendingIntro: 'موعدك في {{salon}} محجوز. أكّد حضورك لو سمحت.',
     confirmedIntro: 'موعدك مؤكد. منستناك!',
@@ -152,6 +152,8 @@ const portal: DeepTranslation<typeof en> = {
       somethingElse: 'غير هيك',
     },
     confirm: 'ألغي موعدي',
+    dialogConfirm: 'آه، ألغيه',
+    dialogKeep: 'لا، خلّيه',
     confirmTitle: 'بدك تلغي هالموعد؟',
     confirmBody: 'رح ينفتح الوقت لزباين ثانيين.',
     keep: 'خلّي الموعد',

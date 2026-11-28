@@ -54,9 +54,14 @@ export default function VerifyStep() {
         />
       }
     >
-      <Text variant="callout" tone="secondary">
-        {t('portal.verify.body', { phone: f.ltr(f.phone(draft.phone.country, draft.phone.number)) })}
-      </Text>
+      <View style={{ gap: 2 }}>
+        <Text variant="callout" tone="secondary">
+          {t('portal.verify.body')}
+        </Text>
+        <Text variant="headline" style={{ writingDirection: 'ltr' }}>
+          {f.phone(draft.phone.country, draft.phone.number)}
+        </Text>
+      </View>
       <OtpInput value={code} onChange={setCode} autoFocus />
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, padding: 12, borderRadius: radius.md, backgroundColor: colors.accentSoft }}>
         <Icon name="info" size={14} color={colors.accentOnSoft} />

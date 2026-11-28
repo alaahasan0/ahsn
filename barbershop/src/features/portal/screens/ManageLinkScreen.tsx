@@ -118,7 +118,10 @@ export default function ManageLinkScreen() {
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start', paddingHorizontal: 10, height: 28, borderRadius: radius.pill, backgroundColor: colors.successSoft }}>
         <Icon name="lock" size={12} color={colors.success} />
         <Text variant="caption" color={colors.success}>
-          {t('portal.link.secure', { phone: f.ltr(maskPhone(customer?.phone)) })}
+          {t('portal.link.secure')}
+        </Text>
+        <Text variant="caption" color={colors.success} style={{ writingDirection: 'ltr' }}>
+          {maskPhone(customer?.phone)}
         </Text>
       </View>
 

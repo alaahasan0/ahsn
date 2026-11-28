@@ -3,9 +3,14 @@ import { today } from '@/lib/clock';
 import type { RecurringSeries, Weekday } from '@/types/models';
 
 import { SALON_ID } from './salon';
+import { barbers } from './team';
 
 const T = today();
 const wd = T.getDay() as Weekday;
+/** Ahmad's fortnightly slot with Yousef falls a few days from the demo day (on a day Yousef works), so today's 5:30 stays free for the voice-assistant demo. */
+const yousef = barbers.find((b) => b.id === 'b2')!;
+const ahmadOffset = [3, 4, 2, 5, 1].find((o) => yousef.schedule[((wd + o) % 7) as Weekday].enabled) ?? 3;
+const ahmadWeekday = ((wd + ahmadOffset) % 7) as Weekday;
 const iso = (n: number) => toISODate(addDays(T, n));
 
 export const recurringSeries: RecurringSeries[] = [
@@ -18,9 +23,9 @@ export const recurringSeries: RecurringSeries[] = [
     mode: 'fixed',
     frequency: 'biweekly',
     intervalWeeks: 2,
-    weekday: wd,
+    weekday: ahmadWeekday,
     time: '17:30',
-    startDate: iso(-84),
+    startDate: iso(ahmadOffset - 84),
     status: 'active',
     excludeHolidays: true,
     skippedDates: [],
