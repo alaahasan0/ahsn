@@ -114,7 +114,7 @@ export function createFormatters(opts: FormatOptions) {
   const dateNumeric = (d: Date) => D(`${d.getDate()}/${d.getMonth() + 1}`);
 
   /** Wrap in a left-to-right isolate so "+12%", phone numbers or codes don't reorder inside Arabic text. */
-  const ltr = (s: string) => `\u2066${s}\u2069`;
+  const ltr = (s: string) => `\u200E${s}\u200E`;
 
   /** "December 2026" */
   const monthYear = (d: Date) => D(`${month(d)} ${d.getFullYear()}`);

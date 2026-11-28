@@ -68,7 +68,7 @@ export function PhoneInput({ label, value, onChange, hint, error, whatsapp, opti
           placeholderTextColor={colors.textTertiary}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          style={{ flex: 1, paddingHorizontal: 12, fontFamily: fontFamilies.latin.regular, fontSize: 16, color: colors.text, textAlign: 'left', writingDirection: 'ltr', outlineStyle: 'none' } as never}
+          style={{ flex: 1, minWidth: 0, paddingHorizontal: 12, fontFamily: fontFamilies.latin.regular, fontSize: 16, color: colors.text, textAlign: 'left', writingDirection: 'ltr', outlineStyle: 'none' } as never}
         />
         {value.number.length > 0 ? (
           <View style={{ justifyContent: 'center', paddingEnd: 12 }}>

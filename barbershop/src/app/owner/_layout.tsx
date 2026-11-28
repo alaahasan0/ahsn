@@ -15,5 +15,14 @@ export default function OwnerTabs() {
     customers: { icon: 'users', label: 'common.nav.customers' },
     more: { icon: 'grid', label: 'common.nav.more' },
   };
-  return <Tabs screenOptions={{ headerShown: false, sceneStyle: { backgroundColor: colors.background } }} tabBar={(props) => <TabBar {...props} items={items} />} />;
+  return (
+    <Tabs screenOptions={{ headerShown: false, sceneStyle: { backgroundColor: colors.background } }} tabBar={(props) => <TabBar {...props} items={items} />}>
+      {/* SDK 58: only screens declared here are rendered. */}
+      <Tabs.Screen name="index" />
+      <Tabs.Screen name="calendar" />
+      <Tabs.Screen name="bookings" />
+      <Tabs.Screen name="customers" />
+      <Tabs.Screen name="more" />
+    </Tabs>
+  );
 }

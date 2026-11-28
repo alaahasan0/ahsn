@@ -119,8 +119,12 @@ function buildHistory(a: Appointment, customer: Customer, service: Service): App
 
 const CANCEL_REASONS = ['Travelling', 'Work came up', 'Feeling unwell', 'Rescheduling with family', 'Exam day'];
 
+/** Minimum days between visits, so visit counts look like a real client base. */
+const COOLDOWN = { trusted: 10, regular: 14, new: 24 };
+
 function generate(barbers: Barber[], services: Service[], customers: Customer[], series: RecurringSeries[]): Appointment[] {
   const out: Appointment[] = [];
+  const lastVisit = new Map<string, number>();
   const serviceById = new Map(services.map((s) => [s.id, s]));
   const customerById = new Map(customers.map((c) => [c.id, c]));
 
@@ -153,6 +157,7 @@ function generate(barbers: Barber[], services: Service[], customers: Customer[],
           if (busy.some((b) => overlaps(occ, end, b.start, b.end))) continue;
           busy.push({ start: occ, end: addMinutes(end, svc.bufferMin) });
           bookedToday.add(cust.id);
+          lastVisit.set(cust.id, offset);
           let status: AppointmentStatus;
           if (end <= NOW) status = chance(NO_SHOW[cust.category] * 2) ? 'no_show' : 'completed';
           else if (occ <= NOW) status = 'checked_in';
@@ -169,14 +174,14 @@ function generate(barbers: Barber[], services: Service[], customers: Customer[],
             price: svc.price,
             status,
             source: 'recurring',
-            createdAt: (createdAt > NOW ? NOW : createdAt).toISOString(),
+            createdAt: (createdAt > NOW ? addMinutes(NOW, -(90 + Math.floor(rand() * 2000))) : createdAt).toISOString(),
             createdBy: 'system',
             recurringId: s.id,
             notes: [],
             history: [],
           };
           if (s.mode === 'invitation' && status !== 'draft') {
-            const sentAt = createdAt > NOW ? NOW : createdAt;
+            const sentAt = createdAt > NOW ? addMinutes(NOW, -(60 + Math.floor(rand() * 1500))) : createdAt;
             appt.confirmation = { token: linkToken(rand), channel: cust.preferredChannel === 'sms' ? 'sms' : 'whatsapp', sentAt: sentAt.toISOString(), expiresAt: addMinutes(sentAt, salon.confirmationLinkHours * 60).toISOString() };
           }
           out.push(appt);
@@ -189,7 +194,12 @@ function generate(barbers: Barber[], services: Service[], customers: Customer[],
       const fill = isPast ? 0.8 : isToday ? 0.86 : Math.max(0.12, 0.8 - offset * 0.05);
       let cursor = dayStart + (chance(0.5) ? 0 : 15);
       while (cursor + 20 <= dayEnd) {
-        const pool = customers.filter((c) => !bookedToday.has(c.id) && (c.category !== 'new' || offset > -Math.max(1, Math.round((NOW.getTime() - new Date(c.createdAt).getTime()) / 86_400_000))));
+        const pool = customers.filter(
+          (c) =>
+            !bookedToday.has(c.id) &&
+            offset - (lastVisit.get(c.id) ?? -999) >= COOLDOWN[c.category] * (0.8 + ((c.id.charCodeAt(c.id.length - 1) % 5) / 10)) &&
+            new Date(c.createdAt).getTime() <= addDays(T, offset).getTime() + 86_400_000,
+        );
         if (pool.length === 0) break;
         const cust = pickWeighted(pool, (c) => CATEGORY_WEIGHT[c.category] * (c.preferredBarberId === barber.id ? 3.5 : c.preferredBarberId ? 0.5 : 1));
         const offered = services.filter((s) => barber.serviceIds.includes(s.id) && s.active);
@@ -208,6 +218,7 @@ function generate(barbers: Barber[], services: Service[], customers: Customer[],
           continue;
         }
         bookedToday.add(cust.id);
+        lastVisit.set(cust.id, offset);
 
         let source = pickWeighted(Object.keys(SOURCE_WEIGHT) as BookingSource[], (s) => SOURCE_WEIGHT[s]);
         if (source === 'walk_in' && start > NOW) source = 'phone';
@@ -299,6 +310,41 @@ function curate(list: Appointment[], customers: Customer[]): Appointment[] {
       const sentAt = addMinutes(new Date(a.createdAt), 1);
       a.confirmation = { token: linkToken(rand), channel: 'whatsapp', sentAt: sentAt.toISOString(), expiresAt: addMinutes(sentAt, 24 * 60).toISOString() };
     }
+  }
+
+  // Make sure the chairs look busy at the demo clock: barbers who are working (not on a break)
+  // and idle at "now" get a customer who checked in a few minutes ago.
+  const active = (a: Appointment) => ['confirmed', 'pending', 'draft', 'checked_in', 'completed'].includes(a.status);
+  for (const b of allBarbers) {
+    const sched = b.schedule[weekdayOf(T)];
+    if (!sched.enabled) continue;
+    const onBreak = sched.breaks.some((br) => overlaps(NOW, addMinutes(NOW, 1), atClock(T, br.start), atClock(T, br.end)));
+    const busyNow = list.some((a) => a.barberId === b.id && active(a) && overlaps(NOW, addMinutes(NOW, 1), new Date(a.start), addMinutes(new Date(a.start), a.durationMin)));
+    if (onBreak || busyNow || NOW < atClock(T, sched.start) || NOW > atClock(T, sched.end)) continue;
+    const svc = allServices.find((s) => s.id === (b.id === 'b2' ? 's7' : 's1'))!;
+    const start = addMinutes(NOW, -10);
+    start.setMinutes(Math.floor(start.getMinutes() / 5) * 5, 0, 0);
+    const end = addMinutes(start, svc.durationMin);
+    const clash = list.some((a) => a.barberId === b.id && active(a) && overlaps(start, end, new Date(a.start), addMinutes(new Date(a.start), a.durationMin)));
+    if (clash) continue;
+    const taken = new Set(list.filter((a) => isSameDay(new Date(a.start), T)).map((a) => a.customerId));
+    const cust = customers.find((c) => !taken.has(c.id) && c.category === 'regular' && c.preferredBarberId === b.id) ?? customers.find((c) => !taken.has(c.id))!;
+    list.push({
+      id: nextId(),
+      salonId: SALON_ID,
+      customerId: cust.id,
+      serviceId: svc.id,
+      barberId: b.id,
+      start: start.toISOString(),
+      durationMin: svc.durationMin,
+      price: svc.price,
+      status: 'checked_in',
+      source: 'phone',
+      createdAt: addDays(start, -2).toISOString(),
+      createdBy: 'staff',
+      notes: [],
+      history: [],
+    });
   }
 
   // One appointment from today moved to tomorrow (shows the rescheduled trail).

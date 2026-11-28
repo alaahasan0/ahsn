@@ -54,7 +54,62 @@ const seeds: Seed[] = [
 
 const DAY = 86_400_000;
 
-export const customers: Customer[] = seeds.map(([id, en, ar, phone, whatsapp, verification, channel, category, preferredBarberId, preferredServiceIds, daysAgo, notes]) => ({
+/**
+ * The wider client base: occasional customers generated deterministically so the 26 named
+ * profiles above keep realistic visit counts (a regular comes every 2–4 weeks, not daily).
+ */
+const FIRST: [string, string][] = [
+  ['Saleh', 'صالح'], ['Khalil', 'خليل'], ['Yousef', 'يوسف'], ['Omar', 'عمر'], ['Hani', 'هاني'], ['Shadi', 'شادي'], ['Ammar', 'عمّار'], ['Bilal', 'بلال'],
+  ['Eyad', 'إياد'], ['Fares', 'فارس'], ['Ghassan', 'غسان'], ['Iyad', 'عياد'], ['Jamal', 'جمال'], ['Kamal', 'كمال'], ['Loay', 'لؤي'], ['Moath', 'معاذ'],
+  ['Nidal', 'نضال'], ['Raed', 'رائد'], ['Sami', 'سامي'], ['Tamer', 'تامر'], ['Wasim', 'وسيم'], ['Yahya', 'يحيى'], ['Zakaria', 'زكريا'], ['Murad', 'مراد'],
+  ['Nasser', 'ناصر'], ['Odai', 'عدي'], ['Ihab', 'إيهاب'], ['Firas', 'فراس'], ['Mahdi', 'مهدي'], ['Hussam', 'حسام'],
+];
+const LAST: [string, string][] = [
+  ['Abu Sharkh', 'أبو شرخ'], ['Odeh', 'عودة'], ['Nofal', 'نوفل'], ['Shalabi', 'شلبي'], ['Tamimi', 'التميمي'], ['Hamdan', 'حمدان'], ['Zaghal', 'زغل'],
+  ['Kassab', 'قصّاب'], ['Mustafa', 'مصطفى'], ['Sharif', 'شريف'], ['Atallah', 'عطا الله'], ['Daoud', 'داود'], ['Hilal', 'هلال'], ['Issa', 'عيسى'],
+  ['Juma', 'جمعة'], ['Khatib', 'الخطيب'], ['Labadi', 'لبادي'], ['Mansour', 'منصور'], ['Nimer', 'نمر'], ['Qaddoumi', 'القدومي'],
+];
+
+function occasionalCustomers(count: number): Customer[] {
+  let x = 7;
+  const r = () => {
+    x = (x * 1103515245 + 12345) % 2147483648;
+    return x / 2147483648;
+  };
+  const out: Customer[] = [];
+  const used = new Set(seeds.map((x) => x[1]));
+  for (let i = 0; i < count; i++) {
+    let [fe, fa] = FIRST[Math.floor(r() * FIRST.length)];
+    let [le, la] = LAST[Math.floor(r() * LAST.length)];
+    for (let tries = 0; used.has(`${fe} ${le}`) && tries < 50; tries++) {
+      [fe, fa] = FIRST[Math.floor(r() * FIRST.length)];
+      [le, la] = LAST[Math.floor(r() * LAST.length)];
+    }
+    used.add(`${fe} ${le}`);
+    const country = r() < 0.75 ? '+970' : '+972';
+    const number = (country === '+970' ? (r() < 0.8 ? '59' : '56') : `5${2 + Math.floor(r() * 6)}`) + String(1000000 + Math.floor(r() * 8999999)).slice(0, 7);
+    const hasWa = r() < 0.85;
+    const category: CustomerCategory = r() < 0.12 ? 'trusted' : r() < 0.8 ? 'regular' : 'new';
+    out.push({
+      id: `c${27 + i}`,
+      salonId: SALON_ID,
+      name: { en: `${fe} ${le}`, ar: `${fa} ${la}` },
+      phone: { country, number },
+      whatsapp: hasWa ? { country, number } : undefined,
+      whatsappVerification: hasWa ? (r() < 0.85 ? 'verified' : 'pending') : 'unverified',
+      preferredChannel: hasWa ? 'whatsapp' : 'sms',
+      preferredBarberId: r() < 0.6 ? ['b1', 'b2', 'b3'][Math.floor(r() * 3)] : undefined,
+      preferredServiceIds: [['s1', 's3', 's7', 's2', 's5'][Math.floor(r() * 5)]],
+      category,
+      categoryManual: false,
+      createdAt: new Date(Date.now() - (category === 'new' ? 5 + r() * 40 : 120 + r() * 900) * DAY).toISOString(),
+      marketingOptIn: r() < 0.7,
+    });
+  }
+  return out;
+}
+
+const named: Customer[] = seeds.map(([id, en, ar, phone, whatsapp, verification, channel, category, preferredBarberId, preferredServiceIds, daysAgo, notes]) => ({
   id,
   salonId: SALON_ID,
   name: { en, ar },
@@ -70,3 +125,5 @@ export const customers: Customer[] = seeds.map(([id, en, ar, phone, whatsapp, ve
   createdAt: new Date(Date.now() - daysAgo * DAY).toISOString(),
   marketingOptIn: category !== 'new',
 }));
+
+export const customers: Customer[] = [...named, ...occasionalCustomers(270)];

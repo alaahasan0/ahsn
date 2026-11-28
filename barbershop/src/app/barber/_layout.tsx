@@ -13,5 +13,14 @@ export default function BarberTabs() {
     customers: { icon: 'users', label: 'common.nav.customers' },
     profile: { icon: 'user', label: 'common.nav.profile' },
   };
-  return <Tabs screenOptions={{ headerShown: false, sceneStyle: { backgroundColor: colors.background } }} tabBar={(props) => <TabBar {...props} items={items} />} />;
+  return (
+    <Tabs screenOptions={{ headerShown: false, sceneStyle: { backgroundColor: colors.background } }} tabBar={(props) => <TabBar {...props} items={items} />}>
+      {/* SDK 58: only screens declared here are rendered. */}
+      <Tabs.Screen name="index" />
+      <Tabs.Screen name="calendar" />
+      <Tabs.Screen name="assistant" />
+      <Tabs.Screen name="customers" />
+      <Tabs.Screen name="profile" />
+    </Tabs>
+  );
 }
