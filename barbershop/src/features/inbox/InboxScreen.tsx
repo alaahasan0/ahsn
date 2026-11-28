@@ -283,7 +283,7 @@ function ActivityRow({ event: e }: { event: ActivityEvent }) {
         <Icon name={ACTIVITY_ICON[e.kind]} size={15} color={tone?.fg ?? colors.textSecondary} />
       </View>
       <View style={{ flex: 1, gap: 2 }}>
-        <Text variant="callout" numberOfLines={1}>
+        <Text variant="callout" numberOfLines={2}>
           {t(`inbox.activity.${e.kind}`, { customer: l(customer?.name), service: l(service?.name) })}
         </Text>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>

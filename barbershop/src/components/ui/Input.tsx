@@ -70,6 +70,7 @@ export const Input = forwardRef<TextInputInstance, InputProps>(function Input({ 
           }}
           style={{
             flex: 1,
+            minWidth: 0,
             minHeight: multiline ? 72 : 46,
             fontFamily: fontFamilies[lang === 'ar' && !ltr ? 'arabic' : 'latin'].regular,
             fontSize: 16,
