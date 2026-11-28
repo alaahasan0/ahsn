@@ -17,7 +17,7 @@ export const SOURCE_ICON: Record<BookingSource, IconName> = {
   phone: 'phone',
   whatsapp: 'ion:logo-whatsapp',
   online: 'globe',
-  walk_in: 'mci:walk',
+  walk_in: 'ion:walk-outline',
   staff: 'user-check',
   recurring: 'repeat',
   voice: 'mic',

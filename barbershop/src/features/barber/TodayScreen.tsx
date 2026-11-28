@@ -71,7 +71,7 @@ export default function TodayScreen() {
   const go = (path: string) => router.push(path as never);
   const quick: { icon: IconName; label: string; onPress: () => void; accent?: boolean }[] = [
     { icon: 'plus', label: t('barber.quick.newBooking'), onPress: () => go(`/appointment/new?barberId=${barberId}`), accent: true },
-    { icon: 'mci:walk', label: t('barber.quick.walkIn'), onPress: () => go(`/appointment/new?walkIn=1&source=walk_in&barberId=${barberId}`) },
+    { icon: 'ion:walk-outline', label: t('barber.quick.walkIn'), onPress: () => go(`/appointment/new?walkIn=1&source=walk_in&barberId=${barberId}`) },
     { icon: 'slash', label: t('barber.quick.block'), onPress: () => go(`/block-time?barberId=${barberId}`) },
     { icon: 'mic', label: t('barber.quick.voice'), onPress: () => go('/barber/assistant') },
   ];

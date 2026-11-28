@@ -42,6 +42,15 @@ npx expo export --platform web      # outputs dist/ (single-page app, any static
 
 The web output is a single-page app (`"output": "single"`), so the host must fall back to `index.html` for unknown paths.
 
+Self-contained single-file build (scripts and fonts inlined, no asset requests). This is what the shared prototype link uses:
+
+```bash
+ARTIFACT_BUILD=1 npx expo export --platform web --output-dir dist-artifact
+node scripts/build-artifact.mjs dist-artifact dist-artifact/barber-house.html
+```
+
+Append `#owner`, `#barber`, `#assistant`, `#portal` or `#welcome` to the page link to open that area directly.
+
 ### Demo tips
 
 - Start at the **welcome screen**. "Explore the prototype" jumps straight into the owner, barber, customer portal or booking-link experience.
