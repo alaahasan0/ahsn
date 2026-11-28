@@ -140,7 +140,8 @@ export default function TrustScreen() {
               {attention.map((c) => {
                 const s = stats.get(c.id)!;
                 return (
-                  <Card key={c.id} padding={12} onPress={() => router.push(`/customers/${c.id}`)} style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                  <Card key={c.id} padding={12} style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Pressable onPress={() => router.push(`/customers/${c.id}`)} style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                     <Avatar name={l(c.name)} size={40} />
                     <View style={{ flex: 1, gap: 2 }}>
                       <Text variant="callout" weight="semibold" numberOfLines={1}>
@@ -150,6 +151,7 @@ export default function TrustScreen() {
                         {tp('customers.trust.noShows', s.noShows)} · {tp('customers.trust.cancels', s.lateCancellations)}
                       </Text>
                     </View>
+                    </Pressable>
                     <Button size="sm" variant="secondary" label={t('customers.trust.reclassify')} onPress={() => setEditing(c)} />
                   </Card>
                 );

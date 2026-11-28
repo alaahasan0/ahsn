@@ -176,11 +176,9 @@ function InboxItem({ appointment: a, tab }: { appointment: Appointment; tab: Exc
   };
 
   return (
-    <Pressable
-      onPress={() => router.push(`/appointment/${a.id}`)}
-      feedback="scale"
-      style={[{ backgroundColor: colors.surface, borderRadius: radius.lg, padding: 14, gap: 12, borderWidth: isDark ? 1 : 0, borderColor: colors.border }, isDark ? null : shadow('sm')]}
-    >
+    // The card itself is not a button: on web, its action buttons may not be nested inside another button.
+    <View style={[{ backgroundColor: colors.surface, borderRadius: radius.lg, padding: 14, gap: 12, borderWidth: isDark ? 1 : 0, borderColor: colors.border }, isDark ? null : shadow('sm')]}>
+      <Pressable onPress={() => router.push(`/appointment/${a.id}`)} style={{ gap: 12 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
         <Avatar name={l(customer?.name)} size={42} />
         <View style={{ flex: 1, gap: 2 }}>
@@ -211,6 +209,7 @@ function InboxItem({ appointment: a, tab }: { appointment: Appointment; tab: Exc
           </Text>
         </View>
       ) : null}
+      </Pressable>
       {invitation ? (
         <View style={{ flexDirection: 'row', gap: 8 }}>
           <Button label={t('inbox.sendNow')} icon="send" size="sm" style={{ flex: 1.3 }} onPress={resend} />
@@ -250,7 +249,7 @@ function InboxItem({ appointment: a, tab }: { appointment: Appointment; tab: Exc
           toast({ message: t('appointment.toast.declined'), description: t('common.toast.simulated'), tone: 'default' });
         }}
       />
-    </Pressable>
+    </View>
   );
 }
 
