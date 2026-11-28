@@ -214,7 +214,7 @@ export function VoiceAssistant({ variant, onClose }: VoiceAssistantProps) {
 
   const busy = phase === 'listening' || phase === 'processing' || phase === 'responding';
   const statusLabel = t(`voice.states.${phase}`);
-  const hint = phase === 'awaiting' ? t('voice.tapToAnswer') : phase === 'listening' ? t('voice.stop') : t('voice.tapToSpeak');
+  const hint = phase === 'awaiting' ? t('voice.tapToAnswer') : phase === 'listening' ? t('voice.stop') : phase === 'error' ? t('common.actions.retry') : t('voice.tapToSpeak');
   const suggestions = useMemo(() => SUGGESTED_INTENTS, []);
 
   const headerRight = (
